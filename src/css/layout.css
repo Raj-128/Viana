@@ -1,0 +1,236 @@
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.1;
+}
+
+.hero-sub {
+  margin-top: 20px;
+  color: var(--muted);
+}
+
+/* =========================
+   PAGE HERO
+========================= */
+
+.page-hero {
+  padding: 160px 0 80px;
+}
+
+.page-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1.1;
+}
+
+.page-lead {
+  margin-top: 16px;
+  max-width: 560px;
+  color: var(--muted);
+}
+
+.page-stats {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.page-stats strong {
+  display: block;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* =========================
+   SYSTEM / COLLECTIONS / PHILOSOPHY
+========================= */
+
+.system-section {
+  background: linear-gradient(180deg, #f6f5f2 0%, #ebe6df 100%);
+}
+
+.collections,
+.work-list,
+.process,
+.journal {
+  background: linear-gradient(180deg, rgba(227,221,214,0.45) 0%, rgba(246,245,242,0) 65%);
+}
+
+.identity-block ul {
+  margin-top: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.collections-section {
+  padding-top: 140px;
+}
+
+.collections-section .work-grid {
+  gap: 36px;
+}
+
+.philosophy-section blockquote {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+/* =========================
+   COLLECTIONS PAGE
+========================= */
+
+.collection-grid {
+  display: grid;
+  gap: 48px;
+}
+
+.collection-card {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.collection-card.reverse {
+  grid-template-columns: 0.9fr 1.1fr;
+}
+
+.collection-card.reverse .collection-media {
+  order: 2;
+}
+
+.collection-card.reverse .collection-body {
+  order: 1;
+}
+
+@media (max-width: 900px) {
+  .collection-card,
+  .collection-card.reverse {
+    grid-template-columns: 1fr;
+  }
+
+  .collection-card.reverse .collection-media,
+  .collection-card.reverse .collection-body {
+    order: initial;
+  }
+}
+
+/* =========================
+   GRIDS
+========================= */
+
+.identity-grid,
+.services-grid,
+.about-grid,
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 100px;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+.work-card.full {
+  grid-column: span 2;
+}
+
+/* =========================
+   PAGE HEADERS
+========================= */
+
+.work-hero,
+.services-hero,
+.about-hero,
+.contact-hero {
+  padding: 160px 0 80px;
+}
+
+.work-hero h1,
+.services-hero h1,
+.about-hero h1,
+.contact-hero h1 {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.site-footer {
+  margin-top: 72px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .identity-grid,
+  .services-grid,
+  .about-grid,
+  .work-grid,
+  .project-grid {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+
+  .work-card.full {
+    grid-column: auto;
+  }
+
+  .page-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .service-grid,
+  .process-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}

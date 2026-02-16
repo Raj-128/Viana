@@ -1,0 +1,95 @@
+/* =========================
+   RESET & VARIABLES
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #F6F5F2;
+  --header-bg: #E4E0DA;
+  --text: #1E1B17;
+  --nav-text: #61584E;
+  --muted: #7A7268;
+  --accent: #7A6B5B;
+  --accent-soft: rgba(122,107,91,0.35);
+
+  --surface: #EEE9E2;
+  --surface-2: #E3DDD6;
+  --ink-soft: #3B332B;
+  --line: #CFC7BD;
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+
+/* =========================
+   BASE ELEMENTS
+========================= */
+
+body {
+  font-family: var(--font-body);
+  background:
+    radial-gradient(1200px 800px at 10% -20%, #fbfaf8 0%, transparent 60%),
+    radial-gradient(1200px 800px at 110% 20%, #ebe6df 0%, transparent 55%),
+    var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  cursor: none;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+h1, h2, h3 {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+section {
+  padding: 120px 0;
+  scroll-margin-top: 120px;
+}
+
+/* =========================
+   REVEAL ANIMATION
+========================= */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
