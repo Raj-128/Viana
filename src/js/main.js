@@ -182,7 +182,7 @@ if (cursor && dot && outline && window.innerWidth >= 768) {
 
     list.forEach(project => {
       const card = document.createElement("a");
-      card.href = `/project.html?id=${project.id}`;
+      card.href = `project.html?id=${project.id}`;
       card.className = "work-card reveal-media";
 
       card.innerHTML = `
@@ -334,7 +334,7 @@ pillButtons.forEach(button => {
    BACK BUTTON (GLOBAL)
 ========================= */
 window.goBack = function () {
-  window.location.href = "/work.html";
+  window.location.href = "work.html";
 };
 
 const heroTitle = document.querySelector(".hero-title");

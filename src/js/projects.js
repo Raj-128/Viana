@@ -1,3 +1,7 @@
+import collection01 from "../assets/images/collection-01.svg";
+import collection02 from "../assets/images/collection-02.svg";
+import collection03 from "../assets/images/collection-03.svg";
+
 export const projects = [
   {
     id: "residential-2024",
@@ -6,11 +10,8 @@ export const projects = [
     type: "interior",
     category: "residential",
     workType: "wallpaper",
-    cover: "/src/assets/images/collection-01.svg",
-    gallery: [
-      "/src/assets/images/collection-01.svg",
-      "/src/assets/images/collection-02.svg"
-    ]
+    cover: collection01,
+    gallery: [collection01, collection02]
   },
   {
     id: "brand-identity-2023",
@@ -19,11 +20,8 @@ export const projects = [
     type: "graphic",
     category: "branding",
     workType: "3d",
-    cover: "/src/assets/images/collection-02.svg",
-    gallery: [
-      "/src/assets/images/collection-02.svg",
-      "/src/assets/images/collection-03.svg"
-    ]
+    cover: collection02,
+    gallery: [collection02, collection03]
   },
   {
     id: "viana-brand-identity",
@@ -32,10 +30,7 @@ export const projects = [
     type: "graphic",
     category: "branding",
     workType: "3d",
-    cover: "/src/assets/images/collection-03.svg",
-    gallery: [
-      "/src/assets/images/collection-03.svg",
-      "/src/assets/images/collection-01.svg"
-    ]
+    cover: collection03,
+    gallery: [collection03, collection01]
   }
 ];

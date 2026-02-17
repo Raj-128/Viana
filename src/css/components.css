@@ -279,7 +279,7 @@ body.menu-open::after {
   bottom: 24px;
   width: 220px;
   height: 220px;
-  background: url("/src/assets/images/flower.png") center / contain no-repeat;
+  background: url("../assets/images/flower.png") center / contain no-repeat;
   opacity: 0.15;
   pointer-events: none;
 }
