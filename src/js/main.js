@@ -1,4 +1,5 @@
 // src/js/main.js
+import "./animations.js";
 import { projects } from "./projects.js";
 
 console.log("MAIN JS LOADED");

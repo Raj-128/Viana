@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const heroSub = document.querySelector(".hero-sub");
+
+  if (!window.gsap) {
+    if (heroSub) heroSub.style.opacity = "1";
+    return;
+  }
 
   document.querySelectorAll('.hero-title .line').forEach(line => {
     line.innerHTML = `<span>${line.innerText}</span>`;
