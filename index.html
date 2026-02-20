@@ -31,14 +31,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
   <!-- CSS (VITE PATHS) -->
-  <script type="module" crossorigin src="/Viana/assets/main-CbCoB4VL.js"></script>
-  <link rel="stylesheet" crossorigin href="/Viana/assets/main-BseHVRaI.css">
+  <script type="module" crossorigin src="/Viana/assets/main-Cw3FaKvT.js"></script>
+  <link rel="stylesheet" crossorigin href="/Viana/assets/main-BFF_cXI0.css">
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-      <div class="logo">
+            <div class="logo">
         <a href="index.html">
           <img src="/Viana/assets/flower-6SgxrDD3.png" alt="Studio Viana Logo" class="logo-img">
           STUDIO VIANA</a>
@@ -60,6 +60,20 @@
       </button>
     </div>
   </header>
+
+  <section class="work-switch-section site-mode-toggle">
+    <div class="container">
+      <div class="work-pill-toggle" data-mode-toggle>
+        <div class="pill-slider"></div>
+        <button class="pill-btn active" data-type="wallpaper">
+          Wallpaper
+        </button>
+        <button class="pill-btn" data-type="3d">
+          3D Model Art
+        </button>
+      </div>
+    </div>
+  </section>
 
   <div class="fullscreen-menu">
   <button class="menu-close" aria-label="Close Menu">Close</button>
@@ -133,31 +147,7 @@
         <p class="section-sub">A curated view of recent studio work.</p>
       </div>
 
-      <div class="work-grid">
-        <a href="project.html?id=residential-2024" class="work-card reveal-media">
-          <img src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1400'%20height='900'%20viewBox='0%200%201400%20900'%3e%3crect%20width='1400'%20height='900'%20fill='%23f4f1ec'/%3e%3ccircle%20cx='980'%20cy='260'%20r='210'%20fill='%23d9cfc7'/%3e%3crect%20x='120'%20y='220'%20width='520'%20height='360'%20fill='%23b9a99a'/%3e%3crect%20x='180'%20y='280'%20width='400'%20height='240'%20fill='%23efe9e3'/%3e%3crect%20x='120'%20y='640'%20width='1160'%20height='8'%20fill='%236f5f4a'/%3e%3c/svg%3e" alt="Residential Interior Project">
-          <div class="work-info">
-            <span>Interior Design</span>
-            <h3>Residential Space</h3>
-          </div>
-        </a>
-
-        <a href="project.html?id=brand-identity-2023" class="work-card reveal-media">
-          <img src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1400'%20height='900'%20viewBox='0%200%201400%20900'%3e%3crect%20width='1400'%20height='900'%20fill='%23f9f8f6'/%3e%3crect%20x='120'%20y='140'%20width='380'%20height='560'%20fill='%23d7cdc4'/%3e%3crect%20x='520'%20y='220'%20width='760'%20height='380'%20fill='%23efe9e3'/%3e%3ccircle%20cx='340'%20cy='660'%20r='110'%20fill='%236f5f4a'/%3e%3crect%20x='520'%20y='640'%20width='760'%20height='10'%20fill='%23111111'/%3e%3c/svg%3e" alt="Brand Identity Project">
-          <div class="work-info">
-            <span>Graphic Design</span>
-            <h3>Brand Identity</h3>
-          </div>
-        </a>
-
-        <a href="project.html?id=viana-brand-identity" class="work-card full reveal-media">
-          <img src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1400'%20height='900'%20viewBox='0%200%201400%20900'%3e%3crect%20width='1400'%20height='900'%20fill='%23f2eee9'/%3e%3crect%20x='100'%20y='160'%20width='420'%20height='520'%20fill='%23cbbfb3'/%3e%3crect%20x='560'%20y='220'%20width='740'%20height='320'%20fill='%23e5ded6'/%3e%3crect%20x='560'%20y='560'%20width='740'%20height='180'%20fill='%236f5f4a'/%3e%3crect%20x='100'%20y='720'%20width='1200'%20height='6'%20fill='%23111111'/%3e%3c/svg%3e" alt="Visual System Project">
-          <div class="work-info">
-            <span>Graphic Design</span>
-            <h3>Viana Brand Identity</h3>
-          </div>
-        </a>
-      </div>
+      <div class="work-grid" id="home-collections"></div>
 
       <div class="section-cta">
         <a href="work.html" class="view-all-link">View all projects &rarr;</a>
@@ -220,9 +210,14 @@
       <div class="footer-contact">
         <p class="footer-heading">Contact</p>
         <a href="mailto:vickyranagovind@gmail.com">vickyranagovind@gmail.com</a>
-        <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
-        <span>India</span>
+        <a href="tel:1234567890">1234567890</a>
       </div>
+      <div class="footer-social">
+        <p class="footer-heading">Social Links</p>
+        <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.behance.net/" target="_blank" rel="noopener">Behance</a>
+      </div>
+
     </div>
     <div class="footer-bottom">
       <div class="container">
@@ -233,7 +228,7 @@
   </footer>
 
   <!-- JS (VITE MODULE) -->
-  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -261,6 +256,13 @@
 </div>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
