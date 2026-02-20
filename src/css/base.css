@@ -11,6 +11,7 @@
 :root {
   --bg: #F6F5F2;
   --header-bg: #E4E0DA;
+  --header-glass: rgba(228, 224, 218, 0.78);
   --text: #1E1B17;
   --nav-text: #61584E;
   --muted: #7A7268;
@@ -39,7 +40,56 @@ body {
     var(--bg);
   color: var(--text);
   line-height: 1.6;
-  cursor: none;
+}
+
+body.mode-wallpaper {
+  --bg: #f6f3ee;
+  --header-bg: #efe7dd;
+  --header-glass: rgba(239, 231, 221, 0.78);
+  --surface: #f2ece5;
+  --surface-2: #e6ddd3;
+  --line: #d5cbbf;
+  --nav-text: #6f6156;
+  --accent: #8b6d58;
+  --accent-soft: rgba(139, 109, 88, 0.35);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(122, 107, 91, 0.04) 0,
+      rgba(122, 107, 91, 0.04) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(122, 107, 91, 0.03) 0,
+      rgba(122, 107, 91, 0.03) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    radial-gradient(1200px 800px at 10% -20%, #fbfaf8 0%, transparent 60%),
+    radial-gradient(1200px 800px at 110% 20%, #ebe6df 0%, transparent 55%),
+    var(--bg);
+}
+
+body.mode-3d {
+  --bg: #f1eee8;
+  --header-bg: #e3dbd1;
+  --header-glass: rgba(227, 219, 209, 0.78);
+  --surface: #e8e1d6;
+  --surface-2: #d9cfc2;
+  --line: #c5b9ad;
+  --nav-text: #5f5248;
+  --accent: #6c5444;
+  --accent-soft: rgba(108, 84, 68, 0.35);
+  background:
+    radial-gradient(800px 520px at 16% -10%, rgba(90, 70, 58, 0.25) 0%, transparent 62%),
+    radial-gradient(820px 520px at 88% 6%, rgba(31, 27, 23, 0.18) 0%, transparent 68%),
+    linear-gradient(120deg, rgba(122, 107, 91, 0.2) 0%, transparent 50%),
+    radial-gradient(1200px 800px at 10% -20%, #f8f6f2 0%, transparent 60%),
+    radial-gradient(1200px 800px at 110% 20%, #e6ded4 0%, transparent 55%),
+    var(--bg);
 }
 
 body.menu-open {

@@ -39,7 +39,7 @@
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-      <div class="logo">
+            <div class="logo">
         <a href="index.html">
           <img src="./src/assets/images/flower.png" alt="Studio Viana Logo" class="logo-img">
           STUDIO VIANA</a>
@@ -61,6 +61,20 @@
       </button>
     </div>
   </header>
+
+  <section class="work-switch-section site-mode-toggle">
+    <div class="container">
+      <div class="work-pill-toggle" data-mode-toggle>
+        <div class="pill-slider"></div>
+        <button class="pill-btn active" data-type="wallpaper">
+          Wallpaper
+        </button>
+        <button class="pill-btn" data-type="3d">
+          3D Model Art
+        </button>
+      </div>
+    </div>
+  </section>
 
   <div class="fullscreen-menu">
   <button class="menu-close" aria-label="Close Menu">Close</button>
@@ -134,31 +148,7 @@
         <p class="section-sub">A curated view of recent studio work.</p>
       </div>
 
-      <div class="work-grid">
-        <a href="project.html?id=residential-2024" class="work-card reveal-media">
-          <img src="./src/assets/images/collection-01.svg" alt="Residential Interior Project">
-          <div class="work-info">
-            <span>Interior Design</span>
-            <h3>Residential Space</h3>
-          </div>
-        </a>
-
-        <a href="project.html?id=brand-identity-2023" class="work-card reveal-media">
-          <img src="./src/assets/images/collection-02.svg" alt="Brand Identity Project">
-          <div class="work-info">
-            <span>Graphic Design</span>
-            <h3>Brand Identity</h3>
-          </div>
-        </a>
-
-        <a href="project.html?id=viana-brand-identity" class="work-card full reveal-media">
-          <img src="./src/assets/images/collection-03.svg" alt="Visual System Project">
-          <div class="work-info">
-            <span>Graphic Design</span>
-            <h3>Viana Brand Identity</h3>
-          </div>
-        </a>
-      </div>
+      <div class="work-grid" id="home-collections"></div>
 
       <div class="section-cta">
         <a href="work.html" class="view-all-link">View all projects &rarr;</a>
@@ -221,9 +211,14 @@
       <div class="footer-contact">
         <p class="footer-heading">Contact</p>
         <a href="mailto:vickyranagovind@gmail.com">vickyranagovind@gmail.com</a>
-        <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
-        <span>India</span>
+        <a href="tel:1234567890">1234567890</a>
       </div>
+      <div class="footer-social">
+        <p class="footer-heading">Social Links</p>
+        <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.behance.net/" target="_blank" rel="noopener">Behance</a>
+      </div>
+
     </div>
     <div class="footer-bottom">
       <div class="container">
@@ -263,6 +258,13 @@
 </div>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 

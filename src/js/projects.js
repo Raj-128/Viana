@@ -9,6 +9,7 @@ export const projects = [
     year: "2024",
     type: "interior",
     category: "residential",
+    ownership: "owned",
     workType: "wallpaper",
     cover: collection01,
     gallery: [collection01, collection02]
@@ -19,6 +20,7 @@ export const projects = [
     year: "2023",
     type: "graphic",
     category: "branding",
+    ownership: "curated",
     workType: "3d",
     cover: collection02,
     gallery: [collection02, collection03]
@@ -29,6 +31,7 @@ export const projects = [
     year: "2024",
     type: "graphic",
     category: "branding",
+    ownership: "owned",
     workType: "3d",
     cover: collection03,
     gallery: [collection03, collection01]

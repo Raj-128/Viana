@@ -39,8 +39,10 @@
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-      <div class="logo">
-        <a href="index.html">STUDIO VIANA</a>
+            <div class="logo">
+        <a href="index.html">
+          <img src="./src/assets/images/flower.png" alt="Studio Viana Logo" class="logo-img">
+          STUDIO VIANA</a>
       </div>
 
       <nav class="desktop-nav">
@@ -78,42 +80,55 @@
     </div>
   </div>
 
+  <!-- Wallpaper Loop (Wallpaper Mode Only) -->
+  <section class="wallpaper-marquee">
+    <div class="marquee-row">
+      <div class="marquee-track">
+        <div class="marquee-group">
+          <img src="./src/assets/images/collection-01.svg" alt="Wallpaper 01">
+          <img src="./src/assets/images/collection-02.svg" alt="Wallpaper 02">
+          <img src="./src/assets/images/collection-03.svg" alt="Wallpaper 03">
+          <img src="./src/assets/images/collection-01.svg" alt="Wallpaper 04">
+          <img src="./src/assets/images/collection-02.svg" alt="Wallpaper 05">
+        </div>
+        <div class="marquee-group" aria-hidden="true">
+          <img src="./src/assets/images/collection-01.svg" alt="">
+          <img src="./src/assets/images/collection-02.svg" alt="">
+          <img src="./src/assets/images/collection-03.svg" alt="">
+          <img src="./src/assets/images/collection-01.svg" alt="">
+          <img src="./src/assets/images/collection-02.svg" alt="">
+        </div>
+      </div>
+    </div>
+
+    <div class="marquee-row reverse">
+      <div class="marquee-track">
+        <div class="marquee-group">
+          <img src="./src/assets/images/collection-03.svg" alt="Wallpaper 06">
+          <img src="./src/assets/images/collection-02.svg" alt="Wallpaper 07">
+          <img src="./src/assets/images/collection-01.svg" alt="Wallpaper 08">
+          <img src="./src/assets/images/collection-03.svg" alt="Wallpaper 09">
+          <img src="./src/assets/images/collection-02.svg" alt="Wallpaper 10">
+        </div>
+        <div class="marquee-group" aria-hidden="true">
+          <img src="./src/assets/images/collection-03.svg" alt="">
+          <img src="./src/assets/images/collection-02.svg" alt="">
+          <img src="./src/assets/images/collection-01.svg" alt="">
+          <img src="./src/assets/images/collection-03.svg" alt="">
+          <img src="./src/assets/images/collection-02.svg" alt="">
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Page Intro -->
   <section class="page-hero reveal">
     <div class="container">
       <p class="section-kicker">Collections</p>
       <h1 class="page-title">Work</h1>
       <p class="page-lead">Selected projects across branding systems and interior environments.</p>
-      <div class="page-stats">
-        <div>
-          <span class="stat-label">Focus</span>
-          <strong>Identity & Space</strong>
-        </div>
-        <div>
-          <span class="stat-label">Studio</span>
-          <strong>Viana</strong>
-        </div>
-        <div>
-          <span class="stat-label">Region</span>
-          <strong>India</strong>
-        </div>
-      </div>
     </div>
   </section>
-<!-- Work Toggle Pill -->
-<section class="work-switch-section">
-  <div class="container">
-    <div class="work-pill-toggle" id="work-pill">
-      <div class="pill-slider"></div>
-      <button class="pill-btn active" data-type="wallpaper">
-        Wallpaper
-      </button>
-      <button class="pill-btn" data-type="3d">
-        3D Model Art
-      </button>
-    </div>
-  </div>
-</section>
 
   <!-- Filters -->
   <section class="work-filters">
@@ -129,21 +144,20 @@
       </div>
 
       <div class="filter-group">
-        <label>Type</label>
-        <select id="filter-type">
+        <label>Category</label>
+        <select id="filter-ownership">
           <option value="">All</option>
-          <option value="interior">Interior</option>
-          <option value="graphic">Graphic</option>
+          <option value="owned">Studio Owned</option>
+          <option value="curated">Curated Sources</option>
         </select>
       </div>
 
       <div class="filter-group">
-        <label>Category</label>
-        <select id="filter-category">
+        <label>Type</label>
+        <select id="filter-type">
           <option value="">All</option>
-          <option value="residential">Residential</option>
-          <option value="commercial">Commercial</option>
-          <option value="branding">Branding</option>
+          <option value="interior">Interior</option>
+          <option value="graphic">Digital Artist</option>
         </select>
       </div>
 
@@ -176,9 +190,14 @@
       <div class="footer-contact">
         <p class="footer-heading">Contact</p>
         <a href="mailto:vickyranagovind@gmail.com">vickyranagovind@gmail.com</a>
-        <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
-        <span>India</span>
+        <a href="tel:1234567890">1234567890</a>
       </div>
+      <div class="footer-social">
+        <p class="footer-heading">Social Links</p>
+        <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.behance.net/" target="_blank" rel="noopener">Behance</a>
+      </div>
+
     </div>
     <div class="footer-bottom">
       <div class="container">
@@ -196,6 +215,14 @@
   <div class="cursor-outline"></div>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 
