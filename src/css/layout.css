@@ -70,10 +70,9 @@ body.mode-wallpaper .page-hero::before {
 
 body.mode-3d .hero-announce::before,
 body.mode-3d .page-hero::before {
+  opacity: 0.18;
   background-image:
-    radial-gradient(520px 220px at 18% 0%, rgba(122, 107, 91, 0.14), transparent 70%),
-    radial-gradient(420px 200px at 82% 10%, rgba(31, 27, 23, 0.12), transparent 72%),
-    linear-gradient(120deg, rgba(122, 107, 91, 0.1), transparent 40%);
+    radial-gradient(640px 300px at 50% 0%, rgba(255, 255, 255, 0.12), transparent 70%);
 }
 
 .page-title {
@@ -117,7 +116,7 @@ body.mode-3d .page-hero::before {
 }
 
 body.mode-3d .system-section {
-  background: linear-gradient(180deg, #efe7dc 0%, #dcd2c5 100%);
+  background: linear-gradient(180deg, rgba(8, 8, 8, 0.9) 0%, rgba(2, 2, 2, 0.9) 100%);
 }
 
 .collections,
@@ -131,7 +130,7 @@ body.mode-3d .collections,
 body.mode-3d .work-list,
 body.mode-3d .process,
 body.mode-3d .journal {
-  background: linear-gradient(180deg, rgba(216,206,196,0.55) 0%, rgba(246,245,242,0) 65%);
+  background: linear-gradient(180deg, rgba(8, 8, 8, 0.8) 0%, rgba(2, 2, 2, 0) 70%);
 }
 
 .identity-block ul {
@@ -293,4 +292,40 @@ body.mode-3d .journal {
   .contact-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* =========================
+   3D MODE LAYOUT OVERRIDES
+========================= */
+
+body.mode-3d .hero-announce::before,
+body.mode-3d .page-hero::before {
+  opacity: 0;
+  background-image: none;
+}
+
+body.mode-3d .system-section,
+body.mode-3d .collections,
+body.mode-3d .work-list,
+body.mode-3d .process,
+body.mode-3d .journal {
+  background: transparent;
+}
+
+body.mode-3d .page-hero {
+  padding-top: 180px;
+}
+
+body.mode-3d .page-title {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+}
+
+body.mode-3d .page-lead {
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.75rem;
 }

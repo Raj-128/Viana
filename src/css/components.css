@@ -53,6 +53,7 @@
   display: block;
 }
 
+
 /* =========================
    HEADER & NAV
 ========================= */
@@ -70,6 +71,11 @@
 
 .site-header.is-hidden {
   transform: translateY(-120%);
+}
+
+body.mode-3d .site-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 40px rgba(6, 8, 14, 0.6);
 }
 
 .header-inner {
@@ -211,6 +217,16 @@ body.menu-open::after {
 
 .menu-toggle.ripple::after {
   animation: menuRipple 0.6s ease;
+}
+
+body.mode-3d .menu-toggle {
+  background: rgba(18, 22, 34, 0.9);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 32px rgba(3, 6, 12, 0.55);
+}
+
+body.mode-3d .menu-toggle::after {
+  background: radial-gradient(circle, rgba(122, 211, 255, 0.35), transparent 60%);
 }
 
 @keyframes menuRipple {
@@ -402,6 +418,10 @@ body.menu-open::after {
   overflow: hidden;
 }
 
+body.mode-3d .hero-title {
+  text-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
 .hero-title .line {
   display: block;
   overflow: hidden;
@@ -450,6 +470,15 @@ body.menu-open::after {
   border-bottom: 1px solid var(--ink-soft);
 }
 
+body.mode-3d .cta-link {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+  color: var(--text);
+}
+
+body.mode-3d .cta-link:hover {
+  color: var(--accent);
+}
+
 .cta-link:hover {
   color: var(--accent);
   border-bottom-color: var(--accent);
@@ -492,6 +521,25 @@ body.menu-open::after {
   transform: scale(1);
 }
 
+body.mode-3d .work-card {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 28px 70px rgba(4, 6, 12, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  background: linear-gradient(180deg, rgba(20, 24, 38, 0.95), rgba(10, 12, 20, 0.96));
+  border-radius: 20px;
+}
+
+body.mode-3d .work-card img {
+  filter: saturate(1.08) contrast(1.08);
+}
+
+body.mode-3d .work-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+  pointer-events: none;
+}
+
 .work-info {
   position: absolute;
   bottom: 30px;
@@ -500,10 +548,23 @@ body.menu-open::after {
   text-shadow: 0 6px 20px rgba(26,20,16,0.35);
 }
 
+body.mode-3d .work-info {
+  background: rgba(12, 16, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+}
+
 .work-info span {
   font-size: 0.8rem;
   letter-spacing: 1px;
   opacity: 0.8;
+}
+
+body.mode-3d .work-info span {
+  color: rgba(190, 210, 240, 0.85);
+  opacity: 0.9;
 }
 
 .work-info h3 {
@@ -534,6 +595,16 @@ body.menu-open::after {
   max-width: 420px;
 }
 
+body.mode-3d .section-title {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+body.mode-3d .section-sub {
+  color: rgba(205, 215, 230, 0.78);
+}
+
 .section-cta {
   margin-top: 60px;
 }
@@ -555,6 +626,11 @@ body.menu-open::after {
   font-size: 0.7rem;
   color: var(--muted);
   margin-bottom: 12px;
+}
+
+body.mode-3d .section-kicker,
+body.mode-3d .hero-eyebrow {
+  color: rgba(175, 190, 215, 0.85);
 }
 
 /* =========================
@@ -769,6 +845,21 @@ body.menu-open::after {
  border-bottom-color: var(--accent);
 }
 
+body.mode-3d .work-filters {
+  background: rgba(12, 16, 26, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mode-3d .filter-group label {
+  color: rgba(205, 215, 230, 0.8);
+}
+
+body.mode-3d .filter-group select {
+  color: var(--text);
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
 .clear-filters {
   margin-left: auto;
   font-size: 0.85rem;
@@ -878,6 +969,11 @@ body.menu-open::after {
   padding: 12px 0 18px;
   font-size: 0.75rem;
   color: var(--muted);
+}
+
+body.mode-3d .site-footer {
+  background: rgba(16, 18, 26, 0.92);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .footer-bottom .container {
@@ -1012,6 +1108,232 @@ body.mode-3d .wallpaper-marquee {
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+/* =========================
+   3D MODE — AWWWARDS STYLE
+========================= */
+
+body.mode-3d .site-header {
+  background: rgba(0, 0, 0, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+body.mode-3d .header-inner {
+  align-items: center;
+}
+
+body.mode-3d .desktop-nav {
+  margin-left: auto;
+  gap: 28px;
+}
+
+body.mode-3d .desktop-nav a {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.72rem;
+  letter-spacing: 0.35em;
+}
+
+body.mode-3d .menu-toggle {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: none;
+}
+
+body.mode-3d .menu-toggle span {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+body.mode-3d .menu-toggle:hover span,
+body.mode-3d .menu-toggle.active span {
+  background: #ffffff;
+}
+
+body.mode-3d::after {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+body.mode-3d .fullscreen-menu {
+  background: #0b0b0b;
+  box-shadow: -24px 0 70px rgba(0, 0, 0, 0.6);
+}
+
+body.mode-3d .menu-close {
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.mode-3d .menu-links a {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+body.mode-3d .hero {
+  align-items: flex-end;
+  padding-bottom: 120px;
+}
+
+body.mode-3d .hero-announce {
+  padding-top: 180px;
+}
+
+body.mode-3d .hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.8rem, 7vw, 6.8rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 0.95;
+  text-shadow: none;
+}
+
+body.mode-3d .hero-sub {
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  font-size: 0.7rem;
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body.mode-3d .hero-eyebrow {
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.5em;
+}
+
+body.mode-3d .hero-actions {
+  margin-top: 32px;
+  gap: 18px;
+}
+
+body.mode-3d .cta-link {
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.28em;
+}
+
+body.mode-3d .hero-note {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+body.mode-3d .section-title {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-weight: 600;
+}
+
+body.mode-3d .section-sub {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body.mode-3d .section-kicker,
+body.mode-3d .hero-eyebrow {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+body.mode-3d .work-card {
+  border-radius: 6px;
+  border-color: rgba(255, 255, 255, 0.18);
+  background: #0b0b0b;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
+}
+
+body.mode-3d .work-card::after {
+  display: none;
+}
+
+body.mode-3d .work-card img {
+  filter: none;
+  transform: scale(1);
+}
+
+body.mode-3d .work-info {
+  background: transparent;
+  border: none;
+  padding: 0;
+  bottom: 24px;
+  left: 24px;
+  text-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+body.mode-3d .work-info span {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+body.mode-3d .work-info h3 {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+body.mode-3d .work-filters {
+  background: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.mode-3d .filter-group label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body.mode-3d .filter-group select {
+  color: #ffffff;
+  border-bottom-color: rgba(255, 255, 255, 0.35);
+}
+
+body.mode-3d .site-footer {
+  background: #050505;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mode-3d .footer-title {
+  color: #ffffff;
+}
+
+body.mode-3d .footer-heading {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body.mode-3d .footer-bottom {
+  border-top-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+body.mode-3d .work-pill-toggle {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+body.mode-3d .pill-btn {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body.mode-3d .pill-slider {
+  background: #ffffff;
+}
+
+body.mode-3d .pill-btn.active {
+  color: #050505;
+}
+
+@media (max-width: 768px) {
+  body.mode-3d .hero-announce {
+    padding-top: 140px;
+  }
+
+  body.mode-3d .hero-title {
+    font-size: clamp(2.6rem, 11vw, 5rem);
+  }
+
+  body.mode-3d .desktop-nav {
+    gap: 20px;
   }
 }
 

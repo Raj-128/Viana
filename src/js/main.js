@@ -22,7 +22,10 @@ function applyModeClass(mode) {
 }
 
 const initialMode = getStoredMode() || "wallpaper";
+const root = document.documentElement;
+const revealMode = () => root.classList.add("mode-ready");
 applyModeClass(initialMode);
+requestAnimationFrame(revealMode);
 
 console.log("MAIN JS LOADED");
 if (window.innerWidth < 768) {
@@ -360,6 +363,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("resize", updateToggleUI);
   setMode(currentWorkType, { persist: false });
+  revealMode();
+
+  window.addEventListener("pageshow", () => {
+    const storedMode = getStoredMode() || "wallpaper";
+    setMode(storedMode, { persist: false });
+  });
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === MODE_KEY) {
+      const storedMode = getStoredMode() || "wallpaper";
+      setMode(storedMode, { persist: false });
+    }
+  });
 
   if (grid) {
     yearSelect?.addEventListener("change", applyFilters);
