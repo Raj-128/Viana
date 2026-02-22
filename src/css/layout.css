@@ -283,6 +283,18 @@ body.mode-3d .journal {
     grid-column: auto;
   }
 
+  .hero {
+    min-height: 80vh;
+  }
+
+  .hero-announce {
+    padding-top: 120px;
+  }
+
+  .page-hero {
+    padding: 130px 0 60px;
+  }
+
   .page-stats {
     grid-template-columns: 1fr;
   }
@@ -291,6 +303,10 @@ body.mode-3d .journal {
   .process-grid,
   .contact-grid {
     grid-template-columns: 1fr;
+  }
+
+  .site-footer {
+    margin-top: 48px;
   }
 }
 

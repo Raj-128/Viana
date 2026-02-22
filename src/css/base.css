@@ -140,6 +140,17 @@ section {
   scroll-margin-top: 120px;
 }
 
+@media (max-width: 768px) {
+  section {
+    padding: 80px 0;
+    scroll-margin-top: 96px;
+  }
+
+  .container {
+    padding: 0 18px;
+  }
+}
+
 /* =========================
    REVEAL ANIMATION
 ========================= */

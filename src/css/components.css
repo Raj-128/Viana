@@ -986,6 +986,13 @@ body.mode-3d .site-footer {
 @media (max-width: 900px) {
   .footer-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 28px 0 16px;
+  }
+
+  .footer-bottom .container {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 /* =========================
