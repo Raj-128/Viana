@@ -4,7 +4,7 @@ Studio Viana is a digital artist and 3D visualization studio that creates custom
 This website is built as a dual‑mode portfolio and ordering experience: Wallpaper on one side and 3D Model Art on the other.
 
 
-[** Live Site →**](https://raj-128.github.io/Viana/)
+[ Live Site →](https://raj-128.github.io/Viana/)
 
 ---
 
