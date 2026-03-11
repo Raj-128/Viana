@@ -6,12 +6,16 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
+  padding-top: 140px;   /* prevents header overlap */
+  padding-bottom: 80px;
 }
 
 .hero h1 {
   font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  line-height: 1.1;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1.05;   /* tighter and cleaner */
+  letter-spacing: -0.02em;
+  margin: 0;
 }
 
 .hero-sub {
@@ -147,13 +151,46 @@ body.mode-3d .journal {
   gap: 36px;
 }
 
+.collections-section .work-card {
+  min-height: 320px;
+}
+
+.collections-section .work-card.full {
+  grid-column: auto;
+}
+
+.collections-section .work-card img {
+  transform: scale(1.02);
+}
+
 .philosophy-section blockquote {
   font-family: var(--font-heading);
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.4;
   color: var(--ink-soft);
 }
+/* 1. Base state for each word (invisible and shifted down) */
+.philosophy-section blockquote .word {
+  display: inline-block;
+  margin-right: 0.25em; /* This ensures words don't touch */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+}
 
+/* 2. Active state (when the 'reveal' animation triggers) */
+.philosophy.active .word {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 3. The Stagger (Staggered delay for each word) */
+.philosophy.active .word:nth-child(1) { transition-delay: 0.1s; }
+.philosophy.active .word:nth-child(2) { transition-delay: 0.2s; }
+.philosophy.active .word:nth-child(3) { transition-delay: 0.3s; }
+.philosophy.active .word:nth-child(4) { transition-delay: 0.4s; }
+.philosophy.active .word:nth-child(5) { transition-delay: 0.5s; }
+/* Add more nth-child lines if your quote is longer */
 /* =========================
    COLLECTIONS PAGE
 ========================= */

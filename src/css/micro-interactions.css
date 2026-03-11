@@ -1,0 +1,497 @@
+
+  /* =========================
+     ADDITIONAL MICRO-INTERACTIONS
+  ========================= */
+  
+  /* Logo Hover Effect */
+  .logo a:hover .logo-img {
+    transform: rotate(10deg) scale(1.1);
+    filter: drop-shadow(0 10px 20px rgba(122, 107, 91, 0.3));
+  }
+  
+  body.mode-3d .logo a:hover .logo-img {
+    filter: drop-shadow(0 12px 25px rgba(255, 255, 255, 0.3));
+  }
+  
+  /* Desktop Nav Link Hover */
+  .desktop-nav a {
+    position: relative;
+    padding-bottom: 4px;
+  }
+  
+  .desktop-nav a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+  }
+  
+  .desktop-nav a:hover::after {
+    width: 100%;
+  }
+  
+  body.mode-3d .desktop-nav a::after {
+    background: #ffffff;
+  }
+  
+  /* Hero Actions Enhanced */
+  .hero-actions {
+    position: relative;
+  }
+  
+  .hero-note {
+    transition: all 0.4s ease;
+  }
+  
+  .cta-link:hover ~ .hero-note {
+    transform: translateX(10px);
+    color: var(--accent);
+  }
+  
+  /* Section Kicker Animation */
+  .section-kicker {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .section-kicker::before {
+    content: "";
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    width: 20px;
+    height: 1px;
+    background: var(--muted);
+    transform: translateY(-50%) scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s ease;
+  }
+  
+  .reveal.active .section-kicker::before {
+    transform: translateY(-50%) scaleX(1);
+  }
+  
+  /* Work Filter Dropdown Enhancement */
+  .filter-group select {
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .filter-group select:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+  
+  .filter-group select option {
+    padding: 10px;
+  }
+  
+  /* Clear Filters Button */
+  .clear-filters {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .clear-filters::before {
+    content: "\00d7";
+    position: absolute;
+    left: -20px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+  }
+  
+  .clear-filters:hover::before {
+    left: -15px;
+    opacity: 1;
+  }
+  
+  .clear-filters:hover {
+    transform: translateX(5px);
+  }
+  
+  /* Identity Block Hover */
+  .identity-block {
+    transition: all 0.4s ease;
+    cursor: default;
+  }
+  
+  .identity-block:hover {
+    transform: translateY(-5px);
+  }
+  
+  .identity-block h2 {
+    transition: color 0.3s ease;
+  }
+  
+  .identity-block:hover h2 {
+    color: var(--accent);
+  }
+  
+  body.mode-3d .identity-block:hover h2 {
+    color: #ffffff;
+  }
+  
+  /* Identity Block List Items */
+  .identity-block ul li {
+    position: relative;
+    padding-left: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .identity-block ul li::before {
+    content: "\2192";
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    color: var(--accent);
+  }
+  
+  .identity-block:hover ul li::before {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .identity-block ul li:nth-child(1)::before { transition-delay: 0s; }
+  .identity-block ul li:nth-child(2)::before { transition-delay: 0.05s; }
+  .identity-block ul li:nth-child(3)::before { transition-delay: 0.1s; }
+  .identity-block ul li:nth-child(4)::before { transition-delay: 0.15s; }
+  
+  /* Philosophy Quote */
+  .philosophy-section blockquote {
+    position: relative;
+    transition: all 0.5s ease;
+  }
+  
+  .philosophy-section blockquote::before {
+    content: "\201c";
+    position: absolute;
+    top: -40px;
+    left: -20px;
+    font-size: 120px;
+    color: var(--accent-soft);
+    font-family: var(--font-heading);
+    line-height: 1;
+    opacity: 0.3;
+    transition: all 0.5s ease;
+  }
+  
+  .philosophy-section blockquote:hover::before {
+    transform: scale(1.1) rotate(-5deg);
+    opacity: 0.5;
+  }
+  
+  body.mode-3d .philosophy-section blockquote::before {
+    color: rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Journal Date Badge */
+  .journal-date {
+    position: relative;
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--accent-soft);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .journal-item:hover .journal-date {
+    background: var(--accent);
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+  
+  body.mode-3d .journal-date {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  body.mode-3d .journal-item:hover .journal-date {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+  }
+  
+  /* View All Link Arrow Animation */
+  .view-all-link {
+    position: relative;
+    display: inline-block;
+    transition: all 0.3s ease;
+  }
+  
+  .view-all-link::after {
+    content: "\2192";
+    display: inline-block;
+    margin-left: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .view-all-link:hover::after {
+    transform: translateX(5px);
+  }
+  
+  .view-all-link:hover {
+    color: var(--accent);
+  }
+  
+  /* Pill Button Active State Enhancement */
+  .pill-btn {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    border: none;
+    padding: 10px 34px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--nav-text);
+    transition: color 0.3s ease;
+  }
+  
+  .pill-btn::before {
+    display: none; /* REMOVE hover rectangle completely */
+  }
+  
+  .pill-btn:hover {
+    color: var(--accent);
+  }
+  
+  .pill-btn.active {
+    color: #ffffff;
+  }
+  /* Menu Search Input */
+  .menu-search input {
+    transition: all 0.3s ease;
+  }
+  
+  .menu-search input:focus {
+    transform: translateY(-2px);
+    padding-left: 10px;
+  }
+  
+  /* Footer Bottom Hover */
+  .footer-bottom {
+    transition: all 0.3s ease;
+  }
+  
+  .footer-bottom:hover {
+    background: var(--surface);
+  }
+  
+  /* Collection Meta Tags */
+  .collection-meta span {
+    position: relative;
+    padding: 4px 12px;
+    background: var(--surface);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+  
+  .collection-meta span:hover {
+    background: var(--accent-soft);
+    transform: translateY(-2px);
+  }
+  
+  /* Process Step Number */
+  .step-number {
+    position: relative;
+    display: inline-block;
+    transition: all 0.4s ease;
+  }
+  
+  .process-step:hover .step-number {
+    transform: translateX(10px);
+    color: var(--accent);
+  }
+  
+  body.mode-3d .process-step:hover .step-number {
+    color: #ffffff;
+  }
+  
+  /* Contact Links Hover */
+  .contact-links a {
+    position: relative;
+    display: inline-block;
+    padding: 8px 0;
+    transition: all 0.3s ease;
+  }
+  
+  .contact-links a::before {
+    content: "mail";
+    position: absolute;
+    left: -30px;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .contact-links a[href^="mailto:"]:hover::before {
+    content: "mail";
+    left: -25px;
+    opacity: 1;
+  }
+  
+  .contact-links a[href^="tel:"]:hover::before {
+    content: "call";
+    left: -25px;
+    opacity: 1;
+  }
+  
+  .contact-links a:hover {
+    transform: translateX(10px);
+  }
+  
+  /* CTA Band Hover */
+  .cta-band {
+    transition: all 0.4s ease;
+  }
+  
+  .cta-band:hover {
+    background: var(--surface);
+  }
+  
+  /* About Image Hover */
+  .about-image {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .about-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      var(--accent-soft) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  
+  .about-image:hover::after {
+    opacity: 1;
+  }
+  
+  /* Page Stats Hover */
+  .page-stats > div {
+    position: relative;
+    padding: 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: default;
+  }
+  
+  .page-stats > div:hover {
+    background: var(--surface);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(26, 20, 16, 0.1);
+  }
+  
+  body.mode-3d .page-stats > div:hover {
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Marquee Row Hover */
+  .marquee-row {
+    transition: all 0.3s ease;
+  }
+  
+  .marquee-row:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Back Button (if exists) */
+  .back-button {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .back-button::before {
+    content: "\2190";
+    position: absolute;
+    left: -20px;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .back-button:hover::before {
+    left: -15px;
+    opacity: 1;
+  }
+  
+  .back-button:hover {
+    transform: translateX(-5px);
+  }
+  
+  /* Scroll Hint (if added) */
+  @keyframes bounce-down {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(10px);
+    }
+    60% {
+      transform: translateY(5px);
+    }
+  }
+  
+  .scroll-hint {
+    animation: bounce-down 2s infinite;
+  }
+  
+  /* Loading State for Images */
+  img {
+    transition: opacity 0.5s ease;
+  }
+  
+  img:not([src]) {
+    opacity: 0;
+  }
+  
+  img[src] {
+    opacity: 1;
+  }
+  
+  /* Selection Style */
+  ::selection {
+    background: var(--accent);
+    color: #ffffff;
+  }
+  
+  body.mode-3d ::selection {
+    background: #ffffff;
+    color: #000000;
+  }
+  
+  /* Focus Visible Enhancement */
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+  
+  body.mode-3d *:focus-visible {
+    outline-color: #ffffff;
+  }
+  
+  /* Smooth Scroll Behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  
+  

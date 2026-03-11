@@ -1,0 +1,474 @@
+/* =========================
+   CREATIVE EFFECTS & ANIMATIONS
+========================= */
+
+/* =========================
+   ENHANCED CURSOR
+========================= */
+.cursor-dot {
+    transition: transform 0.15s ease;
+    box-shadow: 0 0 20px rgba(110, 79, 69, 0.4);
+  }
+  
+  .cursor-outline {
+    box-shadow: 0 0 25px rgba(216, 163, 168, 0.3);
+  }
+  
+  /* =========================
+     RIPPLE EFFECT
+  ========================= */
+  .ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent);
+    transform: scale(0);
+    animation: ripple-animation 0.6s ease-out;
+    pointer-events: none;
+    z-index: 1000;
+  }
+  
+  @keyframes ripple-animation {
+    to {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+  
+  /* =========================
+     SCROLL PROGRESS BAR
+  ========================= */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--ink-soft));
+    z-index: 9999;
+    width: 0%;
+    transition: width 0.1s ease;
+    box-shadow: 0 2px 10px rgba(122, 107, 91, 0.4);
+  }
+  
+  body.mode-3d .scroll-progress {
+    background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.6));
+    box-shadow: 0 2px 15px rgba(255, 255, 255, 0.3);
+  }
+  
+  /* =========================
+     ENHANCED HOVER EFFECTS
+  ========================= */
+  .work-card {
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.4s ease;
+    transform-style: preserve-3d;
+  }
+  
+  .work-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(255, 255, 255, 0.1),
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .work-card:hover::before {
+    opacity: 1;
+  }
+  
+  .work-card:hover {
+    box-shadow: 0 30px 60px rgba(26, 20, 16, 0.2);
+  }
+  
+  body.mode-3d .work-card:hover {
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.7),
+                0 0 40px rgba(255, 255, 255, 0.1);
+  }
+  
+  /* =========================
+     JOURNAL ITEMS ENHANCED
+  ========================= */
+  .journal-item {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+  }
+  
+  .journal-item::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--accent);
+    transition: width 0.5s ease;
+  }
+  
+  .journal-item:hover::after {
+    width: 100%;
+  }
+  
+  body.mode-3d .journal-item::after {
+    background: linear-gradient(90deg, #ffffff, transparent);
+  }
+  
+  /* =========================
+     MAGNETIC BUTTONS
+  ========================= */
+  .cta-link,
+  .pill-btn,
+  button {
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.3s ease,
+                background 0.3s ease;
+  }
+  
+  .cta-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s ease;
+  }
+  
+  .cta-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  
+  /* =========================
+     SERVICE CARDS 3D EFFECT
+  ========================= */
+  .service-card,
+  .process-step,
+  .contact-card {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    overflow: hidden;
+  }
+  
+  .service-card::before,
+  .process-step::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle,
+      rgba(122, 107, 91, 0.1),
+      transparent 70%
+    );
+    transform: scale(0);
+    transition: transform 0.6s ease;
+  }
+  
+  .service-card:hover::before,
+  .process-step:hover::before {
+    transform: scale(1);
+  }
+  
+  .service-card:hover,
+  .process-step:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(26, 20, 16, 0.15);
+  }
+  
+  body.mode-3d .service-card:hover,
+  body.mode-3d .process-step:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.05);
+  }
+  
+  /* =========================
+     GLASSMORPHISM ENHANCEMENTS
+  ========================= */
+  .site-header {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+  
+  .fullscreen-menu {
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+  }
+  
+  body.mode-3d .work-info {
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+  }
+  
+  /* =========================
+     TEXT CHARACTER ANIMATION
+  ========================= */
+  .char {
+    display: inline-block;
+    transform-origin: center;
+  }
+  
+  /* =========================
+     SMOOTH TRANSITIONS
+  ========================= */
+  * {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* =========================
+     FLOATING ELEMENTS
+  ========================= */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  .logo-img {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  /* =========================
+     GLOW EFFECTS
+  ========================= */
+  .menu-toggle:hover {
+    box-shadow: 0 16px 30px rgba(26, 20, 16, 0.18),
+                0 0 20px rgba(122, 107, 91, 0.3);
+  }
+  
+  body.mode-3d .menu-toggle:hover {
+    box-shadow: 0 18px 40px rgba(3, 6, 12, 0.7),
+                0 0 30px rgba(255, 255, 255, 0.2);
+  }
+  
+  /* =========================
+     BUTTON PRESS EFFECT
+  ========================= */
+  button:active,
+  .cta-link:active {
+    transform: scale(0.95);
+  }
+  
+  /* =========================
+     PARALLAX LAYERS
+  ========================= */
+  .hero,
+  .work-card,
+  .journal-item,
+  .identity-block {
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+  
+  /* =========================
+     IMAGE SCALE ON HOVER
+  ========================= */
+  .work-card img,
+  .about-image img {
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                filter 0.4s ease;
+    will-change: transform;
+  }
+  
+  .work-card:hover img {
+    filter: brightness(1.1) contrast(1.05);
+  }
+  
+  body.mode-3d .work-card:hover img {
+    filter: brightness(1.15) contrast(1.1) saturate(1.2);
+  }
+  
+  /* =========================
+     FOOTER LINK HOVER
+  ========================= */
+  .footer-links a,
+  .footer-contact a,
+  .footer-social a {
+    position: relative;
+    display: inline-block;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  
+  .footer-links a::before,
+  .footer-contact a::before,
+  .footer-social a::before {
+    content: "\2192";
+    position: absolute;
+    left: -20px;
+    opacity: 0;
+    transition: opacity 0.3s ease, left 0.3s ease;
+  }
+  
+  .footer-links a:hover::before,
+  .footer-contact a:hover::before,
+  .footer-social a:hover::before {
+    left: -15px;
+    opacity: 1;
+  }
+  
+  .footer-links a:hover,
+  .footer-contact a:hover,
+  .footer-social a:hover {
+    transform: translateX(5px);
+  }
+  
+  /* =========================
+     MENU LINKS ANIMATION
+  ========================= */
+  .menu-links a {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .menu-links a::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+    transition: left 0.5s ease;
+  }
+  
+  .menu-links a:hover::before {
+    left: 0;
+  }
+  
+  body.mode-3d .menu-links a::before {
+    background: #ffffff;
+  }
+  
+  /* =========================
+     FORM FOCUS EFFECTS
+  ========================= */
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft),
+                0 10px 20px rgba(122, 107, 91, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+  
+  body.mode-3d .contact-form input:focus,
+  body.mode-3d .contact-form textarea:focus {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2),
+                0 10px 25px rgba(255, 255, 255, 0.15);
+  }
+  
+  /* =========================
+     PILL TOGGLE ENHANCEMENT
+  ========================= */
+  .work-pill-toggle {
+    box-shadow: 0 10px 30px rgba(26, 20, 16, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .work-pill-toggle:hover {
+    box-shadow: 0 15px 40px rgba(26, 20, 16, 0.15);
+  }
+  
+  body.mode-3d .work-pill-toggle {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  body.mode-3d .work-pill-toggle:hover {
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  
+  /* =========================
+     LOADING STATES
+  ========================= */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  
+  .loading-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--surface) 0%,
+      var(--surface-2) 50%,
+      var(--surface) 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  /* =========================
+     RESPONSIVE ADJUSTMENTS
+  ========================= */
+  @media (max-width: 768px) {
+    .scroll-progress {
+      height: 2px;
+    }
+  
+    .work-card:hover {
+      transform: translateY(-4px);
+    }
+  
+    .journal-item:hover {
+      transform: translateY(-4px);
+    }
+  }
+  
+  /* =========================
+     ACCESSIBILITY
+  ========================= */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  
+    .logo-img {
+      animation: none;
+    }
+  }
+  
+  /* =========================
+     PERFORMANCE OPTIMIZATIONS
+  ========================= */
+  .work-card,
+  .journal-item,
+  .service-card {
+    will-change: transform, opacity;
+  }
+  
+  .cursor-dot,
+  .cursor-outline {
+    will-change: left, top, transform;
+  }
+  
+  
+  

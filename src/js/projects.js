@@ -1,39 +1,345 @@
 import collection01 from "../assets/images/collection-01.svg";
 import collection02 from "../assets/images/collection-02.svg";
 import collection03 from "../assets/images/collection-03.svg";
+import wallpaperBranch from "../assets/images/wallpapers/1.jpeg";
+import wallpaperFairy from "../assets/images/wallpapers/2.jpeg";
+import wallpaperForest from "../assets/images/wallpapers/3.jpeg";
+import wallpaperArchTree from "../assets/images/wallpapers/4.jpeg";
+import wallpaperJungle from "../assets/images/wallpapers/5.jpeg";
+import wallpaperClassicGarden from "../assets/images/wallpapers/6.jpeg";
+
+export const wallpaperShowcaseImages = [
+  wallpaperBranch,
+  wallpaperFairy,
+  wallpaperForest,
+  wallpaperArchTree,
+  wallpaperJungle,
+  wallpaperClassicGarden,
+];
+
+export const paperTypes = [
+  {
+    id: "standard",
+    label: "Standard Matte",
+    multiplier: 1,
+    note: "Smooth non-woven paper for everyday spaces.",
+  },
+  {
+    id: "canvas",
+    label: "Premium Canvas",
+    multiplier: 1.16,
+    note: "Visible texture with a richer, hand-finished feel.",
+  },
+  {
+    id: "feather",
+    label: "Feather Texture",
+    multiplier: 1.28,
+    note: "Soft grain that diffuses light well in bedrooms.",
+  },
+  {
+    id: "linen",
+    label: "Wall Linen",
+    multiplier: 1.42,
+    note: "Structured weave for premium residential projects.",
+  },
+  {
+    id: "earthy",
+    label: "Earthy Textile",
+    multiplier: 1.58,
+    note: "Warm tactile finish for statement walls and hospitality work.",
+  },
+];
+
+export const pricingThemes = [
+  {
+    id: "child",
+    label: "Child",
+    title: "Moon Garden Storywall",
+    description: "Playful characters, soft stars, and calm pastel layering for nurseries and kid zones.",
+    preview: wallpaperFairy,
+    accent: "#d89aa7",
+    bestFor: "Nursery, playroom, reading nook",
+    finish: "Soft matte with low glare",
+    turnaround: "7 to 9 working days",
+    rate: 46,
+    setupFee: 3200,
+  },
+  {
+    id: "nature",
+    label: "Nature",
+    title: "Forest Hush Panorama",
+    description: "Layered foliage, misty depth, and organic rhythm for restful residential spaces.",
+    preview: wallpaperForest,
+    accent: "#8e7d63",
+    bestFor: "Living room, foyer, studio",
+    finish: "Balanced natural texture",
+    turnaround: "6 to 8 working days",
+    rate: 52,
+    setupFee: 3600,
+  },
+  {
+    id: "floral",
+    label: "Floral",
+    title: "Rose Atrium Bloom",
+    description: "Large floral rhythm with a soft heritage palette for elegant feature walls.",
+    preview: wallpaperBranch,
+    accent: "#b27a84",
+    bestFor: "Powder room, lounge, boutique",
+    finish: "Painterly detail and warm tone",
+    turnaround: "7 to 10 working days",
+    rate: 56,
+    setupFee: 3800,
+  },
+  {
+    id: "abstract",
+    label: "Abstract",
+    title: "Prism Echo Composition",
+    description: "Graphic movement, tonal contrast, and a gallery-like finish for bold interiors.",
+    preview: wallpaperJungle,
+    accent: "#6e5f91",
+    bestFor: "Studio, office, reception",
+    finish: "Sharp contrast and clean edges",
+    turnaround: "5 to 7 working days",
+    rate: 60,
+    setupFee: 4200,
+  },
+  {
+    id: "luxury",
+    label: "Luxury",
+    title: "Stone Bloom Signature",
+    description: "High-contrast mural styling with boutique-hotel presence and tailored detailing.",
+    preview: wallpaperClassicGarden,
+    accent: "#8a6448",
+    bestFor: "Master suite, lounge, hospitality",
+    finish: "Deep color and premium texture",
+    turnaround: "8 to 12 working days",
+    rate: 68,
+    setupFee: 5000,
+  },
+  {
+    id: "minimal",
+    label: "Minimal",
+    title: "Dune Quiet Field",
+    description: "Restrained tonal work for calm surfaces, subtle luxury, and quiet depth.",
+    preview: wallpaperArchTree,
+    accent: "#9e8d79",
+    bestFor: "Bedroom, study, hallway",
+    finish: "Muted grain and soft edges",
+    turnaround: "5 to 7 working days",
+    rate: 48,
+    setupFee: 3000,
+  },
+];
 
 export const projects = [
   {
-    id: "residential-2024",
-    title: "Residential Space",
-    year: "2024",
-    type: "interior",
-    category: "residential",
-    ownership: "owned",
+    id: "moon-garden-storywall",
+    title: "Moon Garden Storywall",
+    year: "2026",
     workType: "wallpaper",
-    cover: collection01,
-    gallery: [collection01, collection02]
-  },
-  {
-    id: "brand-identity-2023",
-    title: "Brand Identity",
-    year: "2023",
-    type: "graphic",
-    category: "branding",
-    ownership: "curated",
-    workType: "3d",
-    cover: collection02,
-    gallery: [collection02, collection03]
-  },
-  {
-    id: "viana-brand-identity",
-    title: "Viana Brand Identity",
-    year: "2024",
-    type: "graphic",
-    category: "branding",
+    theme: "child",
     ownership: "owned",
+    mediumLabel: "Wallpaper Collection",
+    location: "Mumbai",
+    cover: wallpaperFairy,
+    gallery: [wallpaperFairy],
+    summary: "A calm illustrated mural for a child bedroom with layered clouds, birds, and pastel foliage.",
+  },
+  {
+    id: "forest-hush-panorama",
+    title: "Forest Hush Panorama",
+    year: "2025",
+    workType: "wallpaper",
+    theme: "nature",
+    ownership: "owned",
+    mediumLabel: "Wallpaper Collection",
+    location: "Bengaluru",
+    cover: wallpaperForest,
+    gallery: [wallpaperForest],
+    summary: "A panoramic canopy scene tuned for large walls and soft natural light.",
+  },
+  {
+    id: "rose-atrium-bloom",
+    title: "Rose Atrium Bloom",
+    year: "2024",
+    workType: "wallpaper",
+    theme: "floral",
+    ownership: "curated",
+    mediumLabel: "Wallpaper Collection",
+    location: "Delhi",
+    cover: wallpaperBranch,
+    gallery: [wallpaperBranch],
+    summary: "Romantic floral layering with restrained pinks and a painterly heritage feel.",
+  },
+  {
+    id: "prism-echo-composition",
+    title: "Prism Echo Composition",
+    year: "2025",
+    workType: "wallpaper",
+    theme: "abstract",
+    ownership: "owned",
+    mediumLabel: "Wallpaper Collection",
+    location: "Pune",
+    cover: wallpaperJungle,
+    gallery: [wallpaperJungle],
+    summary: "Geometric rhythm and soft metallic contrast for brand-led interiors and feature walls.",
+  },
+  {
+    id: "stone-bloom-signature",
+    title: "Stone Bloom Signature",
+    year: "2024",
+    workType: "wallpaper",
+    theme: "luxury",
+    ownership: "curated",
+    mediumLabel: "Wallpaper Collection",
+    location: "Hyderabad",
+    cover: wallpaperClassicGarden,
+    gallery: [wallpaperClassicGarden],
+    summary: "A high-end mural language built around stone tones, sculpted blooms, and calm drama.",
+  },
+  {
+    id: "dune-quiet-field",
+    title: "Dune Quiet Field",
+    year: "2023",
+    workType: "wallpaper",
+    theme: "minimal",
+    ownership: "owned",
+    mediumLabel: "Wallpaper Collection",
+    location: "Ahmedabad",
+    cover: wallpaperArchTree,
+    gallery: [wallpaperArchTree],
+    summary: "Minimal gradient depth and subtle movement for bedrooms, studies, and refined hallways.",
+  },
+  {
+    id: "lunar-console-study",
+    title: "Lunar Console Study",
+    year: "2026",
     workType: "3d",
+    theme: "luxury",
+    ownership: "owned",
+    mediumLabel: "3D Concept Object",
+    location: "Chennai",
     cover: collection03,
-    gallery: [collection03, collection01]
-  }
+    gallery: [collection03, collection02],
+    summary: "A sculptural 3D furniture study balancing polished surfaces with soft architectural light.",
+  },
+  {
+    id: "petal-lamp-render",
+    title: "Petal Lamp Render",
+    year: "2025",
+    workType: "3d",
+    theme: "floral",
+    ownership: "curated",
+    mediumLabel: "3D Lighting Visual",
+    location: "Jaipur",
+    cover: collection01,
+    gallery: [collection01, collection02],
+    summary: "Floral geometry translated into a product-lighting concept with cinematic framing.",
+  },
+  {
+    id: "pixel-playroom-scene",
+    title: "Pixel Playroom Scene",
+    year: "2024",
+    workType: "3d",
+    theme: "child",
+    ownership: "owned",
+    mediumLabel: "3D Spatial Story",
+    location: "Surat",
+    cover: collection02,
+    gallery: [collection02, collection01],
+    summary: "A cheerful 3D room visualization for kid-centered retail and interactive brand campaigns.",
+  },
+  {
+    id: "canyon-void-frame",
+    title: "Canyon Void Frame",
+    year: "2023",
+    workType: "3d",
+    theme: "abstract",
+    ownership: "curated",
+    mediumLabel: "3D Motion Still",
+    location: "Goa",
+    cover: collection03,
+    gallery: [collection03, collection01],
+    summary: "Atmospheric abstract rendering with depth-led framing for campaign stills and motion posters.",
+  },
+{
+  id: "floral-branch-wall",
+  title: "Floral Branch Customized Wallpaper",
+  year: "2025",
+  workType: "wallpaper",
+  theme: "floral",
+  ownership: "owned",
+  mediumLabel: "Customized Wallpaper",
+  location: "Surat",
+  cover: wallpaperBranch,
+  gallery: [
+    wallpaperBranch
+  ],
+  summary:
+    "Customized floral branch wallpaper installed for a residential entrance wall with soft neutral background and hand illustrated blossoms."
+},
+{
+  id: "fairy-garden-wall",
+  title: "Fairy Garden Kids Room Wallpaper",
+  year: "2025",
+  workType: "wallpaper",
+  theme: "child",
+  ownership: "owned",
+  mediumLabel: "Customized Wallpaper",
+  location: "Surat",
+  cover: wallpaperFairy,
+  gallery: [
+    wallpaperFairy
+  ],
+  summary:
+    "Custom kids room wallpaper featuring a fairy character and nature landscape designed to create a dreamy playful space."
+},
+{
+  id: "misty-forest-wall",
+  title: "Misty Forest Wallpaper",
+  year: "2025",
+  workType: "wallpaper",
+  theme: "nature",
+  ownership: "owned",
+  mediumLabel: "Customized Wallpaper",
+  location: "Surat",
+  cover: wallpaperForest,
+  gallery: [
+    wallpaperForest
+  ],
+  summary:
+    "Minimal forest themed wallpaper installed in a modern bedroom with soft neutral tones and depth illusion."
+},
+{
+  id: "arch-tree-mural",
+  title: "Arch Frame Tree Wallpaper",
+  year: "2025",
+  workType: "wallpaper",
+  theme: "minimal",
+  ownership: "owned",
+  mediumLabel: "Customized Wallpaper",
+  location: "Surat",
+  cover: wallpaperArchTree,
+  gallery: [
+    wallpaperArchTree
+  ],
+  summary:
+    "Decorative arch framed wallpaper mural creating a focal wall with a calm tree silhouette composition."
+},
+{
+  id: "jungle-classic-wall",
+  title: "Classic Jungle Landscape Wallpaper",
+  year: "2025",
+  workType: "wallpaper",
+  theme: "nature",
+  ownership: "owned",
+  mediumLabel: "Customized Wallpaper",
+  location: "Surat",
+  cover: wallpaperJungle,
+  gallery: [
+    wallpaperJungle
+  ],
+  summary:
+    "Large scale jungle landscape mural inspired by classic botanical illustration used for a feature wall."
+},
 ];

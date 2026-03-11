@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="mode-ready">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login - Studio Viana</title>
+  <link rel="icon" href="./src/assets/images/flower.png" sizes="70x70" type="image/png">
+  <meta name="description" content="Studio Viana owner admin access.">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/css/base.css">
+  <link rel="stylesheet" href="./src/css/auth.css">
+</head>
+<body class="auth-page auth-admin-page mode-wallpaper lights-on" data-admin-auth-page>
+  <header class="auth-topbar">
+    <a href="index.html" class="auth-brand">
+      <img src="./src/assets/images/flower.png" alt="Studio Viana Logo" class="auth-brand-mark">
+      <span>Studio Viana</span>
+    </a>
+    <a href="index.html" class="auth-home-link">Back to home</a>
+  </header>
+
+  <main class="auth-shell">
+    <section class="auth-stage">
+      <div class="lamp-scene">
+        <div class="lamp-cord"></div>
+        <button class="lamp-head" type="button" data-lamp-toggle aria-label="Toggle studio light">
+          <span class="lamp-shade"></span>
+          <span class="lamp-bulb"></span>
+          <span class="lamp-eye lamp-eye-left"></span>
+          <span class="lamp-eye lamp-eye-right"></span>
+        </button>
+        <button class="lamp-pull" type="button" data-lamp-toggle>Toggle light</button>
+      </div>
+
+      <div class="auth-copy">
+        <p class="auth-kicker">Owner Access</p>
+        <h1>Admin login stays separate from client entry.</h1>
+        <p class="auth-lead">
+          This page is for the Studio Viana owner only. It is separate from the client login and register flow.
+        </p>
+      </div>
+    </section>
+
+    <section class="auth-panel-stack">
+      <article class="auth-card auth-interface" data-auth-interface>
+        <div class="card-head">
+          <p class="card-kicker">Owner Only</p>
+          <h2>Admin login</h2>
+          <p>Use the owner credentials only. This page is intentionally separate from the client flow.</p>
+        </div>
+
+        <div class="auth-view-stage" data-admin-stage data-stage>
+          <form class="auth-form auth-view-panel is-active" data-admin-view="login" data-admin-login-form aria-hidden="false">
+            <label class="auth-field">
+              <span>Owner email or phone</span>
+              <input type="text" name="identifier" placeholder="Registered studio owner email or phone" required>
+            </label>
+            <label class="auth-field">
+              <span>Password</span>
+              <input type="password" name="password" placeholder="Enter admin password" required>
+            </label>
+            <button class="auth-submit" type="submit">Login as admin</button>
+          </form>
+
+          <form class="auth-form auth-view-panel" data-admin-view="setup" data-admin-setup-form aria-hidden="true">
+            <label class="auth-field">
+              <span>Owner name</span>
+              <input type="text" name="name" placeholder="Studio Viana Admin" value="Studio Viana Admin" required>
+            </label>
+            <div class="auth-grid two">
+              <label class="auth-field">
+                <span>Password</span>
+                <input type="password" name="password" placeholder="Create owner password" required>
+              </label>
+              <label class="auth-field">
+                <span>Confirm password</span>
+                <input type="password" name="confirmPassword" placeholder="Repeat password" required>
+              </label>
+            </div>
+            <button class="auth-submit" type="submit">Create owner admin</button>
+          </form>
+        </div>
+
+        <p class="admin-note" data-admin-note></p>
+        <p class="auth-status" data-admin-status></p>
+      </article>
+
+      <article class="auth-card account-card" data-account-panel hidden>
+        <span class="account-role" data-account-role></span>
+        <h2 data-account-name></h2>
+        <p class="account-copy" data-account-copy></p>
+
+        <div class="account-actions">
+          <a href="#" class="account-link" data-account-continue hidden>Continue</a>
+          <a href="work.html" class="account-link">Open protected pages</a>
+          <a href="index.html" class="account-link subtle">Back to home</a>
+          <button type="button" class="auth-submit secondary" data-logout-button>Sign out</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="./src/js/auth.js"></script>
+</body>
+</html>
