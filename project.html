@@ -12,11 +12,13 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS -->
-  <script type="module" crossorigin src="/Viana/assets/main-CISFdEC4.js"></script>
-  <link rel="stylesheet" crossorigin href="/Viana/assets/main-DIeEVU4P.css">
+  <!-- CSS -->
+  <script type="module" crossorigin src="/Viana/assets/auth-C_lMbKse.js"></script>
+  <script type="module" crossorigin src="/Viana/assets/main-h4Qg8dcC.js"></script>
+  <link rel="stylesheet" crossorigin href="/Viana/assets/auth-BNlpJTwC.css">
+  <link rel="stylesheet" crossorigin href="/Viana/assets/main-BN7gPIes.css">
 </head>
-<body>
+<body data-auth-protected>
 
   <!-- Header -->
   <header class="site-header">
@@ -34,9 +36,12 @@
         <a href="contact.html">Contact</a>
       </nav>
 
-      <button class="menu-toggle" aria-label="Open Menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="header-actions">
+        <button class="menu-toggle" aria-label="Open Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="login.html" class="header-account-chip" data-account-chip>Login</a>
+      </div>
     </div>
   </header>
 
@@ -50,6 +55,7 @@
           <a href="services.html">Services</a>
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
+          <a href="login.html" data-auth-link>Login</a>
         </nav>
       </div>
       <div class="menu-right">
@@ -60,8 +66,12 @@
   </div>
 
   <!-- PROJECT HERO -->
-  <section class="project-hero reveal-media">
-    <img id="project-cover" src="" alt="">
+  <section class="project-hero">
+    <div class="container">
+      <div class="project-hero-shell reveal-media protected-media-block">
+        <img id="project-cover" src="" alt="" draggable="false">
+      </div>
+    </div>
   </section>
 
   <!-- PROJECT INFO -->
@@ -81,6 +91,103 @@
         <p id="project-description"></p>
       </div>
 
+    </div>
+  </section>
+
+  <section class="studio-estimator project-order reveal" data-estimator id="project-order-section">
+    <div class="container studio-estimator-grid">
+      <div class="estimator-stage">
+        <div class="estimator-copy">
+          <p class="section-kicker">Size &amp; Pricing</p>
+          <h2 class="section-title">Customize this wallpaper for your wall.</h2>
+          <p class="section-sub">Enter your wall size, paper type, and quantity here. The order button opens WhatsApp directly with this design and your selected details already filled in.</p>
+        </div>
+
+        <div class="estimator-preview">
+          <div class="preview-frame project-preview-frame protected-media-block">
+            <img id="estimate-preview-image" src="" alt="" draggable="false">
+            <div class="preview-overlay">
+              <p id="estimate-preview-label">Selected Wallpaper</p>
+              <h3 id="estimate-preview-title"></h3>
+              <p id="estimate-preview-copy"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="estimator-facts">
+          <div class="fact-card">
+            <span>Best for</span>
+            <strong id="estimate-best-for"></strong>
+          </div>
+          <div class="fact-card">
+            <span>Finish</span>
+            <strong id="estimate-finish"></strong>
+          </div>
+          <div class="fact-card">
+            <span>Turnaround</span>
+            <strong id="estimate-turnaround"></strong>
+          </div>
+        </div>
+      </div>
+
+      <aside class="quote-card project-quote-card">
+        <p class="quote-kicker">Wallpaper Order</p>
+        <h2>Price this exact design</h2>
+
+        <div class="quote-field">
+          <label>Selected design</label>
+          <div class="quote-static" id="price-selected-design"></div>
+        </div>
+
+        <div class="quote-field">
+          <label for="price-paper">Paper type</label>
+          <select id="price-paper"></select>
+        </div>
+
+        <div class="quote-grid">
+          <div class="quote-field">
+            <label for="price-width">Width (cm)</label>
+            <input id="price-width" type="number" min="40" max="500" step="10" value="200">
+          </div>
+          <div class="quote-field">
+            <label for="price-height">Height (cm)</label>
+            <input id="price-height" type="number" min="40" max="500" step="10" value="100">
+          </div>
+        </div>
+
+        <div class="quote-field">
+          <label for="price-qty">Quantity</label>
+          <div class="quote-stepper">
+            <button type="button" id="price-qty-decrease" aria-label="Decrease quantity">-</button>
+            <input id="price-qty" type="number" min="1" max="12" step="1" value="1" readonly>
+            <button type="button" id="price-qty-increase" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+
+        <div class="quote-breakdown">
+          <div>
+            <span>Dimension factor</span>
+            <strong id="price-dimension">300 cm</strong>
+          </div>
+          <div>
+            <span>Theme rate</span>
+            <strong id="price-theme-rate">Rs. 46 / cm</strong>
+          </div>
+          <div>
+            <span>Paper note</span>
+            <strong id="price-paper-note"></strong>
+          </div>
+        </div>
+
+        <div class="quote-total">
+          <span>Estimated total</span>
+          <strong id="price-total">Rs. 17,000</strong>
+          <p id="price-range">Estimated range: Rs. 15,300 to Rs. 19,000</p>
+        </div>
+
+        <a id="quote-whatsapp-link" href="#" class="quote-cta" target="_blank" rel="noopener">Request this Design </a>
+        <p class="quote-note">Opens WhatsApp with this wallpaper, paper type, size, quantity, and estimated total.</p>
+      </aside>
     </div>
   </section>
 
@@ -107,12 +214,13 @@
       <div class="footer-contact">
         <p class="footer-heading">Contact</p>
         <a href="mailto:vickyranagovind@gmail.com">vickyranagovind@gmail.com</a>
-        <a href="tel:1234567890">1234567890</a>
+        <a href="tel:+919737711570">+91 9737711570</a>
       </div>
       <div class="footer-social">
         <p class="footer-heading">Social Links</p>
         <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.behance.net/" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener">Behance</a>
+        <a href="https://stock.adobe.com/in/contributor/212160808/viana2-o?load_type=author&prev_url=detail" target="_blank" rel="noopener">Adobe Stock</a>
       </div>
 
     </div>
@@ -126,9 +234,10 @@
 
   <!-- JS -->
   <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
-<div class="cursor">
-  <div class="cursor-dot"></div>
-  <div class="cursor-outline"></div>
+  <div class="cursor">
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+  </div>
 </body>
 </html>
 

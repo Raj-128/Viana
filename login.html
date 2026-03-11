@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" class="mode-ready">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login and Register - Studio Viana</title>
+  <link rel="icon" href="/Viana/assets/flower-6SgxrDD3.png" sizes="70x70" type="image/png">
+  <meta name="description" content="Studio Viana client access.">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/Viana/assets/auth-C_lMbKse.js"></script>
+  <link rel="stylesheet" crossorigin href="/Viana/assets/auth-BNlpJTwC.css">
+  <link rel="stylesheet" crossorigin href="/Viana/assets/auth-CPn_V-_0.css">
+</head>
+<body class="auth-page mode-wallpaper lights-on" data-auth-page>
+  <header class="auth-topbar">
+    <a href="index.html" class="auth-brand">
+      <img src="/Viana/assets/flower-6SgxrDD3.png" alt="Studio Viana Logo" class="auth-brand-mark">
+      <span>Studio Viana</span>
+    </a>
+    <a href="index.html" class="auth-home-link">Back to home</a>
+  </header>
+
+  <main class="auth-shell">
+    <section class="auth-stage">
+      <div class="lamp-scene">
+        <div class="lamp-cord"></div>
+        <button class="lamp-head" type="button" data-lamp-toggle aria-label="Toggle studio light">
+          <span class="lamp-shade"></span>
+          <span class="lamp-bulb"></span>
+          <span class="lamp-eye lamp-eye-left"></span>
+          <span class="lamp-eye lamp-eye-right"></span>
+        </button>
+        <button class="lamp-pull" type="button" data-lamp-toggle>Toggle light</button>
+      </div>
+
+      <div class="auth-copy">
+        <p class="auth-kicker">Client Access</p>
+        <h1>Login with a custom-lit studio feel.</h1>
+        <p class="auth-lead">
+          The homepage stays public. After that, the protected studio pages open only for signed-in clients.
+        </p>
+      </div>
+    </section>
+
+    <section class="auth-panel-stack">
+      <article class="auth-card auth-interface" data-auth-interface>
+        <div class="card-head">
+          <p class="card-kicker">Client Access</p>
+          <h2>Login or register</h2>
+          <p>Use your own email and phone to enter the studio archive and request designs.</p>
+        </div>
+
+        <div class="toggle-control auth-tabs" data-client-toggle>
+          <span class="toggle-slider"></span>
+          <button class="toggle-btn active" type="button" data-auth-tab="login">Login</button>
+          <button class="toggle-btn" type="button" data-auth-tab="register">Register</button>
+        </div>
+
+        <div class="auth-view-stage" data-client-stage data-stage>
+          <form class="auth-form auth-view-panel is-active" data-auth-view="login" data-login-form aria-hidden="false">
+            <label class="auth-field">
+              <span>Email or phone</span>
+              <input type="text" name="identifier" placeholder="you@example.com or +91 9876543210" required>
+            </label>
+            <label class="auth-field">
+              <span>Password</span>
+              <input type="password" name="password" placeholder="Enter your password" required>
+            </label>
+            <button class="auth-submit" type="submit">Login to Studio Viana</button>
+          </form>
+
+          <form class="auth-form auth-view-panel" data-auth-view="register" data-register-form aria-hidden="true">
+            <div class="auth-grid two">
+              <label class="auth-field">
+                <span>Full name</span>
+                <input type="text" name="name" placeholder="Your full name" required>
+              </label>
+              <label class="auth-field">
+                <span>Phone number</span>
+                <input type="tel" name="phone" placeholder="+91 9876543210" required>
+              </label>
+            </div>
+
+            <label class="auth-field">
+              <span>Email address</span>
+              <input type="email" name="email" placeholder="you@example.com" required>
+            </label>
+
+            <div class="auth-grid two">
+              <label class="auth-field">
+                <span>Password</span>
+                <input type="password" name="password" placeholder="Use letters and numbers" required>
+              </label>
+              <label class="auth-field">
+                <span>Confirm password</span>
+                <input type="password" name="confirmPassword" placeholder="Repeat password" required>
+              </label>
+            </div>
+
+            <button class="auth-submit" type="submit">Create client account</button>
+          </form>
+        </div>
+
+        <p class="auth-status" data-auth-status></p>
+      </article>
+
+      <article class="auth-card account-card" data-account-panel hidden>
+        <span class="account-role" data-account-role></span>
+        <h2 data-account-name></h2>
+        <p class="account-copy" data-account-copy></p>
+
+        <div class="account-actions">
+          <a href="#" class="account-link" data-account-continue hidden>Continue</a>
+          <a href="work.html" class="account-link">Open protected pages</a>
+          <a href="index.html" class="account-link subtle">Back to home</a>
+          <button type="button" class="auth-submit secondary" data-logout-button>Sign out</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+</body>
+</html>

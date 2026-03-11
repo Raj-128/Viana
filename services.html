@@ -29,11 +29,13 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS (VITE PATHS) -->
-  <script type="module" crossorigin src="/Viana/assets/main-CISFdEC4.js"></script>
-  <link rel="stylesheet" crossorigin href="/Viana/assets/main-DIeEVU4P.css">
+  <!-- CSS (VITE PATHS) -->
+  <script type="module" crossorigin src="/Viana/assets/auth-C_lMbKse.js"></script>
+  <script type="module" crossorigin src="/Viana/assets/main-h4Qg8dcC.js"></script>
+  <link rel="stylesheet" crossorigin href="/Viana/assets/auth-BNlpJTwC.css">
+  <link rel="stylesheet" crossorigin href="/Viana/assets/main-BN7gPIes.css">
 </head>
-<body>
+<body data-auth-protected>
 
   <!-- Header -->
   <header class="site-header">
@@ -51,11 +53,14 @@
         <a href="contact.html">Contact</a>
       </nav>
 
-      <button class="menu-toggle" aria-label="Open Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <div class="header-actions">
+        <button class="menu-toggle" aria-label="Open Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <a href="login.html" class="header-account-chip" data-account-chip>Login</a>
+      </div>
     </div>
   </header>
 
@@ -68,6 +73,7 @@
           <a href="services.html">Services</a>
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
+          <a href="login.html" data-auth-link>Login</a>
         </nav>
       </div>
 
@@ -170,12 +176,13 @@
       <div class="footer-contact">
         <p class="footer-heading">Contact</p>
         <a href="mailto:vickyranagovind@gmail.com">vickyranagovind@gmail.com</a>
-        <a href="tel:1234567890">1234567890</a>
+        <a href="tel:+919737711570">+91 9737711570</a>
       </div>
       <div class="footer-social">
         <p class="footer-heading">Social Links</p>
         <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.behance.net/" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener">Behance</a>
+        <a href="https://stock.adobe.com/in/contributor/212160808/viana2-o?load_type=author&prev_url=detail" target="_blank" rel="noopener">Adobe Stock</a>
       </div>
 
     </div>
@@ -190,8 +197,9 @@
   <!-- JS -->
   <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
   <div class="cursor">
-  <div class="cursor-dot"></div>
-  <div class="cursor-outline"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+  </div>
 </body>
 </html>
 
