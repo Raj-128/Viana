@@ -3,27 +3,50 @@
    Testimonials · Stats · Awards · Pricing · Horizontal Gallery
    ============================================================ */
 
-/* =========================
-   PREMIUM PORTFOLIO STYLES
-   Adds $50,000-tier polish and layouts
-========================= */
+
 
 /* MODE TOGGLE UTILITIES */
-.show-3d { display: none !important; }
-body.mode-3d .show-3d { display: block !important; }
-body.mode-3d .show-wallpaper { display: none !important; }
+.show-3d {
+  display: none !important;
+}
+
+body.mode-3d .show-3d {
+  display: block !important;
+}
+
+body.mode-3d .show-wallpaper {
+  display: none !important;
+}
 
 /* Keep inline elements inline */
-span.show-3d { display: none !important; }
-body.mode-3d span.show-3d { display: inline-block !important; }
-body.mode-3d span.show-wallpaper { display: none !important; }
+span.show-3d {
+  display: none !important;
+}
+
+body.mode-3d span.show-3d {
+  display: inline-block !important;
+}
+
+body.mode-3d span.show-wallpaper {
+  display: none !important;
+}
 
 /* Keep flex elements flex */
-div.show-3d.trust-bar-track { display: none !important; }
-body.mode-3d div.show-3d.trust-bar-track { display: flex !important; }
+div.show-3d.trust-bar-track {
+  display: none !important;
+}
 
-div.show-3d.showcase-track { display: none !important; }
-body.mode-3d div.show-3d.showcase-track { display: flex !important; }
+body.mode-3d div.show-3d.trust-bar-track {
+  display: flex !important;
+}
+
+div.show-3d.showcase-track {
+  display: none !important;
+}
+
+body.mode-3d div.show-3d.showcase-track {
+  display: flex !important;
+}
 
 /* =========================
    SMOOTH SCROLL
@@ -1494,4 +1517,27 @@ body.mode-3d .service-card {
   100% {
     transform: translateY(-100%);
   }
+}
+
+/* =========================
+   ASSET SECURITY (BEST EFFORT)
+========================= */
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none; /* Prevents long-press save / right click on image */
+}
+
+/* Allow links/wrappers to handle clicks */
+a, a img, .showcase-item img, .strip-img img {
+  pointer-events: none;
+}
+
+a {
+  pointer-events: auto; /* Ensure wrapper stays clickable */
 }

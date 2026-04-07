@@ -311,6 +311,35 @@ function initTestimonialTilt() {
 
 
 /* ===========================
+   ANTI-THEFT SYSTEM & SECURITY
+=========================== */
+function initSecurity() {
+  // Prevent Right Click globally
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+  });
+
+  // Prevent generic image drag-and-drop
+  document.addEventListener('dragstart', (e) => {
+    if (e.target.nodeName === 'IMG') {
+      e.preventDefault();
+    }
+  });
+
+  // Prevent basic shortcut keys (PrintScreen, Ctrl+S)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'PrintScreen') {
+      // Trying to clear clipboard (only works in some browsers)
+      navigator.clipboard.writeText('');
+      alert("Screenshots are disabled for premium assets.");
+    }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p')) {
+      e.preventDefault();
+    }
+  });
+}
+
+/* ===========================
    INIT ALL
 =========================== */
 document.addEventListener('DOMContentLoaded', () => {
@@ -325,4 +354,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initStatHovers();
   initPricingGlow();
   initTestimonialTilt();
+  initSecurity();
 });
