@@ -4,18 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Studio Viana &mdash; Digital Artist & 3D Visualizer</title>
+  <title>Studio Viana &mdash; Digital Artist &amp; 3D Visualizer</title>
   <link rel="icon" href="/Viana/assets/flower-6SgxrDD3.png" sizes="70x70" type="image/png">
 
-
   <meta name="description" content="Studio Viana is a digital artist and 3D visualizer studio creating visual identity and physical spaces with clarity and intent.">
-
   <meta name="robots" content="index, follow">
   <meta name="author" content="Studio Viana">
   <link rel="canonical" href="https://www.studioviana.com/">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Studio Viana &mdash; Digital Artist & 3D Visualizer">
+  <meta property="og:title" content="Studio Viana &mdash; Digital Artist &amp; 3D Visualizer">
   <meta property="og:description" content="Designing visual identity and physical space with clarity and intent.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.studioviana.com/">
@@ -23,39 +21,44 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Studio Viana &mdash; Digital Artist & 3D Visualizer">
+  <meta name="twitter:title" content="Studio Viana &mdash; Digital Artist &amp; 3D Visualizer">
   <meta name="twitter:description" content="Designing visual identity and physical space with clarity and intent.">
   <meta name="twitter:image" content="https://www.studioviana.com/og-image.jpg">
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS (VITE PATHS) -->
+  <!-- CSS -->
   <script type="module" crossorigin src="/Viana/assets/auth-C_lMbKse.js"></script>
-  <script type="module" crossorigin src="/Viana/assets/main-h4Qg8dcC.js"></script>
+  <script type="module" crossorigin src="/Viana/assets/main-OQIkaGJZ.js"></script>
+  <script type="module" crossorigin src="/Viana/assets/premium-Cr74VMbo.js"></script>
   <link rel="stylesheet" crossorigin href="/Viana/assets/auth-BNlpJTwC.css">
-  <link rel="stylesheet" crossorigin href="/Viana/assets/main-BN7gPIes.css">
+  <link rel="stylesheet" crossorigin href="/Viana/assets/main-EF-FNqN0.css">
+  <link rel="stylesheet" crossorigin href="/Viana/assets/premium-NaSVKBI5.css">
 </head>
 <body>
+
+  <!-- Page Transition -->
+  <div class="page-transition-overlay" id="page-overlay"></div>
+
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-            <div class="logo">
+      <div class="logo">
         <a href="index.html">
           <img src="/Viana/assets/flower-6SgxrDD3.png" alt="Studio Viana Logo" class="logo-img">
           STUDIO VIANA</a>
       </div>
 
       <!-- Desktop Nav -->
-    <nav class="desktop-nav">
-      <a href="work.html">Work</a>
-      <a href="services.html">Services</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+      <nav class="desktop-nav">
+        <a href="work.html">Work</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
       <div class="header-actions">
-        <!-- Hamburger -->
         <button class="menu-toggle" aria-label="Open Menu">
           <span></span>
           <span></span>
@@ -66,61 +69,172 @@
     </div>
   </header>
 
+  <!-- Mode toggle -->
   <section class="work-switch-section site-mode-toggle">
     <div class="container">
       <div class="work-pill-toggle" data-mode-toggle>
         <div class="pill-slider"></div>
-        <button class="pill-btn active" data-type="wallpaper">
-          Wallpaper
-        </button>
-        <button class="pill-btn" data-type="3d">
-          3D Model Art
-        </button>
+        <button class="pill-btn active" data-type="wallpaper">Wallpaper</button>
+        <button class="pill-btn" data-type="3d">3D Model Art</button>
       </div>
     </div>
   </section>
 
+  <!-- Fullscreen Menu -->
   <div class="fullscreen-menu">
-  <button class="menu-close" aria-label="Close Menu">Close</button>
+    <button class="menu-close" aria-label="Close Menu">Close</button>
     <div class="menu-inner">
       <div class="menu-left">
-      <nav class="menu-links">
-        <a href="work.html">Projects</a>
-        <a href="services.html">Services</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="login.html" data-auth-link>Login</a>
-      </nav>
+        <nav class="menu-links">
+          <a href="work.html">Projects</a>
+          <a href="services.html">Services</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="login.html" data-auth-link>Login</a>
+        </nav>
       </div>
-
       <div class="menu-right">
         <p><strong>Studio Viana</strong></p>
-        <p>Digital Artist & 3D Visualizer</p>
+        <p>Digital Artist &amp; 3D Visualizer</p>
         <p>Designing visual identity and physical space.</p>
       </div>
     </div>
   </div>
 
-  <!-- Hero -->
-  <section class="hero hero-announce">
+  <!-- ======== HERO ======== -->
+  <section class="hero hero-announce" style="position:relative; overflow:hidden;">
     <div class="container">
       <p class="hero-eyebrow">Studio Viana</p>
-      <h1 class="hero-title">
+      <h1 class="hero-title show-wallpaper">
         <span class="line">Designing</span>
         <span class="line">visual identity</span>
         <span class="line">and physical space.</span>
       </h1>
-      <p class="hero-sub">Digital Artist &bull; 3D Visualizer</p>
+      <h1 class="hero-title show-3d">
+        <span class="line">Crafting</span>
+        <span class="line">immersive worlds</span>
+        <span class="line">and 3D concepts.</span>
+      </h1>
+      <p class="hero-sub show-wallpaper">Digital Artist &bull; Muralist</p>
+      <p class="hero-sub show-3d">3D Visualizer &bull; Spatial Designer</p>
+      
       <div class="hero-actions">
         <a href="work.html" class="cta-link">Explore collections</a>
-        <span class="hero-note">Bespoke projects for brands and spaces.</span>
+        <span class="hero-note show-wallpaper">Bespoke projects for brands and spaces.</span>
+        <span class="hero-note show-3d">High-resolution renders and architectural concepts.</span>
+      </div>
+    </div>
+
+    <!-- Real image strip on right side -->
+    <div class="hero-image-strip show-wallpaper" aria-hidden="true">
+      <div class="strip-img">
+        <img src="/Viana/assets/1-CI2Y2ux5.jpeg" alt="" draggable="false" loading="eager">
+      </div>
+      <div class="strip-img">
+        <img src="/Viana/assets/2-CKl5yuZh.jpeg" alt="" draggable="false" loading="eager">
+      </div>
+      <div class="strip-img">
+        <img src="/Viana/assets/3-7fKt1BNz.jpeg" alt="" draggable="false" loading="eager">
+      </div>
+    </div>
+    
+    <div class="hero-image-strip show-3d" aria-hidden="true">
+      <div class="strip-img">
+        <img src="/Viana/assets/4-DYClzEdS.jpeg" alt="" draggable="false" loading="eager">
+      </div>
+      <div class="strip-img">
+        <img src="/Viana/assets/5-Da-78QK3.jpeg" alt="" draggable="false" loading="eager">
+      </div>
+      <div class="strip-img">
+        <img src="/Viana/assets/6-Cyf3reLF.jpeg" alt="" draggable="false" loading="eager">
       </div>
     </div>
   </section>
 
-  <!-- Studio System -->
+  <!-- ======== TRUST BAR ======== -->
+  <div class="trust-bar show-wallpaper">
+    <div class="trust-bar-track" id="trust-track">
+      <div class="trust-item"><span class="trust-dot"></span>Adobe Stock Contributor</div>
+      <div class="trust-item"><span class="trust-dot"></span>Featured on Behance</div>
+      <div class="trust-item"><span class="trust-dot"></span>50+ Wallpapers Installed</div>
+      <div class="trust-item"><span class="trust-dot"></span>Instagram · @_studio_viana</div>
+      <div class="trust-item"><span class="trust-dot"></span>Residential &amp; Commercial</div>
+      <div class="trust-item"><span class="trust-dot"></span>Custom Mural Design</div>
+      <!-- duplicated for infinite scroll -->
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Adobe Stock Contributor</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Featured on Behance</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>50+ Wallpapers Installed</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Instagram · @_studio_viana</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Residential &amp; Commercial</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Custom Mural Design</div>
+    </div>
+  </div>
+  
+  <div class="trust-bar show-3d">
+    <div class="trust-bar-track show-3d" id="trust-track-3d">
+      <div class="trust-item"><span class="trust-dot"></span>Adobe Stock Contributor</div>
+      <div class="trust-item"><span class="trust-dot"></span>Featured on Behance</div>
+      <div class="trust-item"><span class="trust-dot"></span>100+ 3D Renders Completed</div>
+      <div class="trust-item"><span class="trust-dot"></span>Instagram · @_studio_viana</div>
+      <div class="trust-item"><span class="trust-dot"></span>Architectural Visuals</div>
+      <div class="trust-item"><span class="trust-dot"></span>3D Brand Marketing</div>
+      <!-- duplicated for infinite scroll -->
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Adobe Stock Contributor</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Featured on Behance</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>100+ 3D Renders Completed</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Instagram · @_studio_viana</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>Architectural Visuals</div>
+      <div class="trust-item" aria-hidden="true"><span class="trust-dot"></span>3D Brand Marketing</div>
+    </div>
+  </div>
+
+  <!-- ======== STATS ======== -->
+  <section class="stats-section reveal">
+    <div class="container show-wallpaper">
+      <div class="stats-grid">
+        <div class="stat-block">
+          <span class="stat-number"><span class="count-up" data-target="50">0</span><span class="stat-suffix">+</span></span>
+          <span class="stat-desc">Wallpapers Installed</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-number"><span class="count-up" data-target="6">0</span></span>
+          <span class="stat-desc">Mural Themes</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-number"><span class="count-up" data-target="3">0</span></span>
+          <span class="stat-desc">Years of Studio Work</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-number"><span class="count-up" data-target="100">0</span><span class="stat-suffix">%</span></span>
+          <span class="stat-desc">Custom Designs</span>
+        </div>
+      </div>
+    </div>
+    <div class="container show-3d">
+      <div class="stats-grid">
+        <div class="stat-block">
+          <span class="stat-number"><span class="count-up" data-target="100">0</span><span class="stat-suffix">+</span></span>
+          <span class="stat-desc">3D Renders</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-number"><span class="count-up" data-target="12">0</span></span>
+          <span class="stat-desc">Concept Spaces</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-number"><span class="count-up" data-target="5">0</span></span>
+          <span class="stat-desc">Years in 3D</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-number"><span class="count-up" data-target="100">0</span><span class="stat-suffix">%</span></span>
+          <span class="stat-desc">Photorealistic</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== STUDIO SYSTEM ======== -->
   <section class="identity reveal system-section">
-    <div class="container identity-grid">
+    <div class="container identity-grid show-wallpaper" style="display: grid;">
       <div class="identity-block">
         <p class="section-kicker">Design System</p>
         <h2>Graphic Design</h2>
@@ -131,7 +245,6 @@
           <li>Digital Design</li>
         </ul>
       </div>
-
       <div class="identity-block">
         <p class="section-kicker">Spatial System</p>
         <h2>Interior Design</h2>
@@ -143,45 +256,234 @@
         </ul>
       </div>
     </div>
-  </section>
-
-  <!-- Collections -->
-  <section class="featured-work reveal collections-section">
-    <div class="container">
-      <div class="section-head">
-        <h2 class="section-title">Collections</h2>
-        <p class="section-sub">A curated view of recent studio work.</p>
+    <div class="container identity-grid show-3d" style="display: grid;">
+      <div class="identity-block">
+        <p class="section-kicker">3D System</p>
+        <h2>Architectural Visuals</h2>
+        <ul>
+          <li>Photorealism</li>
+          <li>Lighting Design</li>
+          <li>Material Texturing</li>
+          <li>Concept Visualization</li>
+        </ul>
       </div>
-
-      <div class="work-grid" id="home-collections"></div>
-
-      <div class="section-cta">
-        <a href="work.html" class="view-all-link">View all projects &rarr;</a>
+      <div class="identity-block">
+        <p class="section-kicker">Product System</p>
+        <h2>3D Modeling</h2>
+        <ul>
+          <li>Furniture Models</li>
+          <li>Product Renders</li>
+          <li>Brand Sculptures</li>
+          <li>Environment Builds</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- Philosophy -->
+  <!-- ======== HORIZONTAL SCROLL SHOWCASE ======== -->
+  <section class="showcase-section reveal">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">The Collection</h2>
+          <p class="section-sub show-wallpaper">Scroll to explore our latest wallpaper artwork.</p>
+          <p class="section-sub show-3d">Scroll to explore our latest 3D visualizations.</p>
+        </div>
+        <a href="work.html" class="view-all-link">View all &rarr;</a>
+      </div>
+    </div>
+
+    <div class="showcase-scroll-wrapper" id="showcase-scroll">
+      <div class="showcase-track show-wallpaper">
+        <a href="work.html?id=floral-branch-wall" class="showcase-item">
+          <img src="/Viana/assets/1-CI2Y2ux5.jpeg" alt="Floral Branch Wallpaper" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Floral · 2025</span>
+            <strong>Floral Branch Customized</strong>
+          </div>
+        </a>
+        <a href="work.html?id=fairy-garden-wall" class="showcase-item">
+          <img src="/Viana/assets/2-CKl5yuZh.jpeg" alt="Fairy Garden Wallpaper" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Child · 2025</span>
+            <strong>Fairy Garden Kids Room</strong>
+          </div>
+        </a>
+        <a href="work.html?id=misty-forest-wall" class="showcase-item">
+          <img src="/Viana/assets/3-7fKt1BNz.jpeg" alt="Misty Forest Wallpaper" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Nature · 2025</span>
+            <strong>Misty Forest Panorama</strong>
+          </div>
+        </a>
+        <a href="work.html?id=arch-tree-mural" class="showcase-item">
+          <img src="/Viana/assets/4-DYClzEdS.jpeg" alt="Arch Tree Wallpaper" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Minimal · 2025</span>
+            <strong>Arch Frame Tree Mural</strong>
+          </div>
+        </a>
+        <a href="work.html?id=jungle-classic-wall" class="showcase-item">
+          <img src="/Viana/assets/5-Da-78QK3.jpeg" alt="Jungle Wallpaper" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Nature · 2025</span>
+            <strong>Classic Jungle Landscape</strong>
+          </div>
+        </a>
+        <a href="work.html?id=stone-bloom-signature" class="showcase-item">
+          <img src="/Viana/assets/6-Cyf3reLF.jpeg" alt="Stone Bloom Wallpaper" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Luxury · 2024</span>
+            <strong>Stone Bloom Signature</strong>
+          </div>
+        </a>
+      </div>
+      
+      <div class="showcase-track show-3d">
+        <a href="work.html?id=lunar-console-study" class="showcase-item">
+          <img src="/Viana/assets/6-Cyf3reLF.jpeg" alt="Lunar Console Study" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Luxury · 2026</span>
+            <strong>Lunar Console Study</strong>
+          </div>
+        </a>
+        <a href="work.html?id=petal-lamp-render" class="showcase-item">
+          <img src="/Viana/assets/1-CI2Y2ux5.jpeg" alt="Petal Lamp Render" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Floral · 2025</span>
+            <strong>Petal Lamp Render</strong>
+          </div>
+        </a>
+        <a href="work.html?id=pixel-playroom-scene" class="showcase-item">
+          <img src="/Viana/assets/2-CKl5yuZh.jpeg" alt="Pixel Playroom Scene" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Child · 2024</span>
+            <strong>Pixel Playroom Scene</strong>
+          </div>
+        </a>
+        <a href="work.html?id=canyon-void-frame" class="showcase-item">
+          <img src="/Viana/assets/5-Da-78QK3.jpeg" alt="Canyon Void Frame" draggable="false" loading="lazy">
+          <div class="showcase-item-cap">
+            <span>Abstract · 2023</span>
+            <strong>Canyon Void Frame</strong>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+      <p class="showcase-hint">Drag to explore</p>
+    </div>
+  </section>
+
+
+  <!-- ======== PHILOSOPHY ======== -->
   <section class="philosophy reveal philosophy-section">
     <div class="container">
       <blockquote class="split-text">
-        <span class="word">Good</span> 
-        <span class="word">design</span> 
-        <span class="word">is</span> 
-        <span class="word">not</span> 
+        <span class="word">Good</span>
+        <span class="word">design</span>
+        <span class="word">is</span>
+        <span class="word">not</span>
         <span class="word">decoration.</span>
         <br>
-        <span class="word">It</span> 
-        <span class="word">is</span> 
-        <span class="word">clarity,</span> 
-        <span class="word">proportion,</span> 
-        <span class="word">and</span> 
+        <span class="word">It</span>
+        <span class="word">is</span>
+        <span class="word">clarity,</span>
+        <span class="word">proportion,</span>
+        <span class="word">and</span>
         <span class="word">intent.</span>
       </blockquote>
     </div>
   </section>
 
-  <!-- Studio Journal -->
+  <!-- ======== TESTIMONIALS ======== -->
+  <section class="testimonials-section reveal">
+    <div class="container">
+      <div class="section-head testimonials-header">
+        <div>
+          <p class="section-kicker">Client Stories</p>
+          <h2 class="section-title">What clients say</h2>
+        </div>
+        <p class="section-sub">Real feedback from real spaces &mdash; residential, commercial, and studio projects across India.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-quote">"The fairy garden wallpaper transformed our daughter's room completely. Vicky understood the brief perfectly &mdash; dreamy, soft, and full of character. Every guest who visits asks where we got it."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">P</div>
+            <div>
+              <span class="testimonial-name">Priya Mehta</span>
+              <span class="testimonial-role">Homeowner, Surat</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-quote">"We needed something sophisticated for our boutique reception. The floral branch mural exceeded every expectation &mdash; clients walk in and immediately feel the premium atmosphere. Worth every rupee."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">R</div>
+            <div>
+              <span class="testimonial-name">Rahul Sharma</span>
+              <span class="testimonial-role">Business Owner, Ahmedabad</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-quote">"The misty forest design brought such calm to our bedroom. The quality of the design and print is impeccable. I've already recommended Studio Viana to three friends, and they all loved the experience."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">A</div>
+            <div>
+              <span class="testimonial-name">Anjali Patel</span>
+              <span class="testimonial-role">Interior Design Client, Vadodara</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== AWARDS / CREDENTIALS ======== -->
+  <section class="awards-section reveal">
+    <div class="container">
+      <p class="awards-label">Featured &amp; Recognised on</p>
+      <div class="awards-grid">
+        <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener" class="award-badge">
+          <span class="award-badge-icon">🎨</span>
+          Behance Portfolio
+        </a>
+        <a href="https://stock.adobe.com/in/contributor/212160808/viana2-o?load_type=author&prev_url=detail" target="_blank" rel="noopener" class="award-badge">
+          <span class="award-badge-icon">🅰</span>
+          Adobe Stock Contributor
+        </a>
+        <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener" class="award-badge">
+          <span class="award-badge-icon">📷</span>
+          Instagram @_studio_viana
+        </a>
+        <div class="award-badge">
+          <span class="award-badge-icon">🏠</span>
+          Residential &amp; Commercial
+        </div>
+        <div class="award-badge">
+          <span class="award-badge-icon">✦</span>
+          Custom Mural Specialist
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== STUDIO JOURNAL ======== -->
   <section class="journal reveal">
     <div class="container">
       <div class="section-head">
@@ -208,12 +510,12 @@
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- ======== FOOTER ======== -->
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
         <p class="footer-title">Studio Viana</p>
-        <p class="footer-tagline">Digital Artist & 3D Visualizer</p>
+        <p class="footer-tagline">Digital Artist &amp; 3D Visualizer</p>
         <p class="footer-note">Designing visual identity and physical space with clarity and intent.</p>
       </div>
       <div class="footer-links">
@@ -233,9 +535,7 @@
         <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
         <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener">Behance</a>
         <a href="https://stock.adobe.com/in/contributor/212160808/viana2-o?load_type=author&prev_url=detail" target="_blank" rel="noopener">Adobe Stock</a>
-
       </div>
-
     </div>
     <div class="footer-bottom">
       <div class="container">
@@ -245,8 +545,16 @@
     </div>
   </footer>
 
-  <!-- JS (VITE MODULE) -->
-  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+  <!-- Cursor -->
+  <div class="cursor">
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+  </div>
+  <div class="cursor-text" id="cursor-text">View</div>
+
+  <!-- JS -->
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -260,7 +568,8 @@
     "name": "Vicky Rana"
   },
   "sameAs": [
-    "https://www.instagram.com/vianastudio"
+    "https://www.instagram.com/_studio_viana",
+    "https://www.behance.net/vickyrana8"
   ],
   "address": {
     "@type": "PostalAddress",
@@ -268,21 +577,5 @@
   }
 }
   </script>
-<div class="cursor">
-  <div class="cursor-dot"></div>
-  <div class="cursor-outline"></div>
-</div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-

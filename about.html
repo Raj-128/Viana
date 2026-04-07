@@ -8,16 +8,15 @@
   <link rel="icon" href="/Viana/assets/flower-6SgxrDD3.png" sizes="70x70" type="image/png">
 
   <meta name="description" content="Studio Viana is a digital artist and 3D visualizer studio focused on clarity, proportion, and timeless design.">
-
   <meta name="robots" content="index, follow">
   <meta name="author" content="Studio Viana">
-  <link rel="canonical" href="https://www.studioviana.com/">
+  <link rel="canonical" href="https://www.studioviana.com/about">
 
   <!-- Open Graph -->
   <meta property="og:title" content="About &mdash; Studio Viana">
   <meta property="og:description" content="Studio Viana is a digital artist and 3D visualizer studio focused on clarity, proportion, and timeless design.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.studioviana.com/">
+  <meta property="og:url" content="https://www.studioviana.com/about">
   <meta property="og:image" content="https://www.studioviana.com/og-image.jpg">
 
   <!-- Twitter -->
@@ -27,37 +26,37 @@
   <meta name="twitter:image" content="https://www.studioviana.com/og-image.jpg">
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS (VITE PATHS) -->
+  <!-- CSS -->
   <script type="module" crossorigin src="/Viana/assets/auth-C_lMbKse.js"></script>
-  <script type="module" crossorigin src="/Viana/assets/main-h4Qg8dcC.js"></script>
+  <script type="module" crossorigin src="/Viana/assets/main-OQIkaGJZ.js"></script>
+  <script type="module" crossorigin src="/Viana/assets/premium-Cr74VMbo.js"></script>
   <link rel="stylesheet" crossorigin href="/Viana/assets/auth-BNlpJTwC.css">
-  <link rel="stylesheet" crossorigin href="/Viana/assets/main-BN7gPIes.css">
+  <link rel="stylesheet" crossorigin href="/Viana/assets/main-EF-FNqN0.css">
+  <link rel="stylesheet" crossorigin href="/Viana/assets/premium-NaSVKBI5.css">
 </head>
 <body data-auth-protected>
+
+  <div class="page-transition-overlay" id="page-overlay"></div>
 
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-            <div class="logo">
+      <div class="logo">
         <a href="index.html">
           <img src="/Viana/assets/flower-6SgxrDD3.png" alt="Studio Viana Logo" class="logo-img">
           STUDIO VIANA</a>
       </div>
-
       <nav class="desktop-nav">
         <a href="work.html">Work</a>
         <a href="services.html">Services</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
       </nav>
-
       <div class="header-actions">
         <button class="menu-toggle" aria-label="Open Menu">
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </button>
         <a href="login.html" class="header-account-chip" data-account-chip>Login</a>
       </div>
@@ -65,7 +64,7 @@
   </header>
 
   <div class="fullscreen-menu">
-  <button class="menu-close" aria-label="Close Menu">Close</button>
+    <button class="menu-close" aria-label="Close Menu">Close</button>
     <div class="menu-inner">
       <div class="menu-left">
         <nav class="menu-links">
@@ -78,7 +77,7 @@
       </div>
       <div class="menu-right">
         <p><strong>Studio Viana</strong></p>
-        <p>Digital Artist & 3D Visualizer</p>
+        <p>Digital Artist &amp; 3D Visualizer</p>
         <p>Designing visual identity and physical space.</p>
       </div>
     </div>
@@ -88,33 +87,64 @@
   <section class="page-hero reveal">
     <div class="container">
       <p class="section-kicker">Studio</p>
-      <h1 class="page-title">About</h1>
-      <p class="page-lead">We bridge visual identity and physical space through a restrained, material-driven approach.</p>
+      <h1 class="page-title">The person<br>behind the studio.</h1>
+      <p class="page-lead">Vicky Rana is a digital artist and 3D visualizer from Surat, India &mdash; building immersive wallpaper experiences and spatial art for homes, boutiques, and brands.</p>
     </div>
   </section>
 
   <!-- About Content -->
   <section class="about-content reveal">
     <div class="container about-grid">
-      <div class="about-image reveal-media">
-        <img src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1200'%20height='1500'%20viewBox='0%200%201200%201500'%3e%3crect%20width='1200'%20height='1500'%20fill='%23efe9e3'/%3e%3crect%20x='140'%20y='200'%20width='920'%20height='1100'%20fill='%23d9cfc7'/%3e%3ccircle%20cx='600'%20cy='620'%20r='220'%20fill='%23b9a99a'/%3e%3crect%20x='300'%20y='980'%20width='600'%20height='140'%20fill='%236f5f4a'/%3e%3c/svg%3e" alt="Studio Viana portrait">
+
+      <!-- Left: Portrait + badges -->
+      <div class="about-portrait-wrap">
+        <div class="about-portrait-frame">
+          <img src="/Viana/assets/1-CI2Y2ux5.jpeg" alt="Studio Viana — Vicky Rana" draggable="false">
+        </div>
+        <div class="about-portrait-badge">
+          <strong>3+</strong>
+          Years of Studio<br>Experience
+        </div>
+
+        <!-- Credentials -->
+        <div class="credentials-grid" style="margin-top: 40px;">
+          <a href="https://stock.adobe.com/in/contributor/212160808/viana2-o" target="_blank" rel="noopener" class="credential-item" style="text-decoration:none;">
+            <span class="credential-platform">Adobe Stock</span>
+            <span class="credential-value">Verified Contributor</span>
+          </a>
+          <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener" class="credential-item" style="text-decoration:none;">
+            <span class="credential-platform">Behance</span>
+            <span class="credential-value">Featured Portfolio</span>
+          </a>
+          <div class="credential-item">
+            <span class="credential-platform">Projects</span>
+            <span class="credential-value">50+ Installed</span>
+          </div>
+          <div class="credential-item">
+            <span class="credential-platform">Markets</span>
+            <span class="credential-value">Residential & Commercial</span>
+          </div>
+        </div>
       </div>
 
+      <!-- Right: Text -->
       <div class="about-text">
         <p>
-          <strong>Studio Viana</strong> is a digital artist and 3D visualizer studio focused on clarity,
-          proportion, and timeless design.
+          <strong>Studio Viana</strong> is a digital art and wallpaper design studio focused on clarity,
+          proportion, and timeless visual storytelling. Founded by Vicky Rana, the studio creates
+          custom mural wallpapers, 3D visualizations, and brand identity systems.
         </p>
         <p>
-          Our work connects brand identity with space, creating cohesive experiences
-          across digital, print, and physical environments.
+          Every design starts with the space &mdash; its light, scale, and mood. Whether it&rsquo;s a quiet
+          bedroom needing serene depth, a nursery ready to ignite imagination, or a boutique
+          entrance demanding presence, each piece is custom-crafted for that exact wall.
         </p>
         <p>
-          With a strong attention to detail, each project is built to be functional,
-          meaningful, and enduring.
+          Studio Viana work is available on <strong>Adobe Stock</strong>, through direct commission,
+          and as part of our growing printed wallpaper collection shipped across India.
         </p>
 
-        <div class="principles">
+        <div class="principles" style="margin-top: 32px;">
           <p class="section-kicker">Principles</p>
           <ul>
             <li>Clarity before decoration</li>
@@ -123,7 +153,73 @@
             <li>Longevity over trend</li>
           </ul>
         </div>
+
+        <!-- Timeline -->
+        <div class="about-timeline" style="margin-top: 48px;">
+          <div class="timeline-item">
+            <span class="timeline-year">2023</span>
+            <h4>Studio Founded</h4>
+            <p>Started with floral and botanical wallpaper designs for residential clients in Surat.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-year">2024</span>
+            <h4>Adobe Stock Launch</h4>
+            <p>Became a verified Adobe Stock contributor, expanding reach globally.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-year">2025</span>
+            <h4>Custom Mural Expansion</h4>
+            <p>Began offering fully custom large-format wallpaper murals for homes and businesses.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-year">2026</span>
+            <h4>3D Visualization &amp; Behance</h4>
+            <p>Added 3D interior rendering and launched a curated Behance portfolio collection.</p>
+          </div>
+        </div>
       </div>
+
+    </div>
+  </section>
+
+  <!-- Real Work Images Strip -->
+  <section class="showcase-section reveal">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">Real Installed Work</h2>
+        <p class="section-sub">Every piece you see here was custom-made and physically installed.</p>
+      </div>
+    </div>
+    <div class="showcase-scroll-wrapper">
+      <div class="showcase-track">
+        <a href="project.html?id=floral-branch-wall" class="showcase-item">
+          <img src="/Viana/assets/1-CI2Y2ux5.jpeg" alt="Floral Branch Wallpaper" draggable="false" loading="lazy">
+          <div class="showcase-item-cap"><span>Floral · Surat</span><strong>Floral Branch Mural</strong></div>
+        </a>
+        <a href="project.html?id=fairy-garden-wall" class="showcase-item">
+          <img src="/Viana/assets/2-CKl5yuZh.jpeg" alt="Fairy Garden" draggable="false" loading="lazy">
+          <div class="showcase-item-cap"><span>Child · Surat</span><strong>Fairy Garden Kids Room</strong></div>
+        </a>
+        <a href="project.html?id=misty-forest-wall" class="showcase-item">
+          <img src="/Viana/assets/3-7fKt1BNz.jpeg" alt="Misty Forest" draggable="false" loading="lazy">
+          <div class="showcase-item-cap"><span>Nature · Surat</span><strong>Misty Forest Bedroom</strong></div>
+        </a>
+        <a href="project.html?id=arch-tree-mural" class="showcase-item">
+          <img src="/Viana/assets/4-DYClzEdS.jpeg" alt="Arch Tree" draggable="false" loading="lazy">
+          <div class="showcase-item-cap"><span>Minimal · Surat</span><strong>Arch Frame Tree Mural</strong></div>
+        </a>
+        <a href="project.html?id=jungle-classic-wall" class="showcase-item">
+          <img src="/Viana/assets/5-Da-78QK3.jpeg" alt="Jungle Landscape" draggable="false" loading="lazy">
+          <div class="showcase-item-cap"><span>Nature · Surat</span><strong>Classic Jungle Landscape</strong></div>
+        </a>
+        <a href="project.html?id=stone-bloom-signature" class="showcase-item">
+          <img src="/Viana/assets/6-Cyf3reLF.jpeg" alt="Stone Bloom" draggable="false" loading="lazy">
+          <div class="showcase-item-cap"><span>Luxury · Surat</span><strong>Stone Bloom Signature</strong></div>
+        </a>
+      </div>
+    </div>
+    <div class="container">
+      <p class="showcase-hint">Drag to explore</p>
     </div>
   </section>
 
@@ -132,7 +228,7 @@
     <div class="container footer-grid">
       <div class="footer-brand">
         <p class="footer-title">Studio Viana</p>
-        <p class="footer-tagline">Digital Artist & 3D Visualizer</p>
+        <p class="footer-tagline">Digital Artist &amp; 3D Visualizer</p>
         <p class="footer-note">Designing visual identity and physical space with clarity and intent.</p>
       </div>
       <div class="footer-links">
@@ -152,6 +248,7 @@
         <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
         <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener">Behance</a>
         <a href="https://stock.adobe.com/in/contributor/212160808/viana2-o?load_type=author&prev_url=detail" target="_blank" rel="noopener">Adobe Stock</a>
+      </div>
     </div>
     <div class="footer-bottom">
       <div class="container">
@@ -161,24 +258,11 @@
     </div>
   </footer>
 
-  <!-- JS -->
-  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
   <div class="cursor">
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
   </div>
+
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
