@@ -1,398 +1,187 @@
 import VanillaTilt from "vanilla-tilt";
 
 function queryAll(scope, selector) {
-  if (!scope) {
-    return [];
-  }
-
-  if (scope.matches && scope.matches(selector)) {
-    return [scope, ...scope.querySelectorAll(selector)];
-  }
-
+  if (!scope) return [];
+  if (scope.matches && scope.matches(selector)) return [scope, ...scope.querySelectorAll(selector)];
   return [...scope.querySelectorAll(selector)];
 }
 
+// ── CURSOR (RAF-based, smooth) ──────────────────────────────
 export function initEnhancedCursor() {
-  const cursor = document.querySelector(".cursor");
-  const dot = document.querySelector(".cursor-dot");
+  const dot     = document.querySelector(".cursor-dot");
   const outline = document.querySelector(".cursor-outline");
+  if (!dot || !outline || window.innerWidth < 768) return;
 
-  if (!cursor || !dot || !outline || window.innerWidth < 768) {
-    return;
+  let mx = 0, my = 0, ox = 0, oy = 0;
+
+  document.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+
+  function loop() {
+    ox += (mx - ox) * 0.12;
+    oy += (my - oy) * 0.12;
+    dot.style.transform    = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
+    outline.style.transform = `translate(${ox}px,${oy}px) translate(-50%,-50%)`;
+    requestAnimationFrame(loop);
   }
+  requestAnimationFrame(loop);
 
-  let mouseX = 0;
-  let mouseY = 0;
-  let cursorX = 0;
-  let cursorY = 0;
-  let outlineX = 0;
-  let outlineY = 0;
-
-  document.addEventListener("mousemove", (event) => {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-  });
-
-  function animate() {
-    cursorX += (mouseX - cursorX) * 1;
-    cursorY += (mouseY - cursorY) * 1;
-    outlineX += (mouseX - outlineX) * 0.15;
-    outlineY += (mouseY - outlineY) * 0.15;
-
-    dot.style.left = `${cursorX}px`;
-    dot.style.top = `${cursorY}px`;
-    outline.style.left = `${outlineX}px`;
-    outline.style.top = `${outlineY}px`;
-
-    requestAnimationFrame(animate);
-  }
-
-  animate();
-
-  document
-    .querySelectorAll("a, button, .work-card, .menu-toggle, .cta-link, .journal-item, input, textarea, select")
-    .forEach((element) => {
-      element.addEventListener("mouseenter", () => {
-        outline.style.width = "60px";
-        outline.style.height = "60px";
-        outline.style.borderWidth = "2px";
-        dot.style.transform = "translate(-50%, -50%) scale(1.5)";
-      });
-
-      element.addEventListener("mouseleave", () => {
-        outline.style.width = "40px";
-        outline.style.height = "40px";
-        outline.style.borderWidth = "1.5px";
-        dot.style.transform = "translate(-50%, -50%) scale(1)";
-      });
-    });
-
-  document.addEventListener("mousedown", () => {
-    outline.style.width = "50px";
-    outline.style.height = "50px";
-    dot.style.transform = "translate(-50%, -50%) scale(0.8)";
-  });
-
-  document.addEventListener("mouseup", () => {
-    outline.style.width = "40px";
-    outline.style.height = "40px";
-    dot.style.transform = "translate(-50%, -50%) scale(1)";
+  const enlarge  = () => { outline.style.width = "60px"; outline.style.height = "60px"; };
+  const shrink   = () => { outline.style.width = "40px"; outline.style.height = "40px"; };
+  document.querySelectorAll("a,button,.work-card,.showcase-item").forEach(el => {
+    el.addEventListener("mouseenter", enlarge);
+    el.addEventListener("mouseleave", shrink);
   });
 }
 
+// ── TILT: only on desktop, only on visible cards ────────────
 export function initTiltEffects(scope = document) {
-  const cards = [
-    ...queryAll(scope, ".work-card"),
-    ...queryAll(scope, ".journal-item"),
-    ...queryAll(scope, ".service-card"),
-  ];
+  if (window.innerWidth < 768) return;
+  const cards = [ ...queryAll(scope, ".work-card"), ...queryAll(scope, ".service-card") ];
+  cards.forEach(card => {
+    if (card.vanillaTilt) return;
+    VanillaTilt.init(card, { max: 4, speed: 600, glare: true, "max-glare": 0.12, scale: 1.01 });
+  });
+}
 
-  cards.forEach((card) => {
-    if (card.vanillaTilt) {
-      return;
-    }
-
-    VanillaTilt.init(card, {
-      max: 5,
-      speed: 400,
-      glare: true,
-      "max-glare": 0.2,
-      perspective: 1000,
-      scale: 1.02,
-      transition: true,
-      easing: "cubic-bezier(.03,.98,.52,.99)",
+// ── RIPPLE ──────────────────────────────────────────────────
+export function initRippleEffect(scope = document) {
+  queryAll(scope, "button,.cta-link,.work-card").forEach(target => {
+    if (target.dataset.rippleReady) return;
+    target.dataset.rippleReady = "true";
+    target.addEventListener("click", e => {
+      const r = document.createElement("span");
+      r.className = "ripple-effect";
+      const rect = target.getBoundingClientRect();
+      const sz = Math.max(rect.width, rect.height);
+      r.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px`;
+      target.appendChild(r);
+      setTimeout(() => r.remove(), 600);
     });
   });
 }
 
-export function initMagneticButtons() {
-  document
-    .querySelectorAll(".cta-link, .menu-toggle, .pill-btn, button:not(.menu-close)")
-    .forEach((button) => {
-      button.addEventListener("mousemove", (event) => {
-        const rect = button.getBoundingClientRect();
-        const x = event.clientX - rect.left - rect.width / 2;
-        const y = event.clientY - rect.top - rect.height / 2;
-
-        button.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-      });
-
-      button.addEventListener("mouseleave", () => {
-        button.style.transform = "translate(0, 0)";
-      });
-    });
-}
-
-export function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function handleAnchorClick(event) {
-      const href = this.getAttribute("href");
-      if (href === "#") {
-        return;
-      }
-
-      event.preventDefault();
-      const target = document.querySelector(href);
-      if (!target) {
-        return;
-      }
-
-      window.scrollTo({
-        top: target.offsetTop - 100,
-        behavior: "smooth",
-      });
-    });
-  });
-}
-
-export function initStaggeredAnimations() {
-  if (!window.gsap) {
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          return;
-        }
-
-        const children = entry.target.querySelectorAll(
-          "h2, h3, p, .work-card, .journal-item, .identity-block, .service-card, .process-step"
-        );
-
-        gsap.fromTo(
-          children,
-          { y: 40, opacity: 0, scale: 0.95 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power3.out",
-          }
-        );
-
-        observer.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.1 }
-  );
-
-  document.querySelectorAll("section").forEach((section) => observer.observe(section));
-}
-
-export function initFloatingElements() {
-  if (!window.gsap) {
-    return;
-  }
-
-  document
-    .querySelectorAll(".hero-title, .logo-img, .fullscreen-menu .menu-right")
-    .forEach((element, index) => {
-      gsap.to(element, {
-        y: -15,
-        duration: 2 + index * 0.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-      });
-    });
-}
-
+// ── IMAGE HOVER ─────────────────────────────────────────────
 export function initImageHoverEffects(scope = document) {
-  const images = [
-    ...queryAll(scope, ".work-card img"),
-    ...queryAll(scope, ".about-image img"),
-  ];
+  queryAll(scope, ".work-card img,.showcase-item img").forEach(img => {
+    const p = img.parentElement;
+    if (!p || p.dataset.imgHover) return;
+    p.dataset.imgHover = "1";
+    p.addEventListener("mouseenter", () => { img.style.transform = "scale(1.06)"; });
+    p.addEventListener("mouseleave", () => { img.style.transform = ""; });
+  });
+}
 
-  images.forEach((image) => {
-    const parent = image.closest(".work-card, .about-image");
-    if (!parent || parent.dataset.imageHoverReady === "true") {
-      return;
-    }
+// ── SCROLL PROGRESS BAR ─────────────────────────────────────
+export function initScrollProgress() {
+  const bar = document.createElement("div");
+  bar.className = "scroll-progress";
+  document.body.appendChild(bar);
+  window.addEventListener("scroll", () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = `${h > 0 ? (window.scrollY / h) * 100 : 0}%`;
+  }, { passive: true });
+}
 
-    parent.dataset.imageHoverReady = "true";
-
-    parent.addEventListener("mouseenter", () => {
-      if (!window.gsap) {
-        return;
-      }
-
-      gsap.to(image, {
-        scale: 1.1,
-        rotation: 2,
-        duration: 0.6,
-        ease: "power2.out",
-      });
-    });
-
-    parent.addEventListener("mouseleave", () => {
-      if (!window.gsap) {
-        return;
-      }
-
-      gsap.to(image, {
-        scale: 1,
-        rotation: 0,
-        duration: 0.6,
-        ease: "power2.out",
-      });
+// ── SMOOTH SCROLL (anchor links) ────────────────────────────
+export function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener("click", e => {
+      const t = document.querySelector(a.getAttribute("href"));
+      if (!t) return;
+      e.preventDefault();
+      t.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 }
 
-export function initTextReveal() {
-  if (!window.gsap) {
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting || entry.target.querySelector(".char")) {
-          observer.unobserve(entry.target);
-          return;
-        }
-
-        const text = entry.target.textContent;
-        entry.target.innerHTML = text
-          .split("")
-          .map((character) => `<span class="char">${character}</span>`)
-          .join("");
-
-        gsap.fromTo(
-          entry.target.querySelectorAll(".char"),
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.05,
-            stagger: 0.02,
-            ease: "power2.out",
-          }
-        );
-
-        observer.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.5 }
-  );
-
-  document.querySelectorAll(".section-title, .page-title").forEach((element) => {
-    observer.observe(element);
-  });
-}
-
+// ── PAGE LOAD ANIMATION (lightweight, no infinite loops) ────
 export function initPageLoadAnimation() {
-  if (!window.gsap) {
-    return;
-  }
+  if (!window.gsap) return;
+  
+  // Set inline-block for line spans to allow y transforms
+  document.querySelectorAll(".hero-title .line").forEach(line => line.style.display = 'inline-block');
 
-  gsap
-    .timeline()
-    .from("body", {
-      opacity: 0,
-      duration: 0.5,
-    })
-    .from(
-      ".site-header",
-      {
-        y: -100,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-      },
+  gsap.timeline()
+    .fromTo(".site-header", 
+      { y: -60, autoAlpha: 0 }, 
+      { y: 0, autoAlpha: 1, duration: 0.7, ease: "power3.out" }
+    )
+    .fromTo(".hero-eyebrow",  
+      { y: 16, autoAlpha: 0 }, 
+      { y: 0, autoAlpha: 1, duration: 0.5 }, 
+      "-=0.4"
+    )
+    .fromTo(".hero-title .line", 
+      { y: 60, autoAlpha: 0 }, 
+      { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }, 
       "-=0.3"
     )
-    .from(
-      ".hero-eyebrow",
-      {
-        y: 20,
-        opacity: 0,
-        duration: 0.6,
-      },
-      "-=0.4"
-    )
-    .from(
-      ".hero-title .line",
-      {
-        y: 100,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power3.out",
-      },
-      "-=0.4"
+    .fromTo(".hero-sub",  
+      { autoAlpha: 0 }, 
+      { autoAlpha: 1, duration: 0.5 }, 
+      "-=0.3"
     );
 }
 
-export function initRippleEffect(scope = document) {
-  const rippleTargets = [
-    ...queryAll(scope, "button"),
-    ...queryAll(scope, ".cta-link"),
-    ...queryAll(scope, ".work-card"),
-  ];
+// ── STAGGERED SECTION REVEAL ──
+export function initStaggeredAnimations() {
+  // We rely on main.js revealObserver to handle the section reveals without conflicting inner staggers
+}
 
-  rippleTargets.forEach((target) => {
-    if (target.dataset.rippleReady === "true") {
-      return;
-    }
+// ── FLOATING / MAGNETIC ──────
+export function initFloatingElements() {
+  // Logo is fixed - no floating animation
+}
 
-    target.dataset.rippleReady = "true";
-
-    target.addEventListener("click", function handleRippleClick(event) {
-      const ripple = document.createElement("span");
-      ripple.classList.add("ripple-effect");
-
-      const rect = target.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-      const x = event.clientX - rect.left - size / 2;
-      const y = event.clientY - rect.top - size / 2;
-
-      ripple.style.width = `${size}px`;
-      ripple.style.height = `${size}px`;
-      ripple.style.left = `${x}px`;
-      ripple.style.top = `${y}px`;
-
-      target.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
+// ── MAGNETIC BUTTONS (lightweight, CSS-only approach) ───────
+export function initMagneticButtons() {
+  document.querySelectorAll(".cta-link,.menu-toggle").forEach(btn => {
+    btn.addEventListener("mousemove", e => {
+      const r = btn.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width  / 2) * 0.25;
+      const y = (e.clientY - r.top  - r.height / 2) * 0.25;
+      btn.style.transform = `translate(${x}px,${y}px)`;
     });
+    btn.addEventListener("mouseleave", () => { btn.style.transform = ""; });
   });
 }
 
-export function initScrollProgress() {
-  if (document.querySelector(".scroll-progress")) {
-    return;
-  }
+// ── TEXT REVEAL (word by word) ──────
+export function initTextReveal() {
+  if (!window.gsap) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const chars = entry.target.querySelectorAll(".char");
+      if(chars.length) {
+         gsap.fromTo(chars, 
+           { autoAlpha: 0, y: 20 },
+           { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.03, ease: "back.out(1.2)" }
+         );
+      }
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.4 });
 
-  const progressBar = document.createElement("div");
-  progressBar.className = "scroll-progress";
-  document.body.appendChild(progressBar);
-
-  window.addEventListener("scroll", () => {
-    const scrollTop = window.pageYOffset;
-    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollPercent = documentHeight > 0 ? (scrollTop / documentHeight) * 100 : 0;
-    progressBar.style.width = `${scrollPercent}%`;
+  document.querySelectorAll(".section-title, .page-title").forEach(el => {
+    if (!el.querySelector(".char")) {
+      const text = el.textContent;
+      el.innerHTML = text.split("").map(c => c === " " ? "&nbsp;" : `<span class="char" style="display:inline-block">${c}</span>`).join("");
+    }
+    observer.observe(el);
   });
 }
 
+// ── MAIN EXPORT ─────────────────────────────────────────────
 export function initCreativeAnimations() {
   document.addEventListener("DOMContentLoaded", () => {
     initEnhancedCursor();
-    initTiltEffects();
     initMagneticButtons();
     initSmoothScroll();
-    initStaggeredAnimations();
-    initImageHoverEffects();
-    initTextReveal();
-    initRippleEffect();
     initScrollProgress();
-
-    setTimeout(() => {
-      initFloatingElements();
-    }, 1000);
+    initPageLoadAnimation();
+    initStaggeredAnimations();
+    initFloatingElements();
+    initTextReveal();
   });
 }

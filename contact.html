@@ -7,17 +7,16 @@
   <title>Contact &mdash; Studio Viana</title>
   <link rel="icon" href="./src/assets/images/flower.png" sizes="70x70" type="image/png">
 
-  <meta name="description" content="Contact Studio Viana for project inquiries and collaborations.">
-
+  <meta name="description" content="Contact Studio Viana for custom wallpaper quotes, project inquiries, and collaborations. WhatsApp for fastest response.">
   <meta name="robots" content="index, follow">
   <meta name="author" content="Studio Viana">
-  <link rel="canonical" href="https://www.studioviana.com/">
+  <link rel="canonical" href="https://www.studioviana.com/contact">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Contact &mdash; Studio Viana">
   <meta property="og:description" content="Contact Studio Viana for project inquiries and collaborations.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.studioviana.com/">
+  <meta property="og:url" content="https://www.studioviana.com/contact">
   <meta property="og:image" content="https://www.studioviana.com/og-image.jpg">
 
   <!-- Twitter -->
@@ -27,38 +26,37 @@
   <meta name="twitter:image" content="https://www.studioviana.com/og-image.jpg">
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS (VITE PATHS) -->
+  <!-- CSS -->
   <link rel="stylesheet" href="./src/css/base.css">
   <link rel="stylesheet" href="./src/css/components.css">
   <link rel="stylesheet" href="./src/css/layout.css">
   <link rel="stylesheet" href="./src/css/creative-effects.css">
   <link rel="stylesheet" href="./src/css/micro-interactions.css">
+  <link rel="stylesheet" href="./src/css/premium.css">
 </head>
 <body data-auth-protected>
+
+  <div class="page-transition-overlay" id="page-overlay"></div>
 
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-            <div class="logo">
+      <div class="logo">
         <a href="index.html">
           <img src="./src/assets/images/flower.png" alt="Studio Viana Logo" class="logo-img">
           STUDIO VIANA</a>
       </div>
-
       <nav class="desktop-nav">
         <a href="work.html">Work</a>
         <a href="services.html">Services</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
       </nav>
-
       <div class="header-actions">
         <button class="menu-toggle" aria-label="Open Menu">
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </button>
         <a href="login.html" class="header-account-chip" data-account-chip>Login</a>
       </div>
@@ -66,7 +64,7 @@
   </header>
 
   <div class="fullscreen-menu">
-  <button class="menu-close" aria-label="Close Menu">Close</button>
+    <button class="menu-close" aria-label="Close Menu">Close</button>
     <div class="menu-inner">
       <div class="menu-left">
         <nav class="menu-links">
@@ -77,10 +75,9 @@
           <a href="login.html" data-auth-link>Login</a>
         </nav>
       </div>
-
       <div class="menu-right">
         <p><strong>Studio Viana</strong></p>
-        <p>Digital Artist & 3D Visualizer</p>
+        <p>Digital Artist &amp; 3D Visualizer</p>
         <p>Designing visual identity and physical space.</p>
       </div>
     </div>
@@ -90,47 +87,99 @@
   <section class="page-hero reveal">
     <div class="container">
       <p class="section-kicker">Contact</p>
-      <h1 class="page-title">Let&rsquo;s Work Together</h1>
-      <p class="page-lead">For project inquiries, collaborations, or general questions.</p>
+      <h1 class="page-title">Let&rsquo;s build<br>something together.</h1>
+      <p class="page-lead">For custom wallpaper quotes, project collaborations, or general questions &mdash; WhatsApp is the fastest way to reach us.</p>
     </div>
   </section>
+
+  <!-- WhatsApp Primary CTA -->
+  <section class="whatsapp-cta-section reveal">
+    <div class="container">
+      <div class="whatsapp-cta-inner">
+        <p class="section-kicker" style="text-align:center;">Fastest Response</p>
+        <h2 class="section-title" style="text-align:center; font-size:clamp(1.6rem,3vw,2.4rem);">Get a quote in under 60 seconds</h2>
+        <p style="text-align:center; color:var(--muted); font-size:0.9rem; max-width:400px;">Tell us your wall size and theme preference. We&rsquo;ll send back a custom estimate immediately.</p>
+        <a href="https://api.whatsapp.com/send?phone=919737711570&text=Hi%20Studio%20Viana%2C%20I%20am%20interested%20in%20a%20custom%20wallpaper%20quote%20for%20my%20space." target="_blank" rel="noopener" class="whatsapp-btn" id="main-whatsapp-btn">
+          <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12a11.9 11.9 0 001.64 6.07L0 24l6.1-1.6A11.95 11.95 0 0012 24c6.63 0 12-5.37 12-12a11.93 11.93 0 00-3.48-8.52zM12 22a9.93 9.93 0 01-5.06-1.38l-.36-.21-3.73.98.99-3.63-.24-.38A9.93 9.93 0 012 12C2 6.48 6.48 2 12 2a9.93 9.93 0 0110 10A9.93 9.93 0 0112 22zm5.44-7.4c-.3-.15-1.75-.86-2.02-.96s-.47-.15-.66.15-.76.96-.93 1.16-.34.22-.64.07a8.07 8.07 0 01-2.38-1.47 8.94 8.94 0 01-1.65-2.05c-.17-.3-.02-.46.13-.61s.3-.34.45-.51.2-.3.3-.5.05-.37-.02-.52-.66-1.6-.9-2.19c-.24-.57-.47-.49-.66-.5h-.56a1.08 1.08 0 00-.78.37 3.29 3.29 0 00-1.03 2.45 5.71 5.71 0 001.2 3.04 13.1 13.1 0 005.02 4.43c.7.3 1.25.48 1.67.62.7.22 1.34.19 1.84.11.56-.08 1.75-.72 2-1.41s.25-1.29.18-1.41-.27-.22-.57-.37z"/>
+          </svg>
+          Chat on WhatsApp
+        </a>
+        <p class="whatsapp-note">Usually responds within a few hours &bull; +91 9737711570</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
 
   <!-- Contact Content -->
   <section class="contact-content reveal">
     <div class="container contact-grid">
+
+      <!-- Left: Info -->
       <div class="contact-card">
-        <h2>Studio Details</h2>
-        <p>If you&rsquo;re interested in working together, reach out and tell us about your project.</p>
-        <p class="contact-links">
-          <a href="mailto:vickyranagovind@gmail.com"><strong>Email</strong></a><br>
-          <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">
-            <strong>Instagram</strong>
-          </a>
-          <br>
-          <a href="https://www.behance.net/" target="_blank" rel="noopener">
-            <strong>Behance</strong>
-          </a>
+        <p class="section-kicker">Studio Details</p>
+        <h2 style="font-family:var(--font-heading); font-size:1.8rem; margin-bottom:12px;">Let&rsquo;s talk about your space.</h2>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.7;">
+          Whether you know exactly what you want or just have a rough idea &mdash; share your wall dimensions, room type, and favorite theme. We&rsquo;ll handle the rest.
         </p>
+
+        <div class="contact-info-cards" style="margin-top: 32px;">
+          <a href="mailto:vickyranagovind@gmail.com" class="contact-info-item">
+            <div class="contact-info-icon">✉</div>
+            <div>
+              <span class="contact-info-label">Email</span>
+              <span class="contact-info-value">vickyranagovind@gmail.com</span>
+            </div>
+          </a>
+          <a href="tel:+919737711570" class="contact-info-item">
+            <div class="contact-info-icon">📞</div>
+            <div>
+              <span class="contact-info-label">Phone / WhatsApp</span>
+              <span class="contact-info-value">+91 9737711570</span>
+            </div>
+          </a>
+          <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener" class="contact-info-item">
+            <div class="contact-info-icon">📷</div>
+            <div>
+              <span class="contact-info-label">Instagram</span>
+              <span class="contact-info-value">@_studio_viana</span>
+            </div>
+          </a>
+          <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener" class="contact-info-item">
+            <div class="contact-info-icon">🎨</div>
+            <div>
+              <span class="contact-info-label">Behance</span>
+              <span class="contact-info-value">vickyrana8</span>
+            </div>
+          </a>
+        </div>
       </div>
 
-      <form class="contact-form">
+      <!-- Right: Form -->
+      <form class="contact-form" id="contact-form" novalidate>
         <label>
-          Name
-          <input type="text" name="name" placeholder="Your name">
+          Your Name
+          <input type="text" name="name" id="contact-name" placeholder="Priya Mehta" required>
         </label>
         <label>
-          Email
-          <input type="email" name="email" placeholder="you@example.com">
+          Email Address
+          <input type="email" name="email" id="contact-email" placeholder="you@example.com" required>
         </label>
         <label>
           Project Type
-          <input type="text" name="type" placeholder="Brand identity, interior, etc.">
+          <input type="text" name="type" id="contact-type" placeholder="Custom wallpaper, Brand identity, etc.">
+        </label>
+        <label>
+          Wall Dimensions (optional)
+          <input type="text" name="dimensions" id="contact-dimensions" placeholder="e.g. 300cm wide × 270cm tall">
         </label>
         <label>
           Message
-          <textarea name="message" rows="4" placeholder="Tell us about your project"></textarea>
+          <textarea name="message" id="contact-message" rows="4" placeholder="Tell us about your project, the space, and the mood you&apos;re going for." required></textarea>
         </label>
-        <button type="submit" class="cta-link">Send inquiry</button>
+        <button type="submit" id="contact-submit">Send Inquiry &rarr;</button>
+        <p class="whatsapp-note" style="text-align:center; margin-top:12px;">Or <a href="https://api.whatsapp.com/send?phone=919737711570&text=Hi%20Studio%20Viana%2C%20I%20have%20an%20inquiry." target="_blank" rel="noopener" style="color:var(--accent);">message us on WhatsApp</a> for a faster response.</p>
       </form>
     </div>
   </section>
@@ -140,7 +189,7 @@
     <div class="container footer-grid">
       <div class="footer-brand">
         <p class="footer-title">Studio Viana</p>
-        <p class="footer-tagline">Digital Artist & 3D Visualizer</p>
+        <p class="footer-tagline">Digital Artist &amp; 3D Visualizer</p>
         <p class="footer-note">Designing visual identity and physical space with clarity and intent.</p>
       </div>
       <div class="footer-links">
@@ -158,9 +207,9 @@
       <div class="footer-social">
         <p class="footer-heading">Social Links</p>
         <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.behance.net/" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener">Behance</a>
+        <a href="https://stock.adobe.com/in/contributor/212160808/viana2-o?load_type=author&prev_url=detail" target="_blank" rel="noopener">Adobe Stock</a>
       </div>
-
     </div>
     <div class="footer-bottom">
       <div class="container">
@@ -170,25 +219,13 @@
     </div>
   </footer>
 
-  <!-- JS -->
-  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
-  <script type="module" src="./src/js/main.js"></script>
   <div class="cursor">
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
   </div>
+
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+  <script type="module" src="./src/js/main.js"></script>
+  <script type="module" src="./src/js/premium.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-

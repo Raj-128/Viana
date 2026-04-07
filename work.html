@@ -31,8 +31,11 @@
   <link rel="stylesheet" href="./src/css/layout.css">
   <link rel="stylesheet" href="./src/css/creative-effects.css">
   <link rel="stylesheet" href="./src/css/micro-interactions.css">
+  <link rel="stylesheet" href="./src/css/premium.css">
 </head>
 <body data-auth-protected>
+
+  <div class="page-transition-overlay" id="page-overlay"></div>
 
   <header class="site-header">
     <div class="container header-inner">
@@ -50,14 +53,11 @@
         <a href="contact.html">Contact</a>
       </nav>
 
-      <div class="header-actions">
-        <button class="menu-toggle" aria-label="Open Menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-        <a href="login.html" class="header-account-chip" data-account-chip>Login</a>
-      </div>
+      <button class="menu-toggle" aria-label="Open Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
   </header>
 
@@ -70,7 +70,6 @@
           <a href="services.html">Services</a>
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
-          <a href="login.html" data-auth-link>Login</a>
         </nav>
       </div>
 
@@ -84,27 +83,39 @@
 
   <section class="wallpaper-marquee">
     <div class="marquee-row">
-      <div class="marquee-track" data-marquee-track="forward">
+      <div class="marquee-track">
         <div class="marquee-group">
-          <img src="./src/assets/images/wallpapers/1.jpeg" alt="Studio Viana wallpaper 1" draggable="false">
-          <img src="./src/assets/images/wallpapers/2.jpeg" alt="Studio Viana wallpaper 2" draggable="false">
-          <img src="./src/assets/images/wallpapers/3.jpeg" alt="Studio Viana wallpaper 3" draggable="false">
-          <img src="./src/assets/images/wallpapers/4.jpeg" alt="Studio Viana wallpaper 4" draggable="false">
-          <img src="./src/assets/images/wallpapers/5.jpeg" alt="Studio Viana wallpaper 5" draggable="false">
-          <img src="./src/assets/images/wallpapers/6.jpeg" alt="Studio Viana wallpaper 6" draggable="false">
+          <img src="./src/assets/images/collection-01.svg" alt="Wallpaper 01">
+          <img src="./src/assets/images/collection-02.svg" alt="Wallpaper 02">
+          <img src="./src/assets/images/collection-03.svg" alt="Wallpaper 03">
+          <img src="./src/assets/images/collection-01.svg" alt="Wallpaper 04">
+          <img src="./src/assets/images/collection-02.svg" alt="Wallpaper 05">
+        </div>
+        <div class="marquee-group" aria-hidden="true">
+          <img src="./src/assets/images/collection-01.svg" alt="">
+          <img src="./src/assets/images/collection-02.svg" alt="">
+          <img src="./src/assets/images/collection-03.svg" alt="">
+          <img src="./src/assets/images/collection-01.svg" alt="">
+          <img src="./src/assets/images/collection-02.svg" alt="">
         </div>
       </div>
     </div>
 
     <div class="marquee-row reverse">
-      <div class="marquee-track" data-marquee-track="reverse">
+      <div class="marquee-track">
         <div class="marquee-group">
-          <img src="./src/assets/images/wallpapers/4.jpeg" alt="Studio Viana wallpaper 7" draggable="false">
-          <img src="./src/assets/images/wallpapers/5.jpeg" alt="Studio Viana wallpaper 8" draggable="false">
-          <img src="./src/assets/images/wallpapers/6.jpeg" alt="Studio Viana wallpaper 9" draggable="false">
-          <img src="./src/assets/images/wallpapers/1.jpeg" alt="Studio Viana wallpaper 10" draggable="false">
-          <img src="./src/assets/images/wallpapers/2.jpeg" alt="Studio Viana wallpaper 11" draggable="false">
-          <img src="./src/assets/images/wallpapers/3.jpeg" alt="Studio Viana wallpaper 12" draggable="false">
+          <img src="./src/assets/images/collection-03.svg" alt="Wallpaper 06">
+          <img src="./src/assets/images/collection-02.svg" alt="Wallpaper 07">
+          <img src="./src/assets/images/collection-01.svg" alt="Wallpaper 08">
+          <img src="./src/assets/images/collection-03.svg" alt="Wallpaper 09">
+          <img src="./src/assets/images/collection-02.svg" alt="Wallpaper 10">
+        </div>
+        <div class="marquee-group" aria-hidden="true">
+          <img src="./src/assets/images/collection-03.svg" alt="">
+          <img src="./src/assets/images/collection-02.svg" alt="">
+          <img src="./src/assets/images/collection-01.svg" alt="">
+          <img src="./src/assets/images/collection-03.svg" alt="">
+          <img src="./src/assets/images/collection-02.svg" alt="">
         </div>
       </div>
     </div>
@@ -174,7 +185,7 @@
 
         <div class="estimator-preview">
           <div class="preview-frame">
-            <img id="estimate-preview-image" src="./src/assets/images/wallpapers/2.jpeg" alt="Wallpaper preview">
+            <img id="estimate-preview-image" src="./src/assets/images/collection-01.svg" alt="Wallpaper preview">
             <div class="preview-overlay">
               <p id="estimate-preview-label">Child</p>
               <h3 id="estimate-preview-title">Moon Garden Storywall</h3>
@@ -298,6 +309,7 @@
 
   <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
   <script type="module" src="./src/js/main.js"></script>
+  <script type="module" src="./src/js/premium.js"></script>
   <div class="cursor">
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>

@@ -6,7 +6,7 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 140px;   /* prevents header overlap */
+  padding-top: 60px;   /* Adjusted to fix massive gap below mode toggle */
   padding-bottom: 80px;
 }
 
