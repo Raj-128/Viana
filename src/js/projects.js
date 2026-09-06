@@ -1,9 +1,9 @@
-import wallpaperBranch from "../assets/images/wallpapers/1.jpeg";
-import wallpaperFairy from "../assets/images/wallpapers/2.jpeg";
-import wallpaperForest from "../assets/images/wallpapers/3.jpeg";
-import wallpaperArchTree from "../assets/images/wallpapers/4.jpeg";
-import wallpaperJungle from "../assets/images/wallpapers/5.jpeg";
-import wallpaperClassicGarden from "../assets/images/wallpapers/6.jpeg";
+﻿import wallpaperBranch from "../assets/images/wallpapers/optimized/1.jpg";
+import wallpaperFairy from "../assets/images/wallpapers/optimized/2.jpg";
+import wallpaperForest from "../assets/images/wallpapers/optimized/3.jpg";
+import wallpaperArchTree from "../assets/images/wallpapers/optimized/4.jpg";
+import wallpaperJungle from "../assets/images/wallpapers/optimized/5.jpg";
+import wallpaperClassicGarden from "../assets/images/wallpapers/optimized/6.jpg";
 
 export const wallpaperShowcaseImages = [
   wallpaperBranch,
@@ -174,3 +174,4 @@ export const projects = [
     summary: "Atmospheric abstract rendering with depth-led framing for campaign stills and motion posters.",
   },
 ];
+

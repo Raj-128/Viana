@@ -4,6 +4,7 @@ const OWNER_EMAIL = "vickyranagovind@gmail.com";
 const OWNER_PHONE = "+91 9737711570";
 const PUBLIC_PAGES = new Set(["", "index.html", "login.html", "admin-login.html"]);
 const ADMIN_HOLD_DURATION = 950;
+const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
 
 function readStorage(key, fallback) {
   try {
@@ -17,8 +18,9 @@ function readStorage(key, fallback) {
 function writeStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
-    // Ignore storage errors.
+    return false;
   }
 }
 
@@ -61,11 +63,14 @@ function formatPhoneForDisplay(value = "") {
 }
 
 function getUsers() {
-  return readStorage(USERS_KEY, []);
+  const users = readStorage(USERS_KEY, []);
+  return Array.isArray(users) ? users : [];
 }
 
 function saveUsers(users) {
-  writeStorage(USERS_KEY, users);
+  if (!writeStorage(USERS_KEY, users)) {
+    throw new Error("Browser storage is unavailable or full. Enable storage for this site and try again.");
+  }
 }
 
 function getCurrentPageName(targetHref = window.location.href) {
@@ -176,7 +181,9 @@ function createSessionPayload(user) {
 }
 
 function setSession(user) {
-  writeStorage(SESSION_KEY, createSessionPayload(user));
+  if (!writeStorage(SESSION_KEY, createSessionPayload(user))) {
+    throw new Error("Could not save your session. Enable browser storage and try again.");
+  }
 }
 
 function findUserByIdentifier(identifier, role = "") {
@@ -361,7 +368,18 @@ function initHiddenAdminAccess() {
 }
 
 export function getSession() {
-  return readStorage(SESSION_KEY, null);
+  const session = readStorage(SESSION_KEY, null);
+  if (!session?.id || !session?.lastLoginAt) {
+    return null;
+  }
+
+  const lastLoginTime = Date.parse(session.lastLoginAt);
+  if (!Number.isFinite(lastLoginTime) || Date.now() - lastLoginTime > SESSION_TTL_MS) {
+    removeStorage(SESSION_KEY);
+    return null;
+  }
+
+  return session;
 }
 
 export function getCurrentUser() {
@@ -389,7 +407,7 @@ export function isAdminConfigured() {
   return getUsers().some((user) => user.role === "admin");
 }
 
-export async function setupAdmin({ name, password, confirmPassword }) {
+export async function setupAdmin({ name, identifier, password, confirmPassword }) {
   if (isAdminConfigured()) {
     throw new Error("Admin access is already configured.");
   }
@@ -397,6 +415,14 @@ export async function setupAdmin({ name, password, confirmPassword }) {
   const passwordError = validatePassword(password);
   if (passwordError) {
     throw new Error(passwordError);
+  }
+
+  const cleanIdentifier = identifier.trim();
+  const identifierIsOwner =
+    normalizeEmail(cleanIdentifier) === normalizeEmail(OWNER_EMAIL) ||
+    normalizePhone(cleanIdentifier) === normalizePhone(OWNER_PHONE);
+  if (!identifierIsOwner) {
+    throw new Error('Use the registered owner email or phone number.');
   }
 
   if (password !== confirmPassword) {
@@ -407,10 +433,10 @@ export async function setupAdmin({ name, password, confirmPassword }) {
   const adminRecord = {
     id: "studio-viana-admin",
     name: name.trim() || "Studio Viana Admin",
-    email: OWNER_EMAIL,
-    emailNormalized: normalizeEmail(OWNER_EMAIL),
-    phone: OWNER_PHONE,
-    phoneNormalized: normalizePhone(OWNER_PHONE),
+    email: cleanIdentifier.includes('@') ? normalizeEmail(cleanIdentifier) : OWNER_EMAIL,
+    emailNormalized: cleanIdentifier.includes('@') ? normalizeEmail(cleanIdentifier) : normalizeEmail(OWNER_EMAIL),
+    phone: cleanIdentifier.includes('@') ? OWNER_PHONE : formatPhoneForDisplay(cleanIdentifier),
+    phoneNormalized: cleanIdentifier.includes('@') ? normalizePhone(OWNER_PHONE) : normalizePhone(cleanIdentifier),
     role: "admin",
     passwordHash: await hashSecret(password),
     createdAt: new Date().toISOString(),
@@ -459,6 +485,14 @@ export async function registerUser({ name, email, phone, password, confirmPasswo
   const passwordError = validatePassword(password);
   if (passwordError) {
     throw new Error(passwordError);
+  }
+
+  const cleanIdentifier = identifier.trim();
+  const identifierIsOwner =
+    normalizeEmail(cleanIdentifier) === normalizeEmail(OWNER_EMAIL) ||
+    normalizePhone(cleanIdentifier) === normalizePhone(OWNER_PHONE);
+  if (!identifierIsOwner) {
+    throw new Error('Use the registered owner email or phone number.');
   }
 
   if (password !== confirmPassword) {
@@ -668,6 +702,14 @@ function initClientAuthPage() {
   const accountContinue = authRoot.querySelector("[data-account-continue]");
   let currentClientView = requestedClientView;
 
+  const syncLightState = () => {
+    const lightsOn = document.body.classList.contains('lights-on');
+    if (authInterface) authInterface.hidden = !lightsOn || Boolean(getSession());
+    if (loginForm) loginForm.inert = !lightsOn;
+    if (registerForm) registerForm.inert = !lightsOn;
+    if (clientToggle) clientToggle.inert = !lightsOn;
+  };
+
   const pulseInterface = () => {
     authInterface?.animate(
       [
@@ -727,6 +769,7 @@ function initClientAuthPage() {
     applyAuthStateToDocument();
     syncAuthLinks();
     renderAccountPanel();
+    syncLightState();
 
     if (!getSession()) {
       switchView(
@@ -746,6 +789,7 @@ function initClientAuthPage() {
     document.body.classList.toggle("lights-on");
     document.body.classList.add("lamp-swing");
     randomizeAccent();
+    syncLightState();
     window.setTimeout(() => {
       document.body.classList.remove("lamp-swing");
     }, 460);
@@ -850,6 +894,14 @@ function initAdminAuthPage() {
   const logoutButton = authRoot.querySelector("[data-logout-button]");
   const adminNote = authRoot.querySelector("[data-admin-note]");
 
+
+  const syncLightState = () => {
+    const lightsOn = document.body.classList.contains("lights-on");
+    if (authInterface) authInterface.hidden = !lightsOn || Boolean(getSession()?.role === "admin");
+    if (adminSetupForm) adminSetupForm.inert = !lightsOn;
+    if (adminLoginForm) adminLoginForm.inert = !lightsOn;
+  };
+
   const redirectAfterSuccess = (message, statusTarget) => {
     if (!shouldAutoRedirect()) {
       return false;
@@ -908,6 +960,7 @@ function initAdminAuthPage() {
     syncAuthLinks();
     updateAdminView();
     renderAccountPanel();
+    syncLightState();
     updateStageHeights(authRoot);
   };
 
@@ -915,6 +968,7 @@ function initAdminAuthPage() {
     document.body.classList.toggle("lights-on");
     document.body.classList.add("lamp-swing");
     randomizeAccent();
+    syncLightState();
     window.setTimeout(() => {
       document.body.classList.remove("lamp-swing");
     }, 460);
@@ -932,6 +986,7 @@ function initAdminAuthPage() {
     try {
       await setupAdmin({
         name: `${formData.get("name") || ""}`,
+        identifier: String(formData.get("identifier") || ""),
         password: `${formData.get("password") || ""}`,
         confirmPassword: `${formData.get("confirmPassword") || ""}`,
       });
@@ -985,3 +1040,4 @@ document.addEventListener("DOMContentLoaded", () => {
   initClientAuthPage();
   initAdminAuthPage();
 });
+

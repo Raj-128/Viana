@@ -1541,3 +1541,11 @@ a, a img, .showcase-item img, .strip-img img {
 a {
   pointer-events: auto; /* Ensure wrapper stays clickable */
 }
+
+/* Keep protected artwork out of browser print output. */
+@media print {
+  html.print-guard .protected-media-block,
+  html.print-guard .protected-media-block img {
+    visibility: hidden !important;
+  }
+}

@@ -1,17 +1,24 @@
-/**
- * Studio Viana — Premium Interactions
+﻿/**
+ * Studio Viana - Premium Interactions
  * Handles: stats counter, horizontal drag scroll, page transitions,
  * cursor text, WhatsApp contact form, parallax strip
  */
+
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const supportsFinePointer = window.matchMedia("(pointer: fine)");
+
+function shouldRunMotion() {
+  return !prefersReducedMotion.matches && !document.hidden;
+}
 
 /* ===========================
    SMOOTH JS MARQUEE
 =========================== */
 function initTrustMarquee() {
   const tracks = document.querySelectorAll('.trust-bar-track');
-  if (!tracks.length) return;
+  if (!tracks.length || prefersReducedMotion.matches) return;
 
-  const speed = 0.03; // pixels per millisecond (smooth slow glide)
+  const speed = 0.025; // pixels per millisecond (smooth slow glide)
   
   tracks.forEach(track => {
     let offset = 0;
@@ -21,6 +28,11 @@ function initTrustMarquee() {
       const delta = now - lastTime;
       lastTime = now;
       
+      if (!shouldRunMotion()) {
+        requestAnimationFrame(loop);
+        return;
+      }
+
       offset -= speed * delta;
       
       // Calculate 50% width since content is exactly duplicated
@@ -192,54 +204,76 @@ function initPageTransitions() {
 =========================== */
 function initHeroParallax() {
   const strip = document.querySelector('.hero-image-strip');
-  if (!strip) return;
+  if (!strip || prefersReducedMotion.matches) return;
+
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    if (!shouldRunMotion()) return;
+    const scrolled = window.scrollY;
+    strip.querySelectorAll('.strip-img img').forEach((img, i) => {
+      const speed = 0.025 + i * 0.012;
+      img.style.transform = `scale(1.08) translate3d(0, ${scrolled * speed}px, 0)`;
+    });
+  };
 
   window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const images = strip.querySelectorAll('.strip-img img');
-    images.forEach((img, i) => {
-      const speed = 0.04 + i * 0.02;
-      img.style.transform = `scale(1.08) translateY(${scrolled * speed}px)`;
-    });
+    if (!frame) frame = requestAnimationFrame(update);
   }, { passive: true });
 }
 
 
 /* ===========================
-   CONTACT FORM — WHATSAPP SUBMIT
+   CONTACT FORM - WHATSAPP SUBMIT
 =========================== */
 function initContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
+  const status = document.createElement('p');
+  status.className = 'form-status';
+  status.setAttribute('aria-live', 'polite');
+  form.appendChild(status);
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('contact-name')?.value || '';
-    const email = document.getElementById('contact-email')?.value || '';
-    const type = document.getElementById('contact-type')?.value || '';
-    const dimensions = document.getElementById('contact-dimensions')?.value || '';
-    const message = document.getElementById('contact-message')?.value || '';
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const name = document.getElementById('contact-name')?.value.trim() || '';
+    const email = document.getElementById('contact-email')?.value.trim() || '';
+    const type = document.getElementById('contact-type')?.value.trim() || '';
+    const dimensions = document.getElementById('contact-dimensions')?.value.trim() || '';
+    const message = document.getElementById('contact-message')?.value.trim() || '';
 
     const lines = [
-      `Hi Studio Viana!`,
-      ``,
+      'Hi Studio Viana,',
+      '',
       `Name: ${name}`,
-      email ? `Email: ${email}` : '',
-      type ? `Project Type: ${type}` : '',
-      dimensions ? `Wall Dimensions: ${dimensions}` : '',
-      message ? `Message: ${message}` : '',
+      `Email: ${email}`,
+      type ? `Project type: ${type}` : '',
+      dimensions ? `Wall dimensions: ${dimensions}` : '',
+      `Message: ${message}`,
     ].filter(Boolean);
 
-    const encoded = encodeURIComponent(lines.join('\n'));
-    window.open(`https://api.whatsapp.com/send?phone=919737711570&text=${encoded}`, '_blank');
+    const url = `https://api.whatsapp.com/send?phone=919737711570&text=${encodeURIComponent(lines.join('\n'))}`;
+    const popup = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!popup) {
+      window.location.href = url;
+    }
+
+    status.textContent = 'Inquiry ready in WhatsApp.';
   });
 }
-
 
 /* ===========================
    AWARDS BADGE HOVER FX
 =========================== */
 function initAwardsBadges() {
+  if (!supportsFinePointer.matches || prefersReducedMotion.matches) return;
   document.querySelectorAll('.award-badge').forEach(badge => {
     badge.addEventListener('mousemove', (e) => {
       const rect = badge.getBoundingClientRect();
@@ -258,6 +292,7 @@ function initAwardsBadges() {
    STAT BLOCKS MICRO HOVER
 =========================== */
 function initStatHovers() {
+  if (!supportsFinePointer.matches || prefersReducedMotion.matches) return;
   document.querySelectorAll('.stat-block').forEach(block => {
     block.addEventListener('mousemove', (e) => {
       const rect = block.getBoundingClientRect();
@@ -276,6 +311,7 @@ function initStatHovers() {
    PRICING CARD HOVER GLOW
 =========================== */
 function initPricingGlow() {
+  if (!supportsFinePointer.matches || prefersReducedMotion.matches) return;
   document.querySelectorAll('.pricing-card:not(.featured)').forEach(card => {
     card.addEventListener('mousemove', (e) => {
       const rect = card.getBoundingClientRect();
@@ -294,6 +330,7 @@ function initPricingGlow() {
    TESTIMONIAL CARDS 3D TILT
 =========================== */
 function initTestimonialTilt() {
+  if (!supportsFinePointer.matches || prefersReducedMotion.matches) return;
   document.querySelectorAll('.testimonial-card').forEach(card => {
     card.addEventListener('mousemove', (e) => {
       const rect = card.getBoundingClientRect();
@@ -311,31 +348,11 @@ function initTestimonialTilt() {
 
 
 /* ===========================
-   ANTI-THEFT SYSTEM & SECURITY
+   MEDIA PROTECTION HINTS
 =========================== */
 function initSecurity() {
-  // Prevent Right Click globally
-  document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-  });
-
-  // Prevent generic image drag-and-drop
-  document.addEventListener('dragstart', (e) => {
-    if (e.target.nodeName === 'IMG') {
-      e.preventDefault();
-    }
-  });
-
-  // Prevent basic shortcut keys (PrintScreen, Ctrl+S)
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'PrintScreen') {
-      // Trying to clear clipboard (only works in some browsers)
-      navigator.clipboard.writeText('');
-      alert("Screenshots are disabled for premium assets.");
-    }
-    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p')) {
-      e.preventDefault();
-    }
+  document.querySelectorAll('img').forEach(img => {
+    img.draggable = false;
   });
 }
 
@@ -356,3 +373,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initTestimonialTilt();
   initSecurity();
 });
+
+

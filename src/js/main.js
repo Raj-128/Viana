@@ -845,9 +845,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const theme = getThemeDetails(estimatorState.theme) ?? pricingThemes[0];
     const paper = paperTypes.find((item) => item.id === estimatorState.paper) ?? paperTypes[0];
-    const width = Math.max(40, Number(estimatorState.width) || 40);
-    const height = Math.max(40, Number(estimatorState.height) || 40);
-    const quantity = Math.max(1, Number(estimatorState.quantity) || 1);
+    const width = Math.min(500, Math.max(40, Number(estimatorState.width) || 40));
+    const height = Math.min(500, Math.max(40, Number(estimatorState.height) || 40));
+    const quantity = Math.min(12, Math.max(1, Number(estimatorState.quantity) || 1));
     const dimensionFactor = width + height;
     const selectedDesign = activeProject?.title ?? theme.title;
     const previewSource = activeProject?.cover ?? theme.preview;
@@ -1032,7 +1032,9 @@ document.addEventListener("DOMContentLoaded", () => {
       description.textContent = project.summary;
     }
     if (gallery && project.gallery) {
-      gallery.innerHTML = project.gallery
+      const supportingImages = project.gallery.filter((image) => image !== project.cover);
+      gallery.closest('.project-gallery')?.toggleAttribute('hidden', supportingImages.length === 0);
+      gallery.innerHTML = supportingImages
         .map(
           (image, index) => `
             <div class="project-gallery-item reveal-media protected-media-block">
@@ -1054,6 +1056,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function enhanceContactForm() {
     const form = document.querySelector(".contact-form");
     if (!form) {
+      return;
+    }
+
+    if (form.id === "contact-form") {
       return;
     }
 
@@ -1137,3 +1143,4 @@ document.addEventListener("DOMContentLoaded", () => {
 window.goBack = function goBack() {
   window.location.href = "work.html";
 };
+
