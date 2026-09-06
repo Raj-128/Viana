@@ -57,6 +57,114 @@ html {
 }
 
 /* =========================
+   WORK CATALOGUE
+========================= */
+.catalogue-hero {
+  min-height: 390px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  color: #171613;
+  background:
+    linear-gradient(90deg, rgba(245, 243, 235, .94) 0%, rgba(245, 243, 235, .7) 46%, rgba(245, 243, 235, .27) 100%),
+    url('../assets/images/wallpapers/optimized/5.jpg') center 43% / cover;
+}
+
+.catalogue-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 100px;
+  background: linear-gradient(transparent, var(--bg));
+}
+
+.catalogue-hero-content { position: relative; z-index: 1; max-width: 920px; }
+.catalogue-breadcrumb, .catalogue-type > span, .filter-group label {
+  font-size: .66rem;
+  line-height: 1;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.catalogue-breadcrumb { margin-bottom: 23px; opacity: .72; }
+.catalogue-hero h1 {
+  max-width: 720px;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5.6vw, 5.3rem);
+  font-weight: 400;
+  line-height: .96;
+  letter-spacing: -.055em;
+}
+.catalogue-hero p:not(.catalogue-breadcrumb) { max-width: 590px; margin: 22px 0 0; font-size: 1rem; line-height: 1.65; }
+
+.catalogue-filters { padding: 32px 0 18px; background: var(--bg); }
+.catalogue-filters .filters-bar {
+  padding: 14px;
+  gap: 20px;
+  align-items: center;
+  border: 1px solid #211f1a;
+  background: rgba(255,255,255,.5);
+}
+.catalogue-search { height: 42px; min-width: min(310px, 100%); flex: 1 1 280px; display: flex; align-items: center; border: 1px solid var(--line); background: #fff; }
+.catalogue-search input { min-width: 0; flex: 1; border: 0; outline: 0; padding: 0 12px; background: transparent; font: inherit; font-size: .78rem; }
+.catalogue-search span:last-child { padding: 0 13px; font-size: 1.3rem; line-height: 1; }
+.catalogue-type { display: flex; flex-direction: column; gap: 7px; }
+.type-tabs { display: flex; gap: 12px; }
+.type-tabs .pill-btn { padding: 0; border: 0; border-radius: 0; background: none; font: inherit; font-size: .76rem; color: var(--muted); cursor: pointer; }
+.type-tabs .pill-btn.active { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.catalogue-filters .filter-group { gap: 7px; }
+.catalogue-filters .filter-group select { min-width: 105px; padding: 0 19px 2px 0; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; background: transparent; font-size: .76rem; }
+.catalogue-filters .filters-count { margin-left: auto; padding: 0; border: 0; font-size: .72rem; white-space: nowrap; }
+.catalogue-filters .clear-filters { padding: 6px 0; border: 0; background: none; text-decoration: underline; text-underline-offset: 3px; font-size: .7rem; }
+
+.catalogue-list { padding: 18px 0 100px; background: var(--bg); }
+.catalogue-list .work-grid { grid-template-columns: repeat(3, 1fr); gap: 30px 18px; }
+.catalogue-list .work-card {
+  min-height: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-decoration: none;
+}
+.catalogue-list .work-card:hover { transform: none; box-shadow: none; }
+.catalogue-card-image { position: relative; display: block; aspect-ratio: 4 / 4.75; overflow: hidden; background: #e8e3da; border: 5px solid #161616; }
+.catalogue-list .work-card img { transform: none; width: 100%; height: 100%; object-fit: cover; }
+.catalogue-list .work-card:hover img { transform: scale(1.035); }
+.catalogue-badge { position: absolute; right: 0; bottom: 0; left: 0; padding: 13px; background: #0e0e0d; color: #fff; text-align: center; font-size: .62rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; }
+.catalogue-plus { position: absolute; top: 12px; right: 12px; width: 31px; height: 31px; display: grid; place-items: center; border: 0; background: rgba(15,15,14,.92); color: #fff; font-size: 1.35rem; line-height: 1; opacity: 0; transform: translateY(-5px); transition: .25s ease; }
+.work-card:hover .catalogue-plus, .work-card:focus-visible .catalogue-plus { opacity: 1; transform: none; }
+.catalogue-card-copy { position: relative; padding: 13px 42px 0 0; color: var(--ink); }
+.catalogue-card-copy h3 { margin: 0; font-size: 1rem; line-height: 1.15; font-family: var(--font-body); font-weight: 700; }
+.catalogue-card-copy p { margin: 5px 0 0; color: var(--muted); font-size: .69rem; line-height: 1.35; }
+.catalogue-card-copy .catalogue-plus { top: 14px; right: 0; opacity: 1; transform: none; }
+.catalogue-card-copy .catalogue-plus::after { content: 'View details'; position: absolute; right: 0; top: 40px; width: 80px; color: var(--ink); font-size: .55rem; letter-spacing: .08em; text-transform: uppercase; opacity: 0; transition: opacity .2s; }
+.work-card:hover .catalogue-card-copy .catalogue-plus::after { opacity: 1; }
+.catalogue-actions { display: flex; gap: 13px; margin-top: 13px; }
+.catalogue-actions button { padding: 0; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: .64rem; letter-spacing: .05em; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.catalogue-actions .catalogue-add { font-weight: 700; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .catalogue-list .work-grid { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
+  .catalogue-filters .filters-bar { align-items: flex-end; }
+  .catalogue-filters .filters-count { margin-left: 0; }
+}
+@media (max-width: 600px) {
+  .catalogue-hero { min-height: 360px; }
+  .catalogue-hero h1 { font-size: 3rem; }
+  .catalogue-filters .filters-bar { gap: 16px; padding: 12px; }
+  .catalogue-search { flex-basis: 100%; }
+  .catalogue-secondary-filter { display: none; }
+  .catalogue-list .work-grid { gap: 25px 12px; }
+  .catalogue-card-image { border-width: 3px; }
+  .catalogue-badge { padding: 10px 5px; font-size: .52rem; letter-spacing: .18em; }
+  .catalogue-card-copy h3 { font-size: .82rem; }
+}
+
+/* =========================
    SOCIAL PROOF / TRUST BAR
 ========================= */
 

@@ -81,66 +81,39 @@
     </div>
   </div>
 
-  <section class="wallpaper-marquee">
-    <div class="marquee-row">
-      <div class="marquee-track">
-        <div class="marquee-group">
-          <img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="Wallpaper 01">
-          <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="Wallpaper 02">
-          <img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="Wallpaper 03">
-          <img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="Wallpaper 04">
-          <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="Wallpaper 05">
-        </div>
-        <div class="marquee-group" aria-hidden="true">
-          <img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="">
-          <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="">
-          <img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="">
-          <img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="">
-          <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="">
-        </div>
-      </div>
-    </div>
-
-    <div class="marquee-row reverse">
-      <div class="marquee-track">
-        <div class="marquee-group">
-          <img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="Wallpaper 06">
-          <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="Wallpaper 07">
-          <img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="Wallpaper 08">
-          <img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="Wallpaper 09">
-          <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="Wallpaper 10">
-        </div>
-        <div class="marquee-group" aria-hidden="true">
-          <img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="">
-          <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="">
-          <img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="">
-          <img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="">
-          <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="">
-        </div>
-      </div>
+  <section class="catalogue-hero">
+    <div class="container catalogue-hero-content">
+      <p class="catalogue-breadcrumb">Home / Collections</p>
+      <h1>Wallpapers &amp; visual stories</h1>
+      <p>Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click.</p>
     </div>
   </section>
 
-  <section class="page-hero reveal">
+  <section class="work-filters catalogue-filters">
     <div class="container">
-      <p class="section-kicker">Collections</p>
-      <h1 class="page-title">Work that feels custom from the first click.</h1>
-      <p class="page-lead">Switch between wallpaper stories and 3D concepts, then build a live mural estimate with the exact theme, finish, width, and height you want.</p>
-    </div>
-  </section>
-
-  <section class="work-filters">
-    <div class="container">
-      <div class="filters-head">
-        <div>
-          <p class="section-kicker">Browse Archive</p>
-          <h2 class="section-title">Collections and concept studies</h2>
-        </div>
-        <p class="filters-summary">Use the filters to narrow by year, source, or mural theme. The theme dropdown now includes directions like child, nature, floral, abstract, luxury, and minimal.</p>
-      </div>
-
       <div class="filters-bar">
+        <label class="catalogue-search" for="filter-search">
+          <span class="sr-only">Search designs</span>
+          <input id="filter-search" type="search" placeholder="Search designs, themes or locations">
+          <span aria-hidden="true">⌕</span>
+        </label>
+
+        <div class="catalogue-type" data-mode-toggle aria-label="Product type">
+          <span>Product type</span>
+          <div class="type-tabs">
+            <button class="pill-btn active" type="button" data-type="wallpaper">Wallpapers</button>
+            <button class="pill-btn" type="button" data-type="3d">3D concepts</button>
+          </div>
+        </div>
+
         <div class="filter-group">
+          <label for="filter-theme">Style</label>
+          <select id="filter-theme">
+            <option value="">All styles</option>
+          </select>
+        </div>
+
+        <div class="filter-group catalogue-secondary-filter">
           <label for="filter-year">Year</label>
           <select id="filter-year">
             <option value="">All years</option>
@@ -156,13 +129,6 @@
           </select>
         </div>
 
-        <div class="filter-group">
-          <label for="filter-theme">Theme</label>
-          <select id="filter-theme">
-            <option value="">All themes</option>
-          </select>
-        </div>
-
         <div class="filters-count" id="work-count">0 pieces</div>
 
         <button id="clear-filters" class="clear-filters">Clear</button>
@@ -170,7 +136,7 @@
     </div>
   </section>
 
-  <section class="work-list reveal">
+  <section class="work-list catalogue-list reveal">
     <div class="container work-grid" id="work-grid"></div>
   </section>
 
