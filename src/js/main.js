@@ -412,6 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const yearSelect = document.getElementById("filter-year");
   const ownershipSelect = document.getElementById("filter-ownership");
   const themeSelect = document.getElementById("filter-theme");
+  const searchInput = document.getElementById("filter-search");
   const clearBtn = document.getElementById("clear-filters");
   const workCount = document.getElementById("work-count");
   const modeToggles = document.querySelectorAll("[data-mode-toggle]");
@@ -629,18 +630,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderProjectCard(project, { featured = false } = {}) {
     const theme = getThemeDetails(project.theme);
-    const element = document.createElement("a");
-    element.href = `project.html?id=${project.id}`;
+    const isCatalogue = Boolean(grid);
+    const element = document.createElement(isCatalogue ? "article" : "a");
+    if (!isCatalogue) {
+      element.href = `project.html?id=${project.id}`;
+    }
     element.className = `work-card protected-media-block${featured ? " full" : ""}`;
 
-    element.innerHTML = `
-      <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
-      <div class="work-info">
-        <span>${project.mediumLabel}</span>
-        <h3>${project.title}</h3>
-        <p>${theme?.label ?? project.theme} / ${project.year}</p>
-      </div>
-    `;
+    element.innerHTML = isCatalogue
+      ? `
+        <a class="catalogue-card-image" href="project.html?id=${project.id}" aria-label="View details for ${project.title}">
+          <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
+          <span class="catalogue-plus" aria-hidden="true">+</span>
+          <span class="catalogue-badge">${project.ownership === "owned" ? "Studio collection" : "Curated edition"}</span>
+        </a>
+        <div class="catalogue-card-copy">
+          <h3>${project.title}</h3>
+          <p>${theme?.label ?? project.theme} · ${project.mediumLabel} · ${project.location}</p>
+          <a class="catalogue-plus" href="project.html?id=${project.id}" aria-label="View details for ${project.title}">+</a>
+        </div>
+        <div class="catalogue-actions">
+          <button type="button" class="catalogue-add" data-add-design="${project.id}">+ Add to quote</button>
+          <button type="button" class="catalogue-download" data-download-brief="${project.id}">↓ Download brief</button>
+        </div>
+      `
+      : `
+        <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
+        <div class="work-info">
+          <span>${project.mediumLabel}</span>
+          <h3>${project.title}</h3>
+          <p>${theme?.label ?? project.theme} / ${project.year}</p>
+        </div>
+      `;
+
+    if (isCatalogue) {
+      element.querySelector("[data-add-design]")?.addEventListener("click", () => {
+        estimatorState.theme = project.theme;
+        if (estimatorThemeSelect) estimatorThemeSelect.value = project.theme;
+        updateEstimator();
+        estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      element.querySelector("[data-download-brief]")?.addEventListener("click", () => {
+        const brief = [
+          "STUDIO VIANA — DESIGN BRIEF",
+          "",
+          `Design: ${project.title}`,
+          `Collection: ${project.mediumLabel}`,
+          `Style: ${theme?.label ?? project.theme}`,
+          `Location: ${project.location}`,
+          `Year: ${project.year}`,
+          "",
+          project.summary,
+          "",
+          "For custom sizing, paper options and a final quote, contact Studio Viana.",
+        ].join("\n");
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([brief], { type: "text/plain" }));
+        link.download = `${project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-brief.txt`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+    }
 
     return element;
   }
@@ -727,6 +777,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (themeSelect?.value) {
       filtered = filtered.filter((project) => project.theme === themeSelect.value);
+    }
+
+    const query = searchInput?.value.trim().toLowerCase();
+    if (query) {
+      filtered = filtered.filter((project) =>
+        [project.title, project.summary, project.location, project.mediumLabel, project.theme]
+          .join(" ")
+          .toLowerCase()
+          .includes(query)
+      );
     }
 
     renderProjects(filtered);
@@ -1085,6 +1145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   yearSelect?.addEventListener("change", applyFilters);
   ownershipSelect?.addEventListener("change", applyFilters);
   themeSelect?.addEventListener("change", applyFilters);
+  searchInput?.addEventListener("input", applyFilters);
   clearBtn?.addEventListener("click", () => {
     if (yearSelect) {
       yearSelect.value = "";
@@ -1094,6 +1155,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (themeSelect) {
       themeSelect.value = "";
+    }
+    if (searchInput) {
+      searchInput.value = "";
     }
     applyFilters();
   });
