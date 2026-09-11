@@ -8,29 +8,79 @@ function queryAll(scope, selector) {
 
 // ── CURSOR (RAF-based, smooth) ──────────────────────────────
 export function initEnhancedCursor() {
-  const dot     = document.querySelector(".cursor-dot");
+  const cursor = document.querySelector(".cursor");
+  const dot = document.querySelector(".cursor-dot");
   const outline = document.querySelector(".cursor-outline");
-  if (!dot || !outline || window.innerWidth < 768) return;
+  const canUseCustomCursor = window.matchMedia("(hover: hover) and (pointer: fine)");
 
-  let mx = 0, my = 0, ox = 0, oy = 0;
+  if (!cursor || !dot || !outline || !canUseCustomCursor.matches) return;
 
-  document.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+  let targetX = 0;
+  let targetY = 0;
+  let dotX = 0;
+  let dotY = 0;
+  let ringX = 0;
+  let ringY = 0;
+  let isReady = false;
+  let frameId = 0;
+  let lastFrameTime = 0;
 
-  function loop() {
-    ox += (mx - ox) * 0.12;
-    oy += (my - oy) * 0.12;
-    dot.style.transform    = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
-    outline.style.transform = `translate(${ox}px,${oy}px) translate(-50%,-50%)`;
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
+  const moveTowards = (current, target, maxDistance) => {
+    const distance = target - current;
+    return current + Math.sign(distance) * Math.min(Math.abs(distance), maxDistance);
+  };
 
-  const enlarge  = () => { outline.style.width = "60px"; outline.style.height = "60px"; };
-  const shrink   = () => { outline.style.width = "40px"; outline.style.height = "40px"; };
-  document.querySelectorAll("a,button,.work-card,.showcase-item").forEach(el => {
-    el.addEventListener("mouseenter", enlarge);
-    el.addEventListener("mouseleave", shrink);
-  });
+  const setInteractiveState = (element) => {
+    const interactive = element?.closest?.("a, button, input, select, textarea, [role='button'], .work-card, .showcase-item, .showcase-scroll-wrapper");
+    cursor.classList.toggle("is-interactive", Boolean(interactive));
+  };
+
+  const render = (time) => {
+    const elapsed = Math.min(32, Math.max(8, time - lastFrameTime || 16.67));
+    lastFrameTime = time;
+    const frameScale = elapsed / 16.67;
+
+    // Caps prevent a high system mouse speed from making either circle teleport.
+    dotX = moveTowards(dotX, targetX, 72 * frameScale);
+    dotY = moveTowards(dotY, targetY, 72 * frameScale);
+    ringX = moveTowards(ringX, targetX, 30 * frameScale);
+    ringY = moveTowards(ringY, targetY, 30 * frameScale);
+
+    dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
+    outline.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+    frameId = window.requestAnimationFrame(render);
+  };
+
+  document.documentElement.classList.add("has-custom-cursor");
+
+  document.addEventListener("pointermove", (event) => {
+    if (event.pointerType && event.pointerType !== "mouse") return;
+
+    targetX = event.clientX;
+    targetY = event.clientY;
+    if (!isReady) {
+      dotX = ringX = targetX;
+      dotY = ringY = targetY;
+      isReady = true;
+      cursor.classList.add("is-visible");
+    }
+  }, { passive: true });
+
+  document.addEventListener("pointerover", (event) => setInteractiveState(event.target), { passive: true });
+  document.addEventListener("pointerout", (event) => {
+    if (!event.relatedTarget || !event.relatedTarget.closest?.("a, button, input, select, textarea, [role='button'], .work-card, .showcase-item, .showcase-scroll-wrapper")) {
+      cursor.classList.remove("is-interactive");
+    }
+  }, { passive: true });
+  document.addEventListener("pointerdown", () => cursor.classList.add("is-pressed"), { passive: true });
+  document.addEventListener("pointerup", () => cursor.classList.remove("is-pressed"), { passive: true });
+  document.addEventListener("mouseleave", () => cursor.classList.remove("is-visible"));
+  document.addEventListener("mouseenter", () => isReady && cursor.classList.add("is-visible"));
+  window.addEventListener("blur", () => cursor.classList.remove("is-visible"));
+  window.addEventListener("focus", () => isReady && cursor.classList.add("is-visible"));
+
+  frameId = window.requestAnimationFrame(render);
+  window.addEventListener("pagehide", () => window.cancelAnimationFrame(frameId), { once: true });
 }
 
 // ── TILT: only on desktop, only on visible cards ────────────

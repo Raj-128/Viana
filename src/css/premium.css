@@ -6,6 +6,44 @@
 
 
 /* MODE TOGGLE UTILITIES */
+.project-guide { padding: 120px 0; }
+.project-guide-head { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-bottom: 38px; }
+.project-guide-head .section-title { max-width: 590px; margin: 0; }
+.project-guide-head .section-sub { margin: 0; }
+.project-guide-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+.project-guide-tab { padding: 11px 18px; border: 1px solid var(--line); border-radius: 999px; color: var(--text); font: inherit; font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
+.project-guide-tab:hover, .project-guide-tab:focus-visible { border-color: var(--text); transform: translateY(-2px); }
+.project-guide-tab.is-active { background: var(--text); border-color: var(--text); color: var(--bg); }
+.project-guide-panel { padding: clamp(26px, 4vw, 52px); border: 1px solid var(--text); background: rgba(255,255,255,.52); }
+.project-guide-summary { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 22px; max-width: 780px; }
+.project-guide-number { color: var(--accent); font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: .8; }
+.project-guide-summary h3 { margin: 7px 0 11px; font-family: var(--font-heading); font-size: clamp(1.65rem, 3vw, 2.6rem); font-weight: 400; }
+.project-guide-summary p:last-child { max-width: 650px; margin: 0; color: var(--muted); line-height: 1.65; }
+.project-guide-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 42px 0 34px; padding: 0; list-style: none; counter-reset: guide-step; }
+.project-guide-steps li { position: relative; padding: 20px 15px 0 0; border-top: 1px solid var(--line); counter-increment: guide-step; }
+.project-guide-steps li::before { content: "0" counter(guide-step); display: block; margin-bottom: 21px; color: var(--accent); font-size: .67rem; letter-spacing: .12em; }
+.project-guide-steps strong, .project-guide-steps span { display: block; }
+.project-guide-steps strong { margin-bottom: 8px; font-size: .88rem; }
+.project-guide-steps span { color: var(--muted); font-size: .78rem; line-height: 1.55; }
+.project-guide-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 23px; border-top: 1px solid var(--line); color: var(--muted); font-size: .78rem; }
+.project-guide-footer strong { color: var(--text); }
+.project-guide-cta { color: var(--text); font-size: .76rem; font-weight: 600; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; white-space: nowrap; }
+.project-guide-cta span { display: inline-block; margin-left: 6px; transition: transform .2s ease; }
+.project-guide-cta:hover span, .project-guide-cta:focus-visible span { transform: translateX(5px); }
+
+@media (max-width: 760px) {
+  .project-guide { padding: 82px 0; }
+  .project-guide-head, .project-guide-footer { align-items: flex-start; flex-direction: column; }
+  .project-guide-tabs { overflow-x: auto; padding-bottom: 4px; }
+  .project-guide-tab { flex: 0 0 auto; }
+  .project-guide-steps { grid-template-columns: 1fr 1fr; margin-top: 34px; }
+}
+
+@media (max-width: 460px) {
+  .project-guide-panel { padding: 24px 19px; }
+  .project-guide-steps { grid-template-columns: 1fr; gap: 22px; }
+}
+
 .show-3d {
   display: none !important;
 }
@@ -546,15 +584,10 @@ body.mode-3d .testimonial-stars span {
 .showcase-scroll-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
-  cursor: grab;
   padding-bottom: 40px;
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
   -webkit-overflow-scrolling: touch;
-}
-
-.showcase-scroll-wrapper:active {
-  cursor: grabbing;
 }
 
 .showcase-scroll-wrapper::-webkit-scrollbar {
@@ -1547,32 +1580,6 @@ body.mode-3d .service-card {
   background: rgba(14, 16, 24, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-}
-
-/* =========================
-   CURSOR TEXT ON HOVER
-========================= */
-
-.cursor-text {
-  position: fixed;
-  font-size: 0.62rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #fff;
-  background: var(--ink-soft);
-  padding: 6px 12px;
-  border-radius: 999px;
-  pointer-events: none;
-  z-index: 10000;
-  opacity: 0;
-  transform: translate(-50%, -120%) scale(0.8);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  white-space: nowrap;
-}
-
-.cursor-text.visible {
-  opacity: 1;
-  transform: translate(-50%, -130%) scale(1);
 }
 
 /* =========================

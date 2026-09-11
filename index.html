@@ -233,49 +233,25 @@
   </section>
 
   <!-- ======== STUDIO SYSTEM ======== -->
-  <section class="identity reveal system-section">
-    <div class="container identity-grid show-wallpaper" style="display: grid;">
-      <div class="identity-block">
-        <p class="section-kicker">Design System</p>
-        <h2>Graphic Design</h2>
-        <ul>
-          <li>Brand Identity</li>
-          <li>Typography</li>
-          <li>Visual Systems</li>
-          <li>Digital Design</li>
-        </ul>
+  <section class="project-guide reveal system-section" data-project-guide>
+    <div class="container">
+      <div class="project-guide-head">
+        <div><p class="section-kicker">A clear process</p><h2 class="section-title">See how your project comes together.</h2></div>
+        <p class="section-sub">Choose the service you need. We will show you exactly what to send, what happens next, and what you receive.</p>
       </div>
-      <div class="identity-block">
-        <p class="section-kicker">Spatial System</p>
-        <h2>Interior Design</h2>
-        <ul>
-          <li>Residential</li>
-          <li>Commercial</li>
-          <li>Space Planning</li>
-          <li>Material Selection</li>
-        </ul>
+      <div class="project-guide-tabs" role="tablist" aria-label="Choose a project type">
+        <button class="project-guide-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="guide-wallpaper" id="guide-tab-wallpaper" data-guide-mode="wallpaper">Custom wallpaper</button>
+        <button class="project-guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-3d" id="guide-tab-3d" data-guide-mode="3d">3D visualisation</button>
       </div>
-    </div>
-    <div class="container identity-grid show-3d" style="display: grid;">
-      <div class="identity-block">
-        <p class="section-kicker">3D System</p>
-        <h2>Architectural Visuals</h2>
-        <ul>
-          <li>Photorealism</li>
-          <li>Lighting Design</li>
-          <li>Material Texturing</li>
-          <li>Concept Visualization</li>
-        </ul>
+      <div class="project-guide-panel" id="guide-wallpaper" role="tabpanel" aria-labelledby="guide-tab-wallpaper" data-guide-panel="wallpaper">
+        <div class="project-guide-summary"><span class="project-guide-number">01</span><div><p class="section-kicker">Custom mural wallpaper</p><h3>From your wall to a print-ready mural.</h3><p>Share a photo, your wall measurements, and the feeling you want the room to have. We turn that into a mural designed specifically for your space.</p></div></div>
+        <ol class="project-guide-steps"><li><strong>You send</strong><span>A wall photo, width and height, location, and a few style references.</span></li><li><strong>We shape the direction</strong><span>You receive the suggested theme, paper finish, estimated price, and timeline.</span></li><li><strong>You approve</strong><span>We refine the artwork and confirm the final proof before printing.</span></li><li><strong>Ready for your wall</strong><span>Your custom-sized wallpaper is printed and delivered installation-ready.</span></li></ol>
+        <div class="project-guide-footer"><span><strong>Typical turnaround:</strong> 5–12 working days after approval</span><a class="project-guide-cta" href="https://api.whatsapp.com/send?phone=919737711570&amp;text=Hello%20Studio%20Viana%2C%20I%20would%20like%20to%20start%20a%20custom%20wallpaper%20project." target="_blank" rel="noopener">Start a wallpaper enquiry <span aria-hidden="true">→</span></a></div>
       </div>
-      <div class="identity-block">
-        <p class="section-kicker">Product System</p>
-        <h2>3D Modeling</h2>
-        <ul>
-          <li>Furniture Models</li>
-          <li>Product Renders</li>
-          <li>Brand Sculptures</li>
-          <li>Environment Builds</li>
-        </ul>
+      <div class="project-guide-panel" id="guide-3d" role="tabpanel" aria-labelledby="guide-tab-3d" data-guide-panel="3d" hidden>
+        <div class="project-guide-summary"><span class="project-guide-number">02</span><div><p class="section-kicker">3D visualisation</p><h3>See the space before it is built.</h3><p>Bring your plan, sketch, product, or moodboard. We create a considered visual that makes materials, lighting, and proportion easy to understand.</p></div></div>
+        <ol class="project-guide-steps"><li><strong>You send</strong><span>A plan, dimensions, reference images, and the final use of the visual.</span></li><li><strong>We build the scene</strong><span>We establish the composition, materials, lighting, and camera direction.</span></li><li><strong>You review</strong><span>You receive a preview to check the design direction before final rendering.</span></li><li><strong>Ready to use</strong><span>Final high-resolution visuals are prepared for presentation, approval, or campaign use.</span></li></ol>
+        <div class="project-guide-footer"><span><strong>Typical turnaround:</strong> confirmed once the brief is reviewed</span><a class="project-guide-cta" href="https://api.whatsapp.com/send?phone=919737711570&amp;text=Hello%20Studio%20Viana%2C%20I%20would%20like%20to%20start%20a%203D%20visualisation%20project." target="_blank" rel="noopener">Discuss a 3D project <span aria-hidden="true">→</span></a></div>
       </div>
     </div>
   </section>
@@ -550,7 +526,6 @@
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
   </div>
-  <div class="cursor-text" id="cursor-text">View</div>
 
   <!-- JS -->
   <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>

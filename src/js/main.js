@@ -17,6 +17,9 @@ initCreativeAnimations();
 
 const MODE_KEY = "studioMode";
 const MODE_VALUES = ["wallpaper", "3d"];
+// 3D is an optional Home-page preview only. Every inner page is wallpaper-first.
+const isHomePage = /(?:^|\/)index\.html$/i.test(window.location.pathname) || window.location.pathname.endsWith("/");
+const pageAllows3dMode = isHomePage;
 const WHATSAPP_NUMBER = "919737711570";
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -376,7 +379,11 @@ function enhanceCards(scope) {
   initRippleEffect(scope);
 }
 
-const initialMode = getStoredMode() || "wallpaper";
+function getPageMode() {
+  return pageAllows3dMode ? getStoredMode() || "wallpaper" : "wallpaper";
+}
+
+const initialMode = getPageMode();
 const root = document.documentElement;
 const revealMode = () => root.classList.add("mode-ready");
 
@@ -416,6 +423,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const clearBtn = document.getElementById("clear-filters");
   const workCount = document.getElementById("work-count");
   const modeToggles = document.querySelectorAll("[data-mode-toggle]");
+  const catalogueTitle = document.getElementById("catalogue-title");
+  const catalogueIntro = document.getElementById("catalogue-intro");
+  const projectGuide = document.querySelector("[data-project-guide]");
 
   const estimatorSection = document.querySelector("[data-estimator]");
   const estimatorThemeSelect = document.getElementById("price-theme");
@@ -650,8 +660,12 @@ document.addEventListener("DOMContentLoaded", () => {
           <a class="catalogue-plus" href="project.html?id=${project.id}" aria-label="View details for ${project.title}">+</a>
         </div>
         <div class="catalogue-actions">
-          <button type="button" class="catalogue-add" data-add-design="${project.id}">+ Add to quote</button>
-          <button type="button" class="catalogue-download" data-download-brief="${project.id}">↓ Download brief</button>
+          ${
+            project.workType === "wallpaper"
+              ? `<button type="button" class="catalogue-add" data-add-design="${project.id}">+ Add to quote</button>`
+              : ""
+          }
+          <button type="button" class="catalogue-download" data-download-brief="${project.id}">↓ Download details</button>
         </div>
       `
       : `
@@ -665,6 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isCatalogue) {
       element.querySelector("[data-add-design]")?.addEventListener("click", () => {
+        activeProject = project;
         estimatorState.theme = project.theme;
         if (estimatorThemeSelect) estimatorThemeSelect.value = project.theme;
         updateEstimator();
@@ -687,8 +702,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const link = document.createElement("a");
         link.href = URL.createObjectURL(new Blob([brief], { type: "text/plain" }));
         link.download = `${project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-brief.txt`;
+        link.style.display = "none";
+        document.body.appendChild(link);
         link.click();
-        URL.revokeObjectURL(link.href);
+        window.setTimeout(() => {
+          URL.revokeObjectURL(link.href);
+          link.remove();
+        }, 1000);
       });
     }
 
@@ -814,17 +834,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function updateProjectGuide(mode) {
+    if (!projectGuide) return;
+    projectGuide.querySelectorAll("[data-guide-mode]").forEach((button) => {
+      const isActive = button.dataset.guideMode === mode;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-selected", String(isActive));
+      button.tabIndex = isActive ? 0 : -1;
+    });
+    projectGuide.querySelectorAll("[data-guide-panel]").forEach((panel) => {
+      panel.hidden = panel.dataset.guidePanel !== mode;
+    });
+  }
+
   function setMode(mode, { persist = true } = {}) {
     if (!MODE_VALUES.includes(mode)) {
       return;
     }
 
-    currentWorkType = mode;
-    applyModeClass(mode);
+    // Never allow a saved 3D choice to change Work, Services, About, Contact,
+    // or project-detail pages. Those pages always present the wallpaper brand.
+    const permittedMode = pageAllows3dMode ? mode : "wallpaper";
+    currentWorkType = permittedMode;
+    applyModeClass(permittedMode);
 
-    if (persist) {
+    const isWallpaperMode = permittedMode === "wallpaper";
+    if (estimatorSection) {
+      estimatorSection.hidden = !isWallpaperMode;
+    }
+    if (catalogueTitle) {
+      catalogueTitle.textContent = isWallpaperMode ? "Wallpapers & visual stories" : "3D concepts & visual studies";
+    }
+    if (catalogueIntro) {
+      catalogueIntro.textContent = isWallpaperMode
+        ? "Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click."
+        : "Explore Studio Viana’s 3D studies. Filter the collection, download a project brief, or open a concept for the full story.";
+    }
+
+    if (persist && pageAllows3dMode) {
       try {
-        localStorage.setItem(MODE_KEY, mode);
+        localStorage.setItem(MODE_KEY, permittedMode);
       } catch {
         // Ignore storage errors.
       }
@@ -832,6 +881,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     populateFilterOptions();
     updateToggleUI();
+    updateProjectGuide(permittedMode);
 
     if (themeSelect && !getUniqueThemes(currentWorkType).some((theme) => theme.id === themeSelect.value)) {
       themeSelect.value = "";
@@ -1159,7 +1209,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (searchInput) {
       searchInput.value = "";
     }
+    activeProject = null;
+    updateEstimator();
     applyFilters();
+  });
+
+  projectGuide?.querySelectorAll("[data-guide-mode]").forEach((button) => {
+    button.addEventListener("click", () => setMode(button.dataset.guideMode));
   });
 
   initMediaProtection();
@@ -1182,8 +1238,7 @@ document.addEventListener("DOMContentLoaded", () => {
     applyAuthStateToDocument();
     syncAuthLinks();
     gateProtectedNavigation();
-    const storedMode = getStoredMode() || "wallpaper";
-    setMode(storedMode, { persist: false });
+    setMode(getPageMode(), { persist: false });
   });
 
   window.addEventListener("storage", (event) => {
@@ -1199,8 +1254,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const storedMode = getStoredMode() || "wallpaper";
-    setMode(storedMode, { persist: false });
+    setMode(getPageMode(), { persist: false });
   });
 });
 

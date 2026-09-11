@@ -84,8 +84,8 @@
   <section class="catalogue-hero">
     <div class="container catalogue-hero-content">
       <p class="catalogue-breadcrumb">Home / Collections</p>
-      <h1>Wallpapers &amp; visual stories</h1>
-      <p>Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click.</p>
+      <h1 id="catalogue-title">Wallpapers &amp; visual stories</h1>
+      <p id="catalogue-intro">Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click.</p>
     </div>
   </section>
 
@@ -102,7 +102,6 @@
           <span>Product type</span>
           <div class="type-tabs">
             <button class="pill-btn active" type="button" data-type="wallpaper">Wallpapers</button>
-            <button class="pill-btn" type="button" data-type="3d">3D concepts</button>
           </div>
         </div>
 
@@ -140,7 +139,7 @@
     <div class="container work-grid" id="work-grid"></div>
   </section>
 
-  <section class="studio-estimator reveal" data-estimator>
+  <section class="studio-estimator reveal" data-estimator aria-label="Wallpaper price estimator">
     <div class="container studio-estimator-grid">
       <div class="estimator-stage">
         <div class="estimator-copy">
