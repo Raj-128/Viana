@@ -120,6 +120,13 @@ function toggleProjectSelection(project) {
   if (isAlreadySaved) {
     writeStoredList(STORAGE_KEYS.saved, saved.filter((id) => id !== project.id));
     renderSavedCollections();
+    if (activeProject?.id === project.id) {
+      activeProject = null;
+      updateEstimator();
+    }
+    if (typeof applyFilters === "function") {
+      applyFilters();
+    }
     return false;
   }
 
@@ -134,6 +141,9 @@ function toggleProjectSelection(project) {
 
   updateEstimator();
   estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (typeof applyFilters === "function") {
+    applyFilters();
+  }
   return true;
 }
 
@@ -150,6 +160,9 @@ function selectProject(project) {
 
   updateEstimator();
   estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (typeof applyFilters === "function") {
+    applyFilters();
+  }
   return true;
 }
 
