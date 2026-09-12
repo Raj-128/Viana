@@ -27,6 +27,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./src/css/base.css">
+  <link rel="stylesheet" href="./src/css/cursor.css">
   <link rel="stylesheet" href="./src/css/components.css">
   <link rel="stylesheet" href="./src/css/layout.css">
   <link rel="stylesheet" href="./src/css/creative-effects.css">
@@ -71,9 +72,42 @@
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
         </nav>
+
+        <div class="menu-utility-actions">
+          <button type="button" class="menu-action active" data-menu-action="saved">Saved picks</button>
+          <button type="button" class="menu-action" data-menu-action="downloads">Downloads</button>
+          <button type="button" class="menu-action" data-menu-action="quote">Quote list</button>
+        </div>
       </div>
 
       <div class="menu-right">
+        <div class="menu-utility-rail" aria-live="polite">
+          <div class="menu-utility-panel active" data-menu-panel="saved">
+            <div class="menu-utility-header">
+              <p class="section-kicker">Saved picks</p>
+              <button type="button" class="utility-clear" data-clear-saved>Clear</button>
+            </div>
+            <div class="utility-list" id="saved-designs"></div>
+          </div>
+
+          <div class="menu-utility-panel" data-menu-panel="downloads">
+            <div class="menu-utility-header">
+              <p class="section-kicker">Downloads</p>
+              <button type="button" class="utility-clear" data-clear-downloads>Clear</button>
+            </div>
+            <div class="utility-list" id="download-history"></div>
+            <button type="button" class="menu-payment-cta" data-payment-demo>Mark payment complete</button>
+          </div>
+
+          <div class="menu-utility-panel" data-menu-panel="quote">
+            <div class="menu-utility-header">
+              <p class="section-kicker">Quote list</p>
+              <button type="button" class="utility-clear" data-clear-quote>Clear</button>
+            </div>
+            <div class="utility-list" id="quote-designs"></div>
+          </div>
+        </div>
+
         <p><strong>Studio Viana</strong></p>
         <p>Digital Artist &amp; 3D Visualizer</p>
         <p>Designing visual identity and physical space.</p>
@@ -81,11 +115,46 @@
     </div>
   </div>
 
-  <section class="catalogue-hero">
-    <div class="container catalogue-hero-content">
-      <p class="catalogue-breadcrumb">Home / Collections</p>
-      <h1 id="catalogue-title">Wallpapers &amp; visual stories</h1>
-      <p id="catalogue-intro">Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click.</p>
+  <section class="catalogue-hero-carousel">
+    <div class="container hero-carousel-shell">
+      <div class="hero-carousel-copy">
+        <p class="catalogue-breadcrumb">Home / Collections</p>
+        <h1 id="catalogue-title">Wallpapers &amp; visual stories</h1>
+        <p id="catalogue-intro">Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click.</p>
+      </div>
+
+      <div class="hero-carousel-stage" aria-label="Featured design carousel">
+        <div class="hero-carousel-track">
+          <article class="hero-slide active">
+            <img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="Featured wallpaper study 1" loading="eager">
+            <div class="hero-slide-caption">
+              <span>Wallpaper</span>
+              <strong>Bloom Study</strong>
+            </div>
+          </article>
+          <article class="hero-slide">
+            <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="Featured wallpaper study 2" loading="eager">
+            <div class="hero-slide-caption">
+              <span>Wallpaper</span>
+              <strong>Fairy Garden</strong>
+            </div>
+          </article>
+          <article class="hero-slide">
+            <img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="Featured wallpaper study 3" loading="eager">
+            <div class="hero-slide-caption">
+              <span>Wallpaper</span>
+              <strong>Forest Mists</strong>
+            </div>
+          </article>
+          <article class="hero-slide">
+            <img src="./src/assets/images/wallpapers/optimized/4.jpg" alt="Featured wallpaper study 4" loading="eager">
+            <div class="hero-slide-caption">
+              <span>Wallpaper</span>
+              <strong>Quiet Arch</strong>
+            </div>
+          </article>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -102,6 +171,7 @@
           <span>Product type</span>
           <div class="type-tabs">
             <button class="pill-btn active" type="button" data-type="wallpaper">Wallpapers</button>
+            <button class="pill-btn" type="button" data-type="3d">3D Art</button>
           </div>
         </div>
 

@@ -25,26 +25,18 @@ export function initEnhancedCursor() {
   let frameId = 0;
   let lastFrameTime = 0;
 
-  const moveTowards = (current, target, maxDistance) => {
-    const distance = target - current;
-    return current + Math.sign(distance) * Math.min(Math.abs(distance), maxDistance);
-  };
+  const lerp = (current, target, amount) => current + (target - current) * amount;
 
   const setInteractiveState = (element) => {
     const interactive = element?.closest?.("a, button, input, select, textarea, [role='button'], .work-card, .showcase-item, .showcase-scroll-wrapper");
     cursor.classList.toggle("is-interactive", Boolean(interactive));
   };
 
-  const render = (time) => {
-    const elapsed = Math.min(32, Math.max(8, time - lastFrameTime || 16.67));
-    lastFrameTime = time;
-    const frameScale = elapsed / 16.67;
-
-    // Caps prevent a high system mouse speed from making either circle teleport.
-    dotX = moveTowards(dotX, targetX, 72 * frameScale);
-    dotY = moveTowards(dotY, targetY, 72 * frameScale);
-    ringX = moveTowards(ringX, targetX, 30 * frameScale);
-    ringY = moveTowards(ringY, targetY, 30 * frameScale);
+  const render = () => {
+    dotX = lerp(dotX, targetX, 0.18);
+    dotY = lerp(dotY, targetY, 0.18);
+    ringX = lerp(ringX, targetX, 0.12);
+    ringY = lerp(ringY, targetY, 0.12);
 
     dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
     outline.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
@@ -74,6 +66,8 @@ export function initEnhancedCursor() {
   }, { passive: true });
   document.addEventListener("pointerdown", () => cursor.classList.add("is-pressed"), { passive: true });
   document.addEventListener("pointerup", () => cursor.classList.remove("is-pressed"), { passive: true });
+  document.addEventListener("pointerleave", () => cursor.classList.remove("is-visible"));
+  document.addEventListener("pointerenter", () => isReady && cursor.classList.add("is-visible"));
   document.addEventListener("mouseleave", () => cursor.classList.remove("is-visible"));
   document.addEventListener("mouseenter", () => isReady && cursor.classList.add("is-visible"));
   window.addEventListener("blur", () => cursor.classList.remove("is-visible"));

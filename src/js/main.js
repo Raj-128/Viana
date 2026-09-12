@@ -17,8 +17,15 @@ initCreativeAnimations();
 
 const MODE_KEY = "studioMode";
 const MODE_VALUES = ["wallpaper", "3d"];
-// 3D is an optional Home-page preview only. Every inner page is wallpaper-first.
-const isHomePage = /(?:^|\/)index\.html$/i.test(window.location.pathname) || window.location.pathname.endsWith("/");
+const STORAGE_KEYS = {
+  saved: "studioSavedDesigns",
+  downloads: "studioDownloads",
+  quote: "studioQuoteSelections",
+  paid: "studioPaidDesigns",
+};
+const PAYMENT_COMPLETE_KEY = "studioPaymentComplete";
+// 3D is available on the landing page and Work page, while detail pages remain wallpaper-first.
+const isHomePage = /(?:^|\/)(index|work)\.html$/i.test(window.location.pathname) || window.location.pathname.endsWith("/");
 const pageAllows3dMode = isHomePage;
 const WHATSAPP_NUMBER = "919737711570";
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
@@ -34,6 +41,271 @@ function getStoredMode() {
   } catch {
     return null;
   }
+}
+
+function readStoredList(key) {
+  try {
+    const stored = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(stored) ? stored : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeStoredList(key, list) {
+  try {
+    localStorage.setItem(key, JSON.stringify(list.slice(0, 12)));
+  } catch {
+    // Ignore storage errors.
+  }
+}
+
+function getPaidDesigns() {
+  return readStoredList(STORAGE_KEYS.paid);
+}
+
+function markDesignPaid(projectId) {
+  if (!projectId) {
+    return;
+  }
+
+  const paid = getPaidDesigns();
+  const nextPaid = paid.includes(projectId) ? paid : [projectId, ...paid].slice(0, 12);
+  writeStoredList(STORAGE_KEYS.paid, nextPaid);
+  localStorage.setItem(PAYMENT_COMPLETE_KEY, "true");
+  renderSavedCollections();
+  return true;
+}
+
+function isDesignDownloadUnlocked(projectId) {
+  if (!projectId || isAdminSession()) {
+    return true;
+  }
+
+  const paid = getPaidDesigns();
+  if (localStorage.getItem(PAYMENT_COMPLETE_KEY) === "true") {
+    return true;
+  }
+
+  return paid.includes(projectId);
+}
+
+function addProjectToSaved(projectId) {
+  const saved = readStoredList(STORAGE_KEYS.saved);
+  const nextList = saved.includes(projectId)
+    ? saved.filter((id) => id !== projectId)
+    : [projectId, ...saved].slice(0, 8);
+
+  writeStoredList(STORAGE_KEYS.saved, nextList);
+  renderSavedCollections();
+  return nextList.includes(projectId);
+}
+
+function navigateToProjectDetail(projectId) {
+  if (!projectId) {
+    return;
+  }
+
+  window.location.href = `project.html?id=${projectId}`;
+}
+
+function toggleProjectSelection(project) {
+  if (!project) {
+    return false;
+  }
+
+  const saved = readStoredList(STORAGE_KEYS.saved);
+  const isAlreadySaved = saved.includes(project.id);
+
+  if (isAlreadySaved) {
+    writeStoredList(STORAGE_KEYS.saved, saved.filter((id) => id !== project.id));
+    renderSavedCollections();
+    return false;
+  }
+
+  writeStoredList(STORAGE_KEYS.saved, [project.id, ...saved].slice(0, 8));
+  renderSavedCollections();
+
+  activeProject = project;
+  estimatorState.theme = project.theme;
+  if (estimatorThemeSelect) {
+    estimatorThemeSelect.value = project.theme;
+  }
+
+  updateEstimator();
+  estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  return true;
+}
+
+function selectProject(project) {
+  if (!project) {
+    return false;
+  }
+
+  activeProject = project;
+  estimatorState.theme = project.theme;
+  if (estimatorThemeSelect) {
+    estimatorThemeSelect.value = project.theme;
+  }
+
+  updateEstimator();
+  estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  return true;
+}
+
+function addProjectToQuote(project) {
+  const quote = readStoredList(STORAGE_KEYS.quote);
+  const next = quote.some((entry) => entry && entry.id === project.id)
+    ? quote.filter((entry) => entry && entry.id !== project.id)
+    : [{ id: project.id, title: project.title, workType: project.workType }, ...quote].slice(0, 8);
+
+  writeStoredList(STORAGE_KEYS.quote, next);
+  renderSavedCollections();
+  selectProject(project);
+}
+
+function openUtilityPanel(action) {
+  const menuActionButtons = document.querySelectorAll("[data-menu-action]");
+  const menuPanels = document.querySelectorAll("[data-menu-panel]");
+
+  menuActionButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.menuAction === action);
+  });
+
+  menuPanels.forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.menuPanel === action);
+  });
+}
+
+function downloadProjectBrief(project) {
+  if (!isDesignDownloadUnlocked(project.id)) {
+    openUtilityPanel("downloads");
+    const downloadsContainer = document.getElementById("download-history");
+    if (downloadsContainer) {
+      downloadsContainer.innerHTML = `
+        <div class="utility-item utility-lock">
+          <div>
+            <strong>${project.title}</strong>
+            <span>Payment required</span>
+          </div>
+          <button type="button" data-payment-demo>Unlock</button>
+        </div>
+      `;
+      downloadsContainer.querySelector("[data-payment-demo]")?.addEventListener("click", () => {
+        markDesignPaid(project.id);
+        openUtilityPanel("downloads");
+        downloadProjectBrief(project);
+      });
+    }
+    return;
+  }
+
+  const theme = getThemeDetails(project.theme);
+  const brief = [
+    "STUDIO VIANA — DESIGN BRIEF",
+    "",
+    `Design: ${project.title}`,
+    `Collection: ${project.mediumLabel}`,
+    `Style: ${theme?.label ?? project.theme}`,
+    `Location: ${project.location}`,
+    `Year: ${project.year}`,
+    "",
+    project.summary,
+    "",
+    "For custom sizing, paper options and a final quote, contact Studio Viana.",
+  ].join("\n");
+
+  const downloads = readStoredList(STORAGE_KEYS.downloads);
+  const nextDownloads = downloads.some((entry) => entry && entry.id === project.id)
+    ? downloads.filter((entry) => entry && entry.id !== project.id)
+    : [{ id: project.id, title: project.title, workType: project.workType }, ...downloads].slice(0, 8);
+
+  writeStoredList(STORAGE_KEYS.downloads, nextDownloads);
+  renderSavedCollections();
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([brief], { type: "text/plain" }));
+  link.download = `${project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-brief.txt`;
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  window.setTimeout(() => {
+    URL.revokeObjectURL(link.href);
+    link.remove();
+  }, 1000);
+}
+
+function renderSavedCollections() {
+  const savedContainer = document.getElementById("saved-designs");
+  const downloadsContainer = document.getElementById("download-history");
+  const quoteContainer = document.getElementById("quote-designs");
+
+  if (!savedContainer || !downloadsContainer || !quoteContainer) {
+    return;
+  }
+
+  const saved = readStoredList(STORAGE_KEYS.saved);
+  const downloads = readStoredList(STORAGE_KEYS.downloads);
+  const quote = readStoredList(STORAGE_KEYS.quote);
+
+  const renderList = (items, emptyLabel) => {
+    if (!items.length) {
+      return `<p class="utility-empty">${emptyLabel}</p>`;
+    }
+
+    return items
+      .map((item) => {
+        const project = projects.find((entry) => entry.id === item.id);
+        const label = project ? project.title : item.title;
+        const itemType = project ? (project.workType === "3d" ? "3D concept" : "Wallpaper") : "Saved selection";
+        return `
+          <div class="utility-item">
+            <div>
+              <strong>${label}</strong>
+              <span>${itemType}</span>
+            </div>
+            <button type="button" data-remove-item="${item.id}" data-storage-key="${item.type || "saved"}">Remove</button>
+          </div>
+        `;
+      })
+      .join("");
+  };
+
+  const savedEntries = saved
+    .map((projectId) => ({ id: projectId, type: "saved" }))
+    .filter((entry) => projects.some((project) => project.id === entry.id));
+  const downloadEntries = downloads
+    .map((entry) => ({ ...entry, type: "downloads" }))
+    .filter((entry) => entry && (projects.some((project) => project.id === entry.id) || entry.title));
+  const quoteEntries = quote
+    .map((entry) => ({ ...entry, type: "quote" }))
+    .filter((entry) => entry && (projects.some((project) => project.id === entry.id) || entry.title));
+
+  savedContainer.innerHTML = renderList(savedEntries, "No saved designs yet.");
+  downloadsContainer.innerHTML = renderList(downloadEntries, "No downloads yet.");
+  quoteContainer.innerHTML = renderList(quoteEntries, "No designs in the quote list yet.");
+
+  document.querySelectorAll("[data-remove-item]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const { removeItem, storageKey } = button.dataset;
+      if (!removeItem) {
+        return;
+      }
+
+      if (storageKey === "downloads") {
+        const list = readStoredList(STORAGE_KEYS.downloads).filter((entry) => entry.id !== removeItem);
+        writeStoredList(STORAGE_KEYS.downloads, list);
+      } else if (storageKey === "quote") {
+        const list = readStoredList(STORAGE_KEYS.quote).filter((entry) => entry.id !== removeItem);
+        writeStoredList(STORAGE_KEYS.quote, list);
+      } else {
+        const list = readStoredList(STORAGE_KEYS.saved).filter((id) => id !== removeItem);
+        writeStoredList(STORAGE_KEYS.saved, list);
+      }
+
+      renderSavedCollections();
+    });
+  });
 }
 
 function applyModeClass(mode) {
@@ -413,6 +685,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const menu = document.querySelector(".fullscreen-menu");
   const closeBtn = document.querySelector(".menu-close");
   const header = document.querySelector(".site-header");
+  const menuActionButtons = document.querySelectorAll("[data-menu-action]");
 
   const grid = document.getElementById("work-grid");
   const homeCollections = document.getElementById("home-collections");
@@ -453,6 +726,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const rangeOutput = document.getElementById("price-range");
   const quoteWhatsappLink = document.getElementById("quote-whatsapp-link");
   const projectOrderSection = document.getElementById("project-order-section");
+
+  document.querySelector("[data-clear-saved]")?.addEventListener("click", () => {
+    writeStoredList(STORAGE_KEYS.saved, []);
+    renderSavedCollections();
+  });
+
+  document.querySelector("[data-clear-downloads]")?.addEventListener("click", () => {
+    writeStoredList(STORAGE_KEYS.downloads, []);
+    renderSavedCollections();
+  });
+
+  document.querySelector("[data-clear-quote]")?.addEventListener("click", () => {
+    writeStoredList(STORAGE_KEYS.quote, []);
+    renderSavedCollections();
+  });
+
+  document.querySelector("[data-payment-demo]")?.addEventListener("click", () => {
+    const selectedProject = activeProject || projects[0];
+    if (selectedProject) {
+      markDesignPaid(selectedProject.id);
+      openUtilityPanel("downloads");
+      renderSavedCollections();
+    }
+  });
+
+  renderSavedCollections();
 
   let currentWorkType = initialMode;
   let activeProject = null;
@@ -510,6 +809,23 @@ document.addEventListener("DOMContentLoaded", () => {
       toggle.style.setProperty("--mag-y", "0px");
     });
   }
+
+  menuActionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.menuAction;
+      openUtilityPanel(action);
+
+      if (action === "saved") {
+        document.getElementById("saved-designs")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      if (action === "downloads") {
+        document.getElementById("download-history")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      if (action === "quote") {
+        document.getElementById("quote-designs")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    });
+  });
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") {
@@ -646,26 +962,29 @@ document.addEventListener("DOMContentLoaded", () => {
       element.href = `project.html?id=${project.id}`;
     }
     element.className = `work-card protected-media-block${featured ? " full" : ""}`;
+    const isSaved = readStoredList(STORAGE_KEYS.saved).includes(project.id);
+    const isActiveSelection = activeProject?.id === project.id;
+    const isSelected = isSaved || isActiveSelection;
 
     element.innerHTML = isCatalogue
       ? `
-        <a class="catalogue-card-image" href="project.html?id=${project.id}" aria-label="View details for ${project.title}">
+        <button type="button" class="catalogue-card-image ${isSelected ? "is-selected" : ""}" data-select-design="${project.id}" aria-label="Select ${project.title} and toggle it on or off">
           <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
-          <span class="catalogue-plus" aria-hidden="true">+</span>
+          <span class="catalogue-plus" aria-hidden="true">${isSelected ? "✓" : "+"}</span>
+          <span class="catalogue-selected-tag">${isSelected ? "Selected" : "Select"}</span>
           <span class="catalogue-badge">${project.ownership === "owned" ? "Studio collection" : "Curated edition"}</span>
-        </a>
+        </button>
         <div class="catalogue-card-copy">
           <h3>${project.title}</h3>
           <p>${theme?.label ?? project.theme} · ${project.mediumLabel} · ${project.location}</p>
-          <a class="catalogue-plus" href="project.html?id=${project.id}" aria-label="View details for ${project.title}">+</a>
+          <button type="button" class="catalogue-select-toggle" data-select-design="${project.id}" aria-label="Select ${project.title} and keep it active for quote and estimator">
+            ${isSelected ? "Selected" : "Select"}
+          </button>
         </div>
         <div class="catalogue-actions">
-          ${
-            project.workType === "wallpaper"
-              ? `<button type="button" class="catalogue-add" data-add-design="${project.id}">+ Add to quote</button>`
-              : ""
-          }
-          <button type="button" class="catalogue-download" data-download-brief="${project.id}">↓ Download details</button>
+          <button type="button" class="catalogue-detail" data-detail-design="${project.id}">View details</button>
+          <button type="button" class="catalogue-add" data-add-design="${project.id}">Add to quote</button>
+          <button type="button" class="catalogue-download" data-download-brief="${project.id}">Download brief</button>
         </div>
       `
       : `
@@ -678,37 +997,33 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
     if (isCatalogue) {
+      const selectButtons = element.querySelectorAll("[data-select-design]");
+      selectButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const saved = readStoredList(STORAGE_KEYS.saved);
+          const isSelected = saved.includes(project.id);
+          if (isSelected) {
+            writeStoredList(STORAGE_KEYS.saved, saved.filter((id) => id !== project.id));
+            renderSavedCollections();
+            activeProject = activeProject?.id === project.id ? null : activeProject;
+            if (activeProject?.id === project.id) {
+              updateEstimator();
+            }
+            return;
+          }
+
+          toggleProjectSelection(project);
+        });
+      });
+
+      element.querySelector("[data-detail-design]")?.addEventListener("click", () => {
+        navigateToProjectDetail(project.id);
+      });
       element.querySelector("[data-add-design]")?.addEventListener("click", () => {
-        activeProject = project;
-        estimatorState.theme = project.theme;
-        if (estimatorThemeSelect) estimatorThemeSelect.value = project.theme;
-        updateEstimator();
-        estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+        addProjectToQuote(project);
       });
       element.querySelector("[data-download-brief]")?.addEventListener("click", () => {
-        const brief = [
-          "STUDIO VIANA — DESIGN BRIEF",
-          "",
-          `Design: ${project.title}`,
-          `Collection: ${project.mediumLabel}`,
-          `Style: ${theme?.label ?? project.theme}`,
-          `Location: ${project.location}`,
-          `Year: ${project.year}`,
-          "",
-          project.summary,
-          "",
-          "For custom sizing, paper options and a final quote, contact Studio Viana.",
-        ].join("\n");
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(new Blob([brief], { type: "text/plain" }));
-        link.download = `${project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-brief.txt`;
-        link.style.display = "none";
-        document.body.appendChild(link);
-        link.click();
-        window.setTimeout(() => {
-          URL.revokeObjectURL(link.href);
-          link.remove();
-        }, 1000);
+        downloadProjectBrief(project);
       });
     }
 
@@ -740,6 +1055,7 @@ document.addEventListener("DOMContentLoaded", () => {
     workCount.textContent = `${list.length} ${list.length === 1 ? "piece" : "pieces"}`;
     animateCards(cards);
     enhanceCards(grid);
+    renderSavedCollections();
   }
 
   function renderHomeCollections(list) {
@@ -761,6 +1077,34 @@ document.addEventListener("DOMContentLoaded", () => {
     cards.forEach((card) => homeCollections.appendChild(card));
     animateCards(cards);
     enhanceCards(homeCollections);
+  }
+
+  function renderShowcaseTrack(track, list) {
+    if (!track) {
+      return;
+    }
+
+    track.innerHTML = list
+      .map(
+        (project) => `
+          <a href="project.html?id=${project.id}" class="showcase-item">
+            <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy">
+            <div class="showcase-item-cap">
+              <span>${project.theme ? getThemeDetails(project.theme)?.label ?? project.theme : project.mediumLabel} &middot; ${project.year}</span>
+              <strong>${project.title}</strong>
+            </div>
+          </a>
+        `
+      )
+      .join("");
+  }
+
+  function updateShowcaseSections() {
+    const wallpaperTrack = document.querySelector(".showcase-track.show-wallpaper");
+    const threeDTrack = document.querySelector(".showcase-track.show-3d");
+
+    renderShowcaseTrack(wallpaperTrack, getProjectsByMode("wallpaper").slice(0, 6));
+    renderShowcaseTrack(threeDTrack, getProjectsByMode("3d").slice(0, 4));
   }
 
   function populateFilterOptions() {
@@ -824,7 +1168,9 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleElement.querySelector(`.pill-btn[data-type="${currentWorkType}"]`) || buttons[0];
 
       buttons.forEach((button) => {
-        button.classList.toggle("active", button === activeButton);
+        const isActive = button === activeButton;
+        button.classList.toggle("active", isActive);
+        button.hidden = !isActive;
       });
 
       if (slider && activeButton) {
@@ -863,12 +1209,12 @@ document.addEventListener("DOMContentLoaded", () => {
       estimatorSection.hidden = !isWallpaperMode;
     }
     if (catalogueTitle) {
-      catalogueTitle.textContent = isWallpaperMode ? "Wallpapers & visual stories" : "3D concepts & visual studies";
+      catalogueTitle.textContent = isWallpaperMode ? "Wallpapers & visual stories" : "3D Art & visual studies";
     }
     if (catalogueIntro) {
       catalogueIntro.textContent = isWallpaperMode
         ? "Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click."
-        : "Explore Studio Viana’s 3D studies. Filter the collection, download a project brief, or open a concept for the full story.";
+        : "Explore Studio Viana’s 3D art collection. Filter the collection, download a project brief, or open a concept for the full story.";
     }
 
     if (persist && pageAllows3dMode) {
@@ -879,6 +1225,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    renderSavedCollections();
     populateFilterOptions();
     updateToggleUI();
     updateProjectGuide(permittedMode);
@@ -890,6 +1237,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (homeCollections) {
       renderHomeCollections(getProjectsByMode(currentWorkType));
     }
+
+    updateShowcaseSections();
 
     if (grid) {
       applyFilters();
@@ -1098,6 +1447,68 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function initHeroCarousel() {
+    const stage = document.querySelector(".hero-carousel-stage");
+    const slides = document.querySelectorAll(".hero-slide");
+
+    if (!stage || !slides.length) {
+      return;
+    }
+
+    let activeIndex = 0;
+    let pointerStartX = 0;
+    let isDragging = false;
+    let dragOffset = 0;
+
+    const showSlide = (index) => {
+      activeIndex = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("active", slideIndex === activeIndex);
+      });
+    };
+
+    const handlePointerDown = (event) => {
+      isDragging = true;
+      pointerStartX = event.clientX;
+      dragOffset = 0;
+      stage.setPointerCapture?.(event.pointerId);
+    };
+
+    const handlePointerMove = (event) => {
+      if (!isDragging) {
+        return;
+      }
+
+      dragOffset = event.clientX - pointerStartX;
+    };
+
+    const handlePointerUp = () => {
+      if (!isDragging) {
+        return;
+      }
+
+      isDragging = false;
+
+      if (dragOffset < -40) {
+        showSlide(activeIndex + 1);
+      } else if (dragOffset > 40) {
+        showSlide(activeIndex - 1);
+      }
+
+      dragOffset = 0;
+    };
+
+    stage.addEventListener("pointerdown", handlePointerDown);
+    stage.addEventListener("pointermove", handlePointerMove);
+    stage.addEventListener("pointerup", handlePointerUp);
+    stage.addEventListener("pointerleave", handlePointerUp);
+    stage.addEventListener("pointercancel", handlePointerUp);
+
+    setInterval(() => {
+      showSlide(activeIndex + 1);
+    }, 3000);
+  }
+
   function renderProjectDetail() {
     const params = new URLSearchParams(window.location.search);
     const projectId = params.get("id");
@@ -1223,6 +1634,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", updateToggleUI);
   setMode(currentWorkType, { persist: false });
   revealMode();
+  initHeroCarousel();
   renderProjectDetail();
   populateEstimatorOptions();
   renderEstimatorThemePills();
