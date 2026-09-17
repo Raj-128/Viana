@@ -61,11 +61,12 @@
           <form class="auth-form auth-view-panel is-active" data-auth-view="login" data-login-form aria-hidden="false">
             <label class="auth-field">
               <span>Email or phone</span>
-              <input type="text" name="identifier" placeholder="you@example.com or +91 9876543210" required>
+              <input type="text" name="identifier" placeholder="you@example.com or +91 9876543210" autocomplete="username" aria-describedby="login-identifier-help" required>
+              <small id="login-identifier-help">Enter the email or phone used when creating your account.</small>
             </label>
             <label class="auth-field">
               <span>Password</span>
-              <input type="password" name="password" placeholder="Enter your password" required>
+              <input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
             </label>
             <button class="auth-submit" type="submit">Login to Studio Viana</button>
           </form>
@@ -90,11 +91,11 @@
             <div class="auth-grid two">
               <label class="auth-field">
                 <span>Password</span>
-                <input type="password" name="password" placeholder="Use letters and numbers" required>
+                <input type="password" name="password" placeholder="10+ characters, letters and numbers" autocomplete="new-password" minlength="10" maxlength="128" required>
               </label>
               <label class="auth-field">
                 <span>Confirm password</span>
-                <input type="password" name="confirmPassword" placeholder="Repeat password" required>
+                <input type="password" name="confirmPassword" placeholder="Repeat password" autocomplete="new-password" required>
               </label>
             </div>
 
@@ -105,6 +106,7 @@
         <p class="auth-status" data-auth-status></p>
       </article>
 
+      <template data-account-template>
       <article class="auth-card account-card" data-account-panel hidden>
         <span class="account-role" data-account-role></span>
         <h2 data-account-name></h2>
@@ -117,6 +119,7 @@
           <button type="button" class="auth-submit secondary" data-logout-button>Sign out</button>
         </div>
       </article>
+      </template>
     </section>
   </main>
 

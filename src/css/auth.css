@@ -464,6 +464,29 @@
   box-shadow: 0 0 0 4px rgba(139, 109, 88, 0.12);
 }
 
+.auth-field .password-input-wrap { position: relative; display: block; min-width: 0; }
+.auth-field .password-input-wrap input { width: 100%; box-sizing: border-box; padding-right: 58px; }
+.password-visibility-toggle {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+.password-visibility-toggle svg { width: 22px; height: 22px; pointer-events: none; }
+.password-visibility-toggle:hover { background: rgba(117, 92, 68, .1); }
+.password-visibility-toggle:focus-visible { outline: 2px solid #8b6d58; outline-offset: 1px; }
+.password-input-wrap input::-ms-reveal { display: none; }
+
 .auth-submit,
 .account-link {
   display: inline-flex;
@@ -504,6 +527,16 @@
 
 .auth-status[data-state="error"] {
   color: #a33d3d;
+}
+
+.auth-page [hidden] {
+  display: none !important;
+}
+
+.auth-field small {
+  font-size: .75rem;
+  line-height: 1.5;
+  color: var(--muted, #746c62);
 }
 
 .account-card {

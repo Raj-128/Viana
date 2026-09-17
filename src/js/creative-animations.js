@@ -11,7 +11,7 @@ export function initEnhancedCursor() {
   const cursor = document.querySelector(".cursor");
   const dot = document.querySelector(".cursor-dot");
   const outline = document.querySelector(".cursor-outline");
-  const canUseCustomCursor = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const canUseCustomCursor = window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
 
   if (!cursor || !dot || !outline || !canUseCustomCursor.matches) return;
 
@@ -50,6 +50,7 @@ export function initEnhancedCursor() {
 
     targetX = event.clientX;
     targetY = event.clientY;
+    cursor.classList.add("is-visible");
     if (!isReady) {
       dotX = ringX = targetX;
       dotY = ringY = targetY;
@@ -66,6 +67,7 @@ export function initEnhancedCursor() {
   }, { passive: true });
   document.addEventListener("pointerdown", () => cursor.classList.add("is-pressed"), { passive: true });
   document.addEventListener("pointerup", () => cursor.classList.remove("is-pressed"), { passive: true });
+  document.addEventListener("pointercancel", () => cursor.classList.remove("is-pressed"), { passive: true });
   document.addEventListener("pointerleave", () => cursor.classList.remove("is-visible"));
   document.addEventListener("pointerenter", () => isReady && cursor.classList.add("is-visible"));
   document.addEventListener("mouseleave", () => cursor.classList.remove("is-visible"));
