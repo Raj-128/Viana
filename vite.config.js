@@ -35,7 +35,8 @@ export default defineConfig({
         work: resolve(__dirname, "work.html"),
         project: resolve(__dirname, "project.html"),
         login: resolve(__dirname, "login.html"),
-        adminLogin: resolve(__dirname, "admin-login.html")
+        adminLogin: resolve(__dirname, "admin-login.html"),
+        adminDownloads: resolve(__dirname, "admin-downloads.html")
       }
     }
   }

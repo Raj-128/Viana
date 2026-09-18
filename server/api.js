@@ -4,6 +4,7 @@ import { stat } from "node:fs/promises";
 import { resolve, relative, isAbsolute, extname } from "node:path";
 import { randomBytes, randomUUID, createHash, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
+import { createDownloadAdmin } from "./download-admin.js";
 
 const derive = promisify(scrypt);
 const hash = (value) => createHash("sha256").update(value).digest("hex");
@@ -49,6 +50,7 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
     try { const data = JSON.parse(Buffer.concat(chunks).toString()); if (!data || Array.isArray(data) || typeof data !== "object") throw new Error(); return data; }
     catch { throw fail(400, "Invalid request."); }
   };
+  const handleDownloadAdmin = createDownloadAdmin({ db, filesRoot, sessionUser, readBody, json, fail, limit });
   async function createUser(data, role = "user") {
     const name = String(data.name || "").trim();
     const email = String(data.email || "").trim().toLowerCase();
@@ -110,6 +112,7 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
         startSession(req, res, user);
         return json(res, 200, { user: safeUser(user) });
       }
+      if (await handleDownloadAdmin(req, res, path)) return;
       const match = path.match(/^\/api\/designs\/([a-z0-9-]+)\/download$/);
       if (match && req.method === "GET") {
         const user = sessionUser(req);

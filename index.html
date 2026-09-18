@@ -103,45 +103,31 @@
   </div>
 
   <!-- ======== HERO ======== -->
-  <section class="hero hero-announce" style="position:relative; overflow:hidden;">
-    <div class="container">
-      <p class="hero-eyebrow">Studio Viana</p>
-      <h1 class="hero-title show-wallpaper">
-        <span class="line">Designing</span>
-        <span class="line">visual identity</span>
-        <span class="line">and physical space.</span>
-      </h1>
-      <h1 class="hero-title show-3d">
-        <span class="line">Crafting</span>
-        <span class="line">immersive worlds</span>
-        <span class="line">and 3D concepts.</span>
-      </h1>
-      <p class="hero-sub show-wallpaper">Digital Artist &bull; Muralist</p>
-      <p class="hero-sub show-3d">3D Visualizer &bull; Spatial Designer</p>
-      
-      <div class="hero-actions">
+  <section class="hero home-hero">
+    <div class="container home-hero-grid">
+      <div class="home-hero-copy">
+        <p class="hero-eyebrow">Studio Viana</p>
+        <h1 class="home-hero-title show-wallpaper">Art for the spaces you live in.</h1>
+        <h1 class="home-hero-title show-3d">Ideas shaped into new worlds.</h1>
+        <p class="home-hero-description show-wallpaper">Custom mural wallpapers, made to bring your walls to life.</p>
+        <p class="home-hero-description show-3d">Spaces, objects and atmospheres, explored through 3D visualization.</p>
         <a href="work.html" class="cta-link">Explore collections</a>
-        <span class="hero-note show-wallpaper">Bespoke projects for brands and spaces.</span>
-        <span class="hero-note show-3d">High-resolution renders and architectural concepts.</span>
       </div>
-    </div>
-
-    <!-- Real image strip on right side -->
-    <div class="hero-image-strip show-wallpaper" aria-hidden="true">
-      <div class="strip-img">
-        <img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="" draggable="false" loading="eager">
+      <div class="home-artwork show-wallpaper">
+        <div class="home-collage" aria-label="Wallpaper collection highlights">
+          <a class="home-collage-main" href="project.html?id=floral-branch-wall"><img src="./src/assets/images/wallpapers/optimized/1.jpg" alt="Floral Branch wallpaper" draggable="false" loading="eager" fetchpriority="high"><span>Floral Branch</span></a>
+          <a href="project.html?id=fairy-garden-wall"><img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="Fairy Garden wallpaper" draggable="false" loading="eager"><span>Fairy Garden</span></a>
+          <a href="project.html?id=misty-forest-wall"><img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="Misty Forest wallpaper" draggable="false" loading="eager"><span>Misty Forest</span></a>
+        </div>
+        <p>Walls with personality <span>Selected wallpapers / 01–03</span></p>
       </div>
-      <div class="strip-img">
-        <img src="./src/assets/images/wallpapers/optimized/2.jpg" alt="" draggable="false" loading="eager">
-      </div>
-      <div class="strip-img">
-        <img src="./src/assets/images/wallpapers/optimized/3.jpg" alt="" draggable="false" loading="eager">
-      </div>
-    </div>
-    
-    <div class="hero-image-strip hero-render show-3d" aria-hidden="true">
-      <div class="strip-img">
-        <img src="./src/assets/images/three-d-lunar-console.png" alt="" draggable="false" loading="eager">
+      <div class="home-artwork show-3d">
+        <div class="home-collage" aria-label="3D visualization highlights">
+          <a class="home-collage-main" href="project.html?id=lunar-console-study"><img src="./src/assets/images/three-d-lunar-console.png" alt="Lunar Console 3D interior study" draggable="false" loading="eager"><span>Lunar Console</span></a>
+          <a href="project.html?id=petal-lamp-render"><img src="./src/assets/images/three-d-petal-lamp.png" alt="Petal Lamp lighting study" draggable="false" loading="lazy"><span>Petal Lamp</span></a>
+          <a href="project.html?id=canyon-void-frame"><img src="./src/assets/images/three-d-canyon-void.png" alt="Canyon Void spatial concept" draggable="false" loading="lazy"><span>Canyon Void</span></a>
+        </div>
+        <p>Light. Material. Space. <span>Selected renders / 01–03</span></p>
       </div>
     </div>
   </section>
@@ -228,26 +214,23 @@
   </section>
 
   <!-- ======== STUDIO SYSTEM ======== -->
-  <section class="project-guide reveal system-section" data-project-guide>
-    <div class="container">
-      <div class="project-guide-head">
-        <div><p class="section-kicker">A clear process</p><h2 class="section-title">See how your project comes together.</h2></div>
-        <p class="section-sub">Choose the service you need. We will show you exactly what to send, what happens next, and what you receive.</p>
-      </div>
-      <div class="project-guide-tabs" role="tablist" aria-label="Choose a project type">
-        <button class="project-guide-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="guide-wallpaper" id="guide-tab-wallpaper" data-guide-mode="wallpaper">Custom wallpaper</button>
-        <button class="project-guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-3d" id="guide-tab-3d" data-guide-mode="3d">3D visualisation</button>
-      </div>
-      <div class="project-guide-panel" id="guide-wallpaper" role="tabpanel" aria-labelledby="guide-tab-wallpaper" data-guide-panel="wallpaper">
-        <div class="project-guide-summary"><span class="project-guide-number">01</span><div><p class="section-kicker">Custom mural wallpaper</p><h3>From your wall to a print-ready mural.</h3><p>Share a photo, your wall measurements, and the feeling you want the room to have. We turn that into a mural designed specifically for your space.</p></div></div>
-        <ol class="project-guide-steps"><li><strong>You send</strong><span>A wall photo, width and height, location, and a few style references.</span></li><li><strong>We shape the direction</strong><span>You receive the suggested theme, paper finish, estimated price, and timeline.</span></li><li><strong>You approve</strong><span>We refine the artwork and confirm the final proof before printing.</span></li><li><strong>Ready for your wall</strong><span>Your custom-sized wallpaper is printed and delivered installation-ready.</span></li></ol>
-        <div class="project-guide-footer"><span><strong>Typical turnaround:</strong> 5–12 working days after approval</span><a class="project-guide-cta" href="https://api.whatsapp.com/send?phone=919737711570&amp;text=Hello%20Studio%20Viana%2C%20I%20would%20like%20to%20start%20a%20custom%20wallpaper%20project." target="_blank" rel="noopener">Start a wallpaper enquiry <span aria-hidden="true">→</span></a></div>
-      </div>
-      <div class="project-guide-panel" id="guide-3d" role="tabpanel" aria-labelledby="guide-tab-3d" data-guide-panel="3d" hidden>
-        <div class="project-guide-summary"><span class="project-guide-number">02</span><div><p class="section-kicker">3D visualisation</p><h3>See the space before it is built.</h3><p>Bring your plan, sketch, product, or moodboard. We create a considered visual that makes materials, lighting, and proportion easy to understand.</p></div></div>
-        <ol class="project-guide-steps"><li><strong>You send</strong><span>A plan, dimensions, reference images, and the final use of the visual.</span></li><li><strong>We build the scene</strong><span>We establish the composition, materials, lighting, and camera direction.</span></li><li><strong>You review</strong><span>You receive a preview to check the design direction before final rendering.</span></li><li><strong>Ready to use</strong><span>Final high-resolution visuals are prepared for presentation, approval, or campaign use.</span></li></ol>
-        <div class="project-guide-footer"><span><strong>Typical turnaround:</strong> confirmed once the brief is reviewed</span><a class="project-guide-cta" href="https://api.whatsapp.com/send?phone=919737711570&amp;text=Hello%20Studio%20Viana%2C%20I%20would%20like%20to%20start%20a%203D%20visualisation%20project." target="_blank" rel="noopener">Discuss a 3D project <span aria-hidden="true">→</span></a></div>
-      </div>
+  <section class="home-next" aria-label="Explore Studio Viana">
+    <div class="container home-next-grid">
+      <a class="home-next-card" href="work.html">
+        <span class="home-next-kicker">01 / THE COLLECTION</span>
+        <h2 class="show-wallpaper">Find your next feature wall.</h2>
+        <h2 class="show-3d">Explore a different dimension.</h2>
+        <p class="show-wallpaper">Browse murals, preview the details and save your favourites.</p>
+        <p class="show-3d">Discover rendered spaces, sculptural objects and lighting studies.</p>
+        <span class="home-next-link">Explore designs <span aria-hidden="true">&#8599;</span></span>
+      </a>
+      <a class="home-next-card" href="contact.html">
+        <span class="home-next-kicker">02 / MADE FOR YOU</span>
+        <h2>Have an idea in mind?</h2>
+        <p class="show-wallpaper">Send a wall photo and your measurements. Let's make it personal.</p>
+        <p class="show-3d">Share your references and brief. Let's shape the scene together.</p>
+        <span class="home-next-link">Talk to the studio <span aria-hidden="true">&#8599;</span></span>
+      </a>
     </div>
   </section>
 

@@ -1,3 +1,4 @@
+import "./site-mode.js";
 import { getLoginIdentifier, rememberLoginIdentifier } from "./login-identifier.js";
 
 const identifierStorage = {
@@ -311,7 +312,7 @@ export function getAuthDestination() {
 
   const firstName = session.name?.trim().split(/\s+/)[0] || (session.role === "admin" ? "Admin" : "Account");
   return {
-    href: session.role === "admin" ? "admin-login.html#account" : "login.html#account",
+    href: session.role === "admin" ? "admin-downloads.html" : "login.html#account",
     label: session.role === "admin" ? "Admin" : "Account",
     chipLabel: firstName,
   };

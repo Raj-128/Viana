@@ -157,55 +157,38 @@
     </div>
   </section>
 
-  <section class="work-filters catalogue-filters">
-    <div class="container">
-      <div class="filters-bar">
-        <label class="catalogue-search" for="filter-search">
+  <section class="catalogue-shop container" aria-label="Browse the collection">
+    <details class="catalogue-filter-panel" open>
+      <summary>Filters <span aria-hidden="true">+</span></summary>
+      <div class="catalogue-filter-body">
+        <div id="catalogue-facets"></div>
+        <button id="clear-filters" class="shop-clear" type="button">Clear all filters</button>
+      </div>
+    </details>
+    <div class="catalogue-results catalogue-list">
+      <div class="shop-toolbar">
+        <label class="shop-search" for="filter-search">
           <span class="sr-only">Search designs</span>
           <input id="filter-search" type="search" placeholder="Search designs, themes or locations">
-          <span aria-hidden="true">⌕</span>
+          <span aria-hidden="true">&#8981;</span>
         </label>
-
-        <div class="catalogue-type" data-mode-toggle aria-label="Product type">
-          <span>Product type</span>
-          <div class="type-tabs">
-            <button class="pill-btn active" type="button" data-type="wallpaper">Wallpapers</button>
-            <button class="pill-btn" type="button" data-type="3d">3D Art</button>
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label for="filter-theme">Style</label>
-          <select id="filter-theme">
-            <option value="">All styles</option>
+        <label class="shop-sort" for="catalogue-sort">Sort by
+          <select id="catalogue-sort">
+            <option value="featured">Featured</option>
+            <option value="newest">Newest</option>
+            <option value="az">Name: A?Z</option>
+            <option value="za">Name: Z?A</option>
           </select>
-        </div>
-
-        <div class="filter-group catalogue-secondary-filter">
-          <label for="filter-year">Year</label>
-          <select id="filter-year">
-            <option value="">All years</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="filter-ownership">Source</label>
-          <select id="filter-ownership">
-            <option value="">All sources</option>
-            <option value="owned">Studio Owned</option>
-            <option value="curated">Curated Sources</option>
-          </select>
-        </div>
-
-        <div class="filters-count" id="work-count">0 pieces</div>
-
-        <button id="clear-filters" class="clear-filters">Clear</button>
+        </label>
       </div>
+      <p id="work-count" class="shop-count" role="status" aria-live="polite">Loading designs?</p>
+      <div class="shop-suggestions">
+        <p>Explore styles</p>
+        <div id="catalogue-suggestions" class="shop-chips"></div>
+      </div>
+      <div id="catalogue-active-filters" class="shop-chips shop-active-filters" aria-label="Active filters"></div>
+      <div class="work-grid" id="work-grid"></div>
     </div>
-  </section>
-
-  <section class="work-list catalogue-list reveal">
-    <div class="container work-grid" id="work-grid"></div>
   </section>
 
   <section class="studio-estimator reveal" data-estimator aria-label="Wallpaper price estimator">

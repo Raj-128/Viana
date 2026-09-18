@@ -1,3 +1,6 @@
+import { MODE_KEY, readStudioMode, applyStudioTheme } from "./site-mode.js";
+import { updateModeContent } from "./mode-content.js";
+import { initCatalogueFilters } from "./catalogue-filters.js";
 import { initCommerce, renderCommerce, addToCart, openCommerce, downloadDesign } from "./commerce.js";
 import { initWallpaperViewer } from "./wallpaper-viewer.js";
 import { initMediaDeterrents } from "./media-deterrents.js";
@@ -18,31 +21,18 @@ import {
 
 initCreativeAnimations();
 
-const MODE_KEY = "studioMode";
 const MODE_VALUES = ["wallpaper", "3d"];
 const STORAGE_KEYS = {
   saved: "studioSavedDesigns",
   downloads: "studioDownloads",
   quote: "studioQuoteSelections",
 };
-// 3D is available on the landing page and Work page, while detail pages remain wallpaper-first.
-const isHomePage = /(?:^|\/)(index|work)\.html$/i.test(window.location.pathname) || window.location.pathname.endsWith("/");
-const pageAllows3dMode = isHomePage;
 const WHATSAPP_NUMBER = "919737711570";
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
   currency: "INR",
   maximumFractionDigits: 0,
 });
-
-function getStoredMode() {
-  try {
-    const saved = localStorage.getItem(MODE_KEY);
-    return MODE_VALUES.includes(saved) ? saved : null;
-  } catch {
-    return null;
-  }
-}
 
 function readStoredList(key) {
   try {
@@ -250,13 +240,7 @@ function renderSavedCollections() {
 }
 
 function applyModeClass(mode) {
-  const target = document.body || document.documentElement;
-  if (!target) {
-    return;
-  }
-
-  target.classList.toggle("mode-wallpaper", mode === "wallpaper");
-  target.classList.toggle("mode-3d", mode === "3d");
+  applyStudioTheme(mode);
 }
 
 function createObserverManager() {
@@ -545,11 +529,6 @@ function getProjectsByMode(mode) {
   return projects.filter((project) => project.workType === mode);
 }
 
-function getUniqueYears(mode) {
-  return [...new Set(getProjectsByMode(mode).map((project) => project.year))].sort(
-    (left, right) => Number(right) - Number(left)
-  );
-}
 
 function getUniqueThemes(mode) {
   return [...new Set(getProjectsByMode(mode).map((project) => project.theme))]
@@ -593,7 +572,7 @@ function enhanceCards(scope) {
 }
 
 function getPageMode() {
-  return pageAllows3dMode ? getStoredMode() || "wallpaper" : "wallpaper";
+  return readStudioMode();
 }
 
 const initialMode = getPageMode();
@@ -626,16 +605,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const grid = document.getElementById("work-grid");
   const homeCollections = document.getElementById("home-collections");
-  const yearSelect = document.getElementById("filter-year");
-  const ownershipSelect = document.getElementById("filter-ownership");
-  const themeSelect = document.getElementById("filter-theme");
   const searchInput = document.getElementById("filter-search");
   const clearBtn = document.getElementById("clear-filters");
+  const catalogueFilters = initCatalogueFilters(() => applyFilters());
   const workCount = document.getElementById("work-count");
   const modeToggles = document.querySelectorAll("[data-mode-toggle]");
   const catalogueTitle = document.getElementById("catalogue-title");
   const catalogueIntro = document.getElementById("catalogue-intro");
-  const projectGuide = document.querySelector("[data-project-guide]");
 
   const estimatorSection = document.querySelector("[data-estimator]");
   const estimatorThemeSelect = document.getElementById("price-theme");
@@ -698,46 +674,45 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   if (toggle && menu) {
-    toggle.addEventListener("click", () => {
-      toggle.classList.toggle("active");
-      menu.classList.toggle("active");
-      document.body.classList.toggle("menu-open");
-
-      if (window.gsap && menu.classList.contains("active")) {
-        gsap.fromTo(
-          ".menu-links a",
-          { y: 20, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.08, ease: "power2.out" }
-        );
+    menu.id = "studio-navigation";
+    menu.setAttribute("role", "dialog");
+    menu.setAttribute("aria-modal", "true");
+    menu.setAttribute("aria-label", "Studio navigation");
+    menu.inert = true;
+    toggle.setAttribute("aria-controls", menu.id);
+    toggle.setAttribute("aria-expanded", "false");
+    const heading = document.createElement("p");
+    heading.className = "menu-overline";
+    heading.textContent = "STUDIO VIANA / EXPLORE";
+    menu.querySelector(".menu-left").prepend(heading);
+    const shortcuts = document.createElement("div");
+    shortcuts.className = "menu-shortcuts";
+    shortcuts.innerHTML = '<button type="button" data-menu-commerce="cart">Your cart <span aria-hidden="true">&#8599;</span></button><button type="button" data-menu-commerce="downloads">Downloads <span aria-hidden="true">&#8599;</span></button><a href="mailto:vickyranagovind@gmail.com">Have a project? Email the studio &#8599;</a>';
+    menu.querySelector(".menu-left").append(shortcuts);
+    const setMenu = (open) => {
+      toggle.classList.toggle("active", open);
+      menu.classList.toggle("active", open);
+      document.body.classList.toggle("menu-open", open);
+      menu.inert = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      if (open) closeBtn?.focus(); else toggle.focus();
+    };
+    toggle.addEventListener("click", () => setMenu(!menu.classList.contains("active")));
+    closeBtn?.addEventListener("click", () => setMenu(false));
+    shortcuts.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-menu-commerce]");
+      if (button) { setMenu(false); openCommerce(button.dataset.menuCommerce); }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (!menu.classList.contains("active")) return;
+      if (event.key === "Escape") { event.preventDefault(); setMenu(false); }
+      if (event.key === "Tab") {
+        const targets = [...menu.querySelectorAll('a[href], button, input, select, textarea')].filter((el) => !el.disabled && el.getClientRects().length);
+        const first = targets[0], last = targets.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }
-    });
-
-    toggle.addEventListener("click", () => {
-      toggle.classList.remove("ripple");
-      void toggle.offsetWidth;
-      toggle.classList.add("ripple");
-    });
-
-    closeBtn?.addEventListener("click", () => {
-      toggle.classList.remove("active");
-      menu.classList.remove("active");
-      document.body.classList.remove("menu-open");
-    });
-
-    toggle.addEventListener("mousemove", (event) => {
-      const rect = toggle.getBoundingClientRect();
-      const x = event.clientX - rect.left - rect.width / 2;
-      const y = event.clientY - rect.top - rect.height / 2;
-      const limit = 6;
-      const moveX = Math.max(-limit, Math.min(limit, x * 0.2));
-      const moveY = Math.max(-limit, Math.min(limit, y * 0.2));
-      toggle.style.setProperty("--mag-x", `${moveX}px`);
-      toggle.style.setProperty("--mag-y", `${moveY}px`);
-    });
-
-    toggle.addEventListener("mouseleave", () => {
-      toggle.style.setProperty("--mag-x", "0px");
-      toggle.style.setProperty("--mag-y", "0px");
     });
   }
 
@@ -746,30 +721,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       const action = button.dataset.menuAction;
       if (action === "quote" || action === "downloads") {
         openCommerce(action === "quote" ? "cart" : "downloads");
-        return;
-      }
-      openUtilityPanel(action);
-
-      if (action === "saved") {
-        document.getElementById("saved-designs")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-      if (action === "downloads") {
-        document.getElementById("download-history")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-      if (action === "quote") {
-        document.getElementById("quote-designs")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else {
+        openUtilityPanel(action);
       }
     });
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape") {
-      return;
-    }
-
-    toggle?.classList.remove("active");
-    menu?.classList.remove("active");
-    document.body.classList.remove("menu-open");
   });
 
   function initMediaProtection() {
@@ -882,7 +837,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3-4 6m12-6 4 6M3 9h18l-2 11H5L3 9Z"/><path d="M9 13v3m6-3v3"/></svg>
             <span class="catalogue-basket-label" aria-live="polite">${inBasket ? "Added to cart" : ""}</span>
           </button>
-          <button type="button" class="catalogue-download" data-download-image="${project.id}" aria-label="Download ${project.title}" title="Download wallpaper">
+          <button type="button" class="catalogue-download" data-download-image="${project.id}" aria-label="Download ${project.title}" title="Download design">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>
           </button>
         </div>
@@ -985,53 +940,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderShowcaseTrack(threeDTrack, getProjectsByMode("3d").slice(0, 4));
   }
 
-  function populateFilterOptions() {
-    populateSelect(
-      yearSelect,
-      getUniqueYears(currentWorkType).map((year) => ({ value: year, label: year })),
-      "All years"
-    );
-
-    populateSelect(
-      themeSelect,
-      getUniqueThemes(currentWorkType).map((theme) => ({
-        value: theme.id,
-        label: theme.label,
-      })),
-      "All themes"
-    );
-  }
-
   function applyFilters() {
-    if (!grid) {
-      return;
-    }
-
-    let filtered = [...getProjectsByMode(currentWorkType)];
-
-    if (yearSelect?.value) {
-      filtered = filtered.filter((project) => project.year === yearSelect.value);
-    }
-
-    if (ownershipSelect?.value) {
-      filtered = filtered.filter((project) => project.ownership === ownershipSelect.value);
-    }
-
-    if (themeSelect?.value) {
-      filtered = filtered.filter((project) => project.theme === themeSelect.value);
-    }
-
-    const query = searchInput?.value.trim().toLowerCase();
-    if (query) {
-      filtered = filtered.filter((project) =>
-        [project.title, project.summary, project.location, project.mediumLabel, project.theme]
-          .join(" ")
-          .toLowerCase()
-          .includes(query)
-      );
-    }
-
-    renderProjects(filtered);
+    if (!grid) return;
+    const collection = getProjectsByMode(currentWorkType);
+    renderProjects(catalogueFilters ? catalogueFilters.filter(collection) : collection);
   }
 
   function updateToggleUI() {
@@ -1062,29 +974,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  function updateProjectGuide(mode) {
-    if (!projectGuide) return;
-    projectGuide.querySelectorAll("[data-guide-mode]").forEach((button) => {
-      const isActive = button.dataset.guideMode === mode;
-      button.classList.toggle("is-active", isActive);
-      button.setAttribute("aria-selected", String(isActive));
-      button.tabIndex = isActive ? 0 : -1;
-    });
-    projectGuide.querySelectorAll("[data-guide-panel]").forEach((panel) => {
-      panel.hidden = panel.dataset.guidePanel !== mode;
-    });
-  }
-
   function setMode(mode, { persist = true } = {}) {
     if (!MODE_VALUES.includes(mode)) {
       return;
     }
 
-    // Never allow a saved 3D choice to change Work, Services, About, Contact,
-    // or project-detail pages. Those pages always present the wallpaper brand.
-    const permittedMode = pageAllows3dMode ? mode : "wallpaper";
+    const permittedMode = mode;
     currentWorkType = permittedMode;
     applyModeClass(permittedMode);
+    updateModeContent(permittedMode);
 
     const isWallpaperMode = permittedMode === "wallpaper";
     if (estimatorSection) {
@@ -1096,10 +994,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (catalogueIntro) {
       catalogueIntro.textContent = isWallpaperMode
         ? "Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click."
-        : "Explore Studio Viana’s 3D art collection. Filter the collection, download a project brief, or open a concept for the full story.";
+        : "Explore Studio Viana’s 3D art collection. Filter the collection, preview a concept, or add a design to your cart.";
     }
 
-    if (persist && pageAllows3dMode) {
+    if (persist) {
       try {
         localStorage.setItem(MODE_KEY, permittedMode);
       } catch {
@@ -1108,13 +1006,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     renderSavedCollections();
-    populateFilterOptions();
-    updateToggleUI();
-    updateProjectGuide(permittedMode);
 
-    if (themeSelect && !getUniqueThemes(currentWorkType).some((theme) => theme.id === themeSelect.value)) {
-      themeSelect.value = "";
-    }
+    catalogueFilters?.setCollection(getProjectsByMode(permittedMode), permittedMode);
+    updateToggleUI();
+
 
     if (homeCollections) {
       renderHomeCollections(getProjectsByMode(currentWorkType));
@@ -1515,20 +1410,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  yearSelect?.addEventListener("change", applyFilters);
-  ownershipSelect?.addEventListener("change", applyFilters);
-  themeSelect?.addEventListener("change", applyFilters);
   searchInput?.addEventListener("input", applyFilters);
   clearBtn?.addEventListener("click", () => {
-    if (yearSelect) {
-      yearSelect.value = "";
-    }
-    if (ownershipSelect) {
-      ownershipSelect.value = "";
-    }
-    if (themeSelect) {
-      themeSelect.value = "";
-    }
+    catalogueFilters?.clear();
     if (searchInput) {
       searchInput.value = "";
     }
@@ -1537,9 +1421,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     applyFilters();
   });
 
-  projectGuide?.querySelectorAll("[data-guide-mode]").forEach((button) => {
-    button.addEventListener("click", () => setMode(button.dataset.guideMode));
-  });
 
   initMediaProtection();
 
@@ -1574,7 +1455,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     syncAuthLinks();
     gateProtectedNavigation();
 
-    if (event.key !== MODE_KEY) {
+    if (event.key && event.key !== MODE_KEY) {
       return;
     }
 

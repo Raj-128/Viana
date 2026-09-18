@@ -1,4 +1,16 @@
 .commerce-nav { display: flex; align-items: center; gap: 8px; margin-left: auto; margin-right: 18px; }
+.commerce-download-options { padding: 20px 0; border-bottom: 1px solid currentColor; }
+.commerce-download-options[hidden] { display: none; }
+.commerce-download-options h3 { font-size: 18px; margin: 0 0 18px; }
+.commerce-download-options button { display: block; width: 100%; padding: 14px; background: transparent; border: 1px solid currentColor; border-radius: 6px; text-align: left; }
+.commerce-download-options p { font-size: 12px; line-height: 1.6; opacity: .75; margin: 8px 0 18px; }
+.commerce-download-options a { color: inherit; font-size: 13px; }
+.commerce-requests { margin-top: 28px; border-top: 1px solid currentColor; padding-top: 20px; }
+.commerce-requests[hidden] { display: none; }
+.commerce-requests button { background: transparent; color: inherit; border: 1px solid currentColor; border-radius: 6px; padding: 10px 14px; }
+.commerce-requests p { font-size: 13px; line-height: 1.6; }
+.commerce-request { padding: 18px 0; border-bottom: 1px solid #8884; }
+.commerce-request strong { font-size: 14px; }
 .commerce-nav button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; border: 0; background: transparent; color: inherit; font: inherit; font-size: 12px; cursor: pointer; }
 .commerce-nav svg, .commerce-empty svg { width: 22px; height: 22px; flex-shrink: 0; }
 [data-commerce-count] { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 4px; border-radius: 12px; background: #ded6c8; color: #29251f; font-size: 11px; }

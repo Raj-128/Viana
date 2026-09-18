@@ -9,11 +9,11 @@ export function initWallpaperViewer() {
   dialog.setAttribute("aria-labelledby", "wallpaper-viewer-title");
   dialog.innerHTML = `
     <header class="wallpaper-viewer-heading">
-      <div><p>WALLPAPER PREVIEW</p><h2 id="wallpaper-viewer-title"></h2></div>
+      <div><p data-preview-kind>DESIGN PREVIEW</p><h2 id="wallpaper-viewer-title"></h2></div>
       <div class="wallpaper-viewer-controls">
-        <button type="button" data-viewer-previous aria-label="Previous wallpaper">&#8592;</button>
-        <button type="button" data-viewer-next aria-label="Next wallpaper">&#8594;</button>
-        <button type="button" data-viewer-close aria-label="Close wallpaper preview" autofocus>&times;</button>
+        <button type="button" data-viewer-previous aria-label="Previous design">&#8592;</button>
+        <button type="button" data-viewer-next aria-label="Next design">&#8594;</button>
+        <button type="button" data-viewer-close aria-label="Close design preview" autofocus>&times;</button>
       </div>
     </header>
     <div class="wallpaper-viewer-frame">
@@ -43,6 +43,7 @@ export function initWallpaperViewer() {
     image.src = project.cover;
     image.alt = project.title;
     dialog.querySelector("h2").textContent = project.title;
+    dialog.querySelector("[data-preview-kind]").textContent = project.workType === "3d" ? "3D PREVIEW" : "WALLPAPER PREVIEW";
     const added = store.cart().some((item) => item.id === project.id);
     const basket = dialog.querySelector("[data-add-design]");
     basket.dataset.addDesign = project.id;
@@ -54,7 +55,7 @@ export function initWallpaperViewer() {
     const download = dialog.querySelector("[data-download-image]");
     download.dataset.downloadImage = project.id;
     download.setAttribute("aria-label", 'Download ' + project.title);
-    download.title = "Download wallpaper";
+    download.title = "Download design";
     renderCommerce();
   };
   document.addEventListener("click", (event) => {
