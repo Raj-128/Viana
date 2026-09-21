@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" class="mode-ready">
 <head>
+  <meta http-equiv="Content-Security-Policy" content="object-src &#39;none&#39;; base-uri &#39;self&#39;">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login and Register - Studio Viana</title>
-  <link rel="icon" href="/Viana/assets/flower-6SgxrDD3.png" sizes="70x70" type="image/png">
+  <link rel="icon" href="./assets/flower-6SgxrDD3.png" sizes="70x70" type="image/png">
   <meta name="description" content="Studio Viana client access.">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/Viana/assets/premium-BQuSEdJG.js"></script>
-  <link rel="stylesheet" crossorigin href="/Viana/assets/premium-BeuyW0Jy.css">
-  <link rel="stylesheet" crossorigin href="/Viana/assets/auth-CPn_V-_0.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/auth-Bifgt_VE.js"></script>
+  <script type="module" crossorigin src="./assets/premium-CiQo1dG1.js"></script>
+  <script type="module" crossorigin src="./assets/cursor-C-f4vkBM.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/auth-TJZY5gN1.css">
+  <link rel="stylesheet" crossorigin href="./assets/premium-DQ10SpKe.css">
+  <link rel="stylesheet" crossorigin href="./assets/cursor-C9AL_5KR.css">
 </head>
 <body class="auth-page mode-wallpaper lights-on" data-auth-page>
   <header class="auth-topbar">
     <a href="index.html" class="auth-brand">
-      <img src="/Viana/assets/flower-6SgxrDD3.png" alt="Studio Viana Logo" class="auth-brand-mark">
+      <img src="./assets/flower-6SgxrDD3.png" alt="Studio Viana Logo" class="auth-brand-mark">
       <span>Studio Viana</span>
     </a>
     <a href="index.html" class="auth-home-link">Back to home</a>
@@ -60,11 +66,12 @@
           <form class="auth-form auth-view-panel is-active" data-auth-view="login" data-login-form aria-hidden="false">
             <label class="auth-field">
               <span>Email or phone</span>
-              <input type="text" name="identifier" placeholder="you@example.com or +91 9876543210" required>
+              <input type="text" name="identifier" placeholder="you@example.com or +91 9876543210" autocomplete="username" aria-describedby="login-identifier-help" required>
+              <small id="login-identifier-help">Enter the email or phone used when creating your account.</small>
             </label>
             <label class="auth-field">
               <span>Password</span>
-              <input type="password" name="password" placeholder="Enter your password" required>
+              <input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
             </label>
             <button class="auth-submit" type="submit">Login to Studio Viana</button>
           </form>
@@ -89,11 +96,11 @@
             <div class="auth-grid two">
               <label class="auth-field">
                 <span>Password</span>
-                <input type="password" name="password" placeholder="Use letters and numbers" required>
+                <input type="password" name="password" placeholder="10+ characters, letters and numbers" autocomplete="new-password" minlength="10" maxlength="128" required>
               </label>
               <label class="auth-field">
                 <span>Confirm password</span>
-                <input type="password" name="confirmPassword" placeholder="Repeat password" required>
+                <input type="password" name="confirmPassword" placeholder="Repeat password" autocomplete="new-password" required>
               </label>
             </div>
 
@@ -104,6 +111,7 @@
         <p class="auth-status" data-auth-status></p>
       </article>
 
+      <template data-account-template>
       <article class="auth-card account-card" data-account-panel hidden>
         <span class="account-role" data-account-role></span>
         <h2 data-account-name></h2>
@@ -116,8 +124,11 @@
           <button type="button" class="auth-submit secondary" data-logout-button>Sign out</button>
         </div>
       </article>
+      </template>
     </section>
   </main>
 
+  <div class="cursor" aria-hidden="true"><div class="cursor-dot"></div><div class="cursor-outline"></div></div>
+
 </body>
 </html>

@@ -1,11 +1,14 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Content-Security-Policy" content="object-src &#39;none&#39;; base-uri &#39;self&#39;">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Contact &mdash; Studio Viana</title>
-  <link rel="icon" href="/Viana/assets/flower-6SgxrDD3.png" sizes="70x70" type="image/png">
+  <link rel="icon" href="./assets/flower-6SgxrDD3.png" sizes="70x70" type="image/png">
 
   <meta name="description" content="Contact Studio Viana for custom wallpaper quotes, project inquiries, and collaborations. WhatsApp for fastest response.">
   <meta name="robots" content="index, follow">
@@ -28,11 +31,14 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS -->
-  <script type="module" crossorigin src="/Viana/assets/premium-BQuSEdJG.js"></script>
-  <script type="module" crossorigin src="/Viana/assets/main-DE3IRUPF.js"></script>
-  <link rel="stylesheet" crossorigin href="/Viana/assets/premium-BeuyW0Jy.css">
-  <link rel="stylesheet" crossorigin href="/Viana/assets/main-EF-FNqN0.css">
+  <!-- CSS -->
+  <script type="module" crossorigin src="./assets/auth-Bifgt_VE.js"></script>
+  <script type="module" crossorigin src="./assets/premium-CiQo1dG1.js"></script>
+  <script type="module" crossorigin src="./assets/projects-DY9efnOz.js"></script>
+  <script type="module" crossorigin src="./assets/main-Cf5S92CW.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/auth-TJZY5gN1.css">
+  <link rel="stylesheet" crossorigin href="./assets/premium-DQ10SpKe.css">
+  <link rel="stylesheet" crossorigin href="./assets/main-DnyfHXNf.css">
 </head>
 <body data-auth-protected>
 
@@ -43,7 +49,7 @@
     <div class="container header-inner">
       <div class="logo">
         <a href="index.html">
-          <img src="/Viana/assets/flower-6SgxrDD3.png" alt="Studio Viana Logo" class="logo-img">
+          <img src="./assets/flower-6SgxrDD3.png" alt="Studio Viana Logo" class="logo-img">
           STUDIO VIANA</a>
       </div>
       <nav class="desktop-nav">
@@ -124,28 +130,28 @@
 
         <div class="contact-info-cards" style="margin-top: 32px;">
           <a href="mailto:vickyranagovind@gmail.com" class="contact-info-item">
-            <div class="contact-info-icon">Email</div>
+            <div class="contact-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg></div>
             <div>
               <span class="contact-info-label">Email</span>
               <span class="contact-info-value">vickyranagovind@gmail.com</span>
             </div>
           </a>
           <a href="tel:+919737711570" class="contact-info-item">
-            <div class="contact-info-icon">Phone</div>
+            <div class="contact-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16.5v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 2.5 5.2 2 2 0 0 1 4.5 3h3l1.5 5-2 1.5a15 15 0 0 0 7.5 7.5l1.5-2 5 1.5Z"/></svg></div>
             <div>
               <span class="contact-info-label">Phone / WhatsApp</span>
               <span class="contact-info-value">+91 9737711570</span>
             </div>
           </a>
           <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener" class="contact-info-item">
-            <div class="contact-info-icon">Photo</div>
+            <div class="contact-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></div>
             <div>
               <span class="contact-info-label">Instagram</span>
               <span class="contact-info-value">@_studio_viana</span>
             </div>
           </a>
           <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener" class="contact-info-item">
-            <div class="contact-info-icon">Art</div>
+            <div class="contact-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h5a3.5 3.5 0 0 1 0 7H3V5Zm0 7h5a3.5 3.5 0 0 1 0 7H3v-7Zm12-7h6M14 14h8c0-6-8-6-8 0s6 6 8 3"/></svg></div>
             <div>
               <span class="contact-info-label">Behance</span>
               <span class="contact-info-value">vickyrana8</span>
@@ -169,7 +175,7 @@
           <input type="text" name="type" id="contact-type" placeholder="Custom wallpaper, Brand identity, etc.">
         </label>
         <label>
-          Wall Dimensions (optional)
+          <span id="contact-dimensions-label">Wall Dimensions (optional)</span>
           <input type="text" name="dimensions" id="contact-dimensions" placeholder="e.g. 300cm wide &times; 270cm tall">
         </label>
         <label>
