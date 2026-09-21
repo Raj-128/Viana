@@ -1,10 +1,4 @@
 import "./site-mode.js";
-import { getLoginIdentifier, rememberLoginIdentifier } from "./login-identifier.js";
-
-const identifierStorage = {
-  getItem: (key) => localStorage.getItem(key),
-  setItem: (key, value) => localStorage.setItem(key, value),
-};
 const SESSION_KEY = "studioVianaSession";
 const PUBLIC_PAGES = new Set(["", "index.html", "login.html", "admin-login.html"]);
 const ADMIN_HOLD_DURATION = 950;
@@ -16,6 +10,10 @@ function removeStorage(key) {
     // Ignore storage errors.
   }
 }
+
+// Drop identifiers remembered by earlier builds so login fields never open pre-filled.
+removeStorage("studioLoginIdentifier");
+removeStorage("studioAdminLoginIdentifier");
 
 function getCurrentPageName(targetHref = window.location.href) {
   const url = new URL(targetHref, window.location.href);
@@ -284,19 +282,16 @@ export function isAdminConfigured() { return adminConfigured; }
 export async function registerUser(data) {
   const result = await authRequest('register', data);
   serverSession = result.user;
-  rememberLoginIdentifier(identifierStorage, serverSession);
   return serverSession;
 }
 export async function loginUser(data) {
   const result = await authRequest('login', data);
   serverSession = result.user;
-  rememberLoginIdentifier(identifierStorage, serverSession, data.identifier);
   return serverSession;
 }
 export async function loginAdmin(data) {
   const result = await authRequest('admin-login', data);
   serverSession = result.user;
-  rememberLoginIdentifier(identifierStorage, serverSession, data.identifier);
   return serverSession;
 }
 
@@ -446,7 +441,6 @@ function initClientAuthPage() {
   const authInterface = authRoot.querySelector("[data-auth-interface]");
   const accountPanel = createAccountPanel(authRoot);
   const loginForm = authRoot.querySelector("[data-login-form]");
-  if (loginForm) loginForm.elements.identifier.value = getLoginIdentifier(identifierStorage, { session: getSession() });
   const registerForm = authRoot.querySelector("[data-register-form]");
   const logoutButton = accountPanel.querySelector("[data-logout-button]");
   const authStatus = authRoot.querySelector("[data-auth-status]");
@@ -640,7 +634,6 @@ function initAdminAuthPage() {
   const adminStage = authRoot.querySelector("[data-admin-stage]");
   const refreshAdminButton = authRoot.querySelector("[data-refresh-admin]");
   const adminLoginForm = authRoot.querySelector("[data-admin-login-form]");
-  if (adminLoginForm) adminLoginForm.elements.identifier.value = getLoginIdentifier(identifierStorage, { admin: true, session: getSession() });
   const adminStatus = authRoot.querySelector("[data-admin-status]");
   const accountName = accountPanel.querySelector("[data-account-name]");
   const accountRole = accountPanel.querySelector("[data-account-role]");
