@@ -27,6 +27,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./src/css/base.css">
+  <link rel="stylesheet" href="./src/css/cursor.css">
   <link rel="stylesheet" href="./src/css/components.css">
   <link rel="stylesheet" href="./src/css/layout.css">
   <link rel="stylesheet" href="./src/css/creative-effects.css">
@@ -71,9 +72,41 @@
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
         </nav>
+
+        <div class="menu-utility-actions">
+          <button type="button" class="menu-action active" data-menu-action="saved">Saved picks</button>
+          <button type="button" class="menu-action" data-menu-action="downloads">Downloads</button>
+          <button type="button" class="menu-action" data-menu-action="quote">Cart</button>
+        </div>
       </div>
 
       <div class="menu-right">
+        <div class="menu-utility-rail" aria-live="polite">
+          <div class="menu-utility-panel active" data-menu-panel="saved">
+            <div class="menu-utility-header">
+              <p class="section-kicker">Saved picks</p>
+              <button type="button" class="utility-clear" data-clear-saved>Clear</button>
+            </div>
+            <div class="utility-list" id="saved-designs"></div>
+          </div>
+
+          <div class="menu-utility-panel" data-menu-panel="downloads">
+            <div class="menu-utility-header">
+              <p class="section-kicker">Downloads</p>
+              <button type="button" class="utility-clear" data-clear-downloads>Clear</button>
+            </div>
+            <div class="utility-list" id="download-history"></div>
+          </div>
+
+          <div class="menu-utility-panel" data-menu-panel="quote">
+            <div class="menu-utility-header">
+              <p class="section-kicker">Cart</p>
+              <button type="button" class="utility-clear" data-clear-quote>Clear</button>
+            </div>
+            <div class="utility-list" id="quote-designs"></div>
+          </div>
+        </div>
+
         <p><strong>Studio Viana</strong></p>
         <p>Digital Artist &amp; 3D Visualizer</p>
         <p>Designing visual identity and physical space.</p>
@@ -81,66 +114,84 @@
     </div>
   </div>
 
-  <section class="catalogue-hero">
-    <div class="container catalogue-hero-content">
-      <p class="catalogue-breadcrumb">Home / Collections</p>
-      <h1>Wallpapers &amp; visual stories</h1>
-      <p>Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click.</p>
-    </div>
-  </section>
+  <section class="catalogue-hero-carousel">
+    <div class="container hero-carousel-shell">
+      <div class="hero-carousel-copy">
+        <p class="catalogue-breadcrumb">Home / Collections</p>
+        <h1 id="catalogue-title">Wallpapers &amp; visual stories</h1>
+        <p id="catalogue-intro">Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click.</p>
+      </div>
 
-  <section class="work-filters catalogue-filters">
-    <div class="container">
-      <div class="filters-bar">
-        <label class="catalogue-search" for="filter-search">
-          <span class="sr-only">Search designs</span>
-          <input id="filter-search" type="search" placeholder="Search designs, themes or locations">
-          <span aria-hidden="true">⌕</span>
-        </label>
-
-        <div class="catalogue-type" data-mode-toggle aria-label="Product type">
-          <span>Product type</span>
-          <div class="type-tabs">
-            <button class="pill-btn active" type="button" data-type="wallpaper">Wallpapers</button>
-            <button class="pill-btn" type="button" data-type="3d">3D concepts</button>
-          </div>
+      <div class="hero-carousel-stage" aria-label="Featured design carousel">
+        <div class="hero-carousel-track">
+          <article class="hero-slide active">
+            <img src="./src/assets/images/wallpapers/previews/1.jpg" alt="Featured wallpaper study 1" loading="eager">
+            <div class="hero-slide-caption">
+              <span>Wallpaper</span>
+              <strong>Bloom Study</strong>
+            </div>
+          </article>
+          <article class="hero-slide">
+            <img src="./src/assets/images/wallpapers/previews/2.jpg" alt="Featured wallpaper study 2" loading="eager">
+            <div class="hero-slide-caption">
+              <span>Wallpaper</span>
+              <strong>Fairy Garden</strong>
+            </div>
+          </article>
+          <article class="hero-slide">
+            <img src="./src/assets/images/wallpapers/previews/3.jpg" alt="Featured wallpaper study 3" loading="eager">
+            <div class="hero-slide-caption">
+              <span>Wallpaper</span>
+              <strong>Forest Mists</strong>
+            </div>
+          </article>
+          <article class="hero-slide">
+            <img src="./src/assets/images/wallpapers/previews/4.jpg" alt="Featured wallpaper study 4" loading="eager">
+            <div class="hero-slide-caption">
+              <span>Wallpaper</span>
+              <strong>Quiet Arch</strong>
+            </div>
+          </article>
         </div>
-
-        <div class="filter-group">
-          <label for="filter-theme">Style</label>
-          <select id="filter-theme">
-            <option value="">All styles</option>
-          </select>
-        </div>
-
-        <div class="filter-group catalogue-secondary-filter">
-          <label for="filter-year">Year</label>
-          <select id="filter-year">
-            <option value="">All years</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="filter-ownership">Source</label>
-          <select id="filter-ownership">
-            <option value="">All sources</option>
-            <option value="owned">Studio Owned</option>
-            <option value="curated">Curated Sources</option>
-          </select>
-        </div>
-
-        <div class="filters-count" id="work-count">0 pieces</div>
-
-        <button id="clear-filters" class="clear-filters">Clear</button>
       </div>
     </div>
   </section>
 
-  <section class="work-list catalogue-list reveal">
-    <div class="container work-grid" id="work-grid"></div>
+  <section class="catalogue-shop container" aria-label="Browse the collection">
+    <details class="catalogue-filter-panel" open>
+      <summary>Filters <span aria-hidden="true">+</span></summary>
+      <div class="catalogue-filter-body">
+        <div id="catalogue-facets"></div>
+        <button id="clear-filters" class="shop-clear" type="button">Clear all filters</button>
+      </div>
+    </details>
+    <div class="catalogue-results catalogue-list">
+      <div class="shop-toolbar">
+        <label class="shop-search" for="filter-search">
+          <span class="sr-only">Search designs</span>
+          <input id="filter-search" type="search" placeholder="Search designs, themes or locations">
+          <span aria-hidden="true">&#8981;</span>
+        </label>
+        <label class="shop-sort" for="catalogue-sort">Sort by
+          <select id="catalogue-sort">
+            <option value="featured">Featured</option>
+            <option value="newest">Newest</option>
+            <option value="az">Name: A?Z</option>
+            <option value="za">Name: Z?A</option>
+          </select>
+        </label>
+      </div>
+      <p id="work-count" class="shop-count" role="status" aria-live="polite">Loading designs?</p>
+      <div class="shop-suggestions">
+        <p>Explore styles</p>
+        <div id="catalogue-suggestions" class="shop-chips"></div>
+      </div>
+      <div id="catalogue-active-filters" class="shop-chips shop-active-filters" aria-label="Active filters"></div>
+      <div class="work-grid" id="work-grid"></div>
+    </div>
   </section>
 
-  <section class="studio-estimator reveal" data-estimator>
+  <section class="studio-estimator reveal" data-estimator aria-label="Wallpaper price estimator">
     <div class="container studio-estimator-grid">
       <div class="estimator-stage">
         <div class="estimator-copy">
@@ -151,7 +202,7 @@
 
         <div class="estimator-preview">
           <div class="preview-frame">
-            <img id="estimate-preview-image" src="./src/assets/images/wallpapers/optimized/1.jpg" alt="Wallpaper preview">
+            <img id="estimate-preview-image" src="./src/assets/images/wallpapers/previews/1.jpg" alt="Wallpaper preview">
             <div class="preview-overlay">
               <p id="estimate-preview-label">Child</p>
               <h3 id="estimate-preview-title">Moon Garden Storywall</h3>

@@ -1,0 +1,16 @@
+/* Shared custom cursor for pages that do not load the main site component styles. */
+.cursor { position: fixed; top: 0; left: 0; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 160ms ease; }
+.cursor-dot { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #6e4f45; transform: translate(-50%, -50%); transition: width 180ms ease, height 180ms ease, background-color 180ms ease; will-change: transform; }
+.cursor-outline { position: absolute; width: 40px; height: 40px; border: 1.5px solid #d8a3a8; border-radius: 50%; transform: translate(-50%, -50%); transition: width 180ms ease, height 180ms ease, border-color 180ms ease, background-color 180ms ease; will-change: transform; }
+
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor, html.has-custom-cursor * { cursor: none !important; }
+  .cursor.is-visible { opacity: 1; }
+  .cursor.is-interactive .cursor-dot { width: 8px; height: 8px; background: #fff; }
+  .cursor.is-interactive .cursor-outline { width: 54px; height: 54px; border-color: #6e4f45; background: rgba(216, 163, 168, .18); }
+  .cursor.is-pressed .cursor-outline { width: 30px; height: 30px; background: rgba(110, 79, 69, .24); }
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor { display: none !important; }
+}

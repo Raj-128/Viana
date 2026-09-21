@@ -1,9 +1,31 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
+import { apiPlugin } from "./server/vite-plugin.js";
+import { wallpaperCataloguePlugin } from "./server/wallpaper-catalogue.js";
+
+const securityHeaders = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+  "Content-Security-Policy": "object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+};
 
 export default defineConfig({
-  base: "/Viana/",
+  base: "./",
+  cacheDir: "node_modules/.vite-viana",
   appType: "mpa",
+  server: { headers: securityHeaders, port: 5173, strictPort: true, fs: { deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/.private/**", "**/server/**", "**/wallpapers/optimized/**", "**/wallpapers/*.jpeg"] } },
+  preview: { headers: securityHeaders },
+  plugins: [wallpaperCataloguePlugin(), apiPlugin(), {
+    name: "baseline-security-meta",
+    transformIndexHtml() {
+      return [
+        { tag: "meta", attrs: { "http-equiv": "Content-Security-Policy", content: "object-src 'none'; base-uri 'self'" }, injectTo: "head-prepend" },
+        { tag: "meta", attrs: { name: "referrer", content: "strict-origin-when-cross-origin" }, injectTo: "head-prepend" },
+      ];
+    },
+  }],
   build: {
     rollupOptions: {
       input: {
@@ -14,7 +36,8 @@ export default defineConfig({
         work: resolve(__dirname, "work.html"),
         project: resolve(__dirname, "project.html"),
         login: resolve(__dirname, "login.html"),
-        adminLogin: resolve(__dirname, "admin-login.html")
+        adminLogin: resolve(__dirname, "admin-login.html"),
+        adminDownloads: resolve(__dirname, "admin-downloads.html")
       }
     }
   }

@@ -1,3 +1,10 @@
+import { MODE_KEY, readStudioMode, applyStudioTheme } from "./site-mode.js";
+import { estimateDimensions } from "./estimate-dimensions.js";
+import { updateModeContent } from "./mode-content.js";
+import { initCatalogueFilters } from "./catalogue-filters.js";
+import { initCommerce, renderCommerce, addToCart, openCommerce, downloadDesign } from "./commerce.js";
+import { initWallpaperViewer } from "./wallpaper-viewer.js";
+import { initMediaDeterrents } from "./media-deterrents.js";
 import { paperTypes, pricingThemes, projects, wallpaperShowcaseImages } from "./projects.js";
 import {
   initCreativeAnimations,
@@ -6,17 +13,21 @@ import {
   initTiltEffects,
 } from "./creative-animations.js";
 import {
+  authReady,
   applyAuthStateToDocument,
   enforceProtectedAccess,
   gateProtectedNavigation,
-  isAdminSession,
   syncAuthLinks,
 } from "./auth.js";
 
 initCreativeAnimations();
 
-const MODE_KEY = "studioMode";
 const MODE_VALUES = ["wallpaper", "3d"];
+const STORAGE_KEYS = {
+  saved: "studioSavedDesigns",
+  downloads: "studioDownloads",
+  quote: "studioQuoteSelections",
+};
 const WHATSAPP_NUMBER = "919737711570";
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -24,23 +35,213 @@ const currencyFormatter = new Intl.NumberFormat("en-IN", {
   maximumFractionDigits: 0,
 });
 
-function getStoredMode() {
+function readStoredList(key) {
   try {
-    const saved = localStorage.getItem(MODE_KEY);
-    return MODE_VALUES.includes(saved) ? saved : null;
+    const stored = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(stored) ? stored : [];
   } catch {
-    return null;
+    return [];
   }
 }
 
-function applyModeClass(mode) {
-  const target = document.body || document.documentElement;
-  if (!target) {
+function writeStoredList(key, list) {
+  try {
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch {
+    // Ignore storage errors.
+  }
+}
+
+function addProjectToSaved(projectId) {
+  const saved = readStoredList(STORAGE_KEYS.saved);
+  const nextList = saved.includes(projectId)
+    ? saved.filter((id) => id !== projectId)
+    : [projectId, ...saved].slice(0, 8);
+
+  writeStoredList(STORAGE_KEYS.saved, nextList);
+  renderSavedCollections();
+  return nextList.includes(projectId);
+}
+
+function navigateToProjectDetail(projectId) {
+  if (!projectId) {
     return;
   }
 
-  target.classList.toggle("mode-wallpaper", mode === "wallpaper");
-  target.classList.toggle("mode-3d", mode === "3d");
+  window.location.href = `project.html?id=${projectId}`;
+}
+
+function toggleProjectSelection(project) {
+  if (!project) {
+    return false;
+  }
+
+  const saved = readStoredList(STORAGE_KEYS.saved);
+  const isAlreadySaved = saved.includes(project.id);
+
+  if (isAlreadySaved) {
+    writeStoredList(STORAGE_KEYS.saved, saved.filter((id) => id !== project.id));
+    renderSavedCollections();
+    if (activeProject?.id === project.id) {
+      activeProject = null;
+      updateEstimator();
+    }
+    if (typeof applyFilters === "function") {
+      applyFilters();
+    }
+    return false;
+  }
+
+  writeStoredList(STORAGE_KEYS.saved, [project.id, ...saved].slice(0, 8));
+  renderSavedCollections();
+
+  activeProject = project;
+  estimatorState.theme = project.theme;
+  if (estimatorThemeSelect) {
+    estimatorThemeSelect.value = project.theme;
+  }
+
+  updateEstimator();
+  estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (typeof applyFilters === "function") {
+    applyFilters();
+  }
+  return true;
+}
+
+function selectProject(project) {
+  if (!project) {
+    return false;
+  }
+
+  activeProject = project;
+  estimatorState.theme = project.theme;
+  if (estimatorThemeSelect) {
+    estimatorThemeSelect.value = project.theme;
+  }
+
+  updateEstimator();
+  estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (typeof applyFilters === "function") {
+    applyFilters();
+  }
+  return true;
+}
+
+function addProjectToQuote(project) {
+  addToCart(project);
+}
+
+function syncBasketButtons() {
+  const quote = readStoredList(STORAGE_KEYS.quote);
+  document.querySelectorAll("[data-add-design]").forEach((button) => {
+    const inBasket = quote.some((entry) => entry?.id === button.dataset.addDesign);
+    const title = projects.find((project) => project.id === button.dataset.addDesign)?.title || "design";
+    button.classList.toggle("is-added", inBasket);
+    button.setAttribute("aria-pressed", String(inBasket));
+    button.setAttribute("aria-label", `${inBasket ? "Added to cart. Remove" : "Add to cart:"} ${title}`);
+    button.title = inBasket ? "Remove from cart" : "Add to cart";
+    const label = button.querySelector(".catalogue-basket-label");
+    if (label) label.textContent = inBasket ? "Added to cart" : "";
+  });
+}
+
+function openUtilityPanel(action) {
+  const menuActionButtons = document.querySelectorAll("[data-menu-action]");
+  const menuPanels = document.querySelectorAll("[data-menu-panel]");
+
+  menuActionButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.menuAction === action);
+  });
+
+  menuPanels.forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.menuPanel === action);
+  });
+}
+
+function downloadProjectImage(project) {
+  return downloadDesign(project);
+}
+
+function renderSavedCollections() {
+  syncBasketButtons();
+  renderCommerce();
+  const savedContainer = document.getElementById("saved-designs");
+  const downloadsContainer = document.getElementById("download-history");
+  const quoteContainer = document.getElementById("quote-designs");
+
+  if (!savedContainer || !downloadsContainer || !quoteContainer) {
+    return;
+  }
+
+  const saved = readStoredList(STORAGE_KEYS.saved);
+  const downloads = readStoredList(STORAGE_KEYS.downloads);
+  const quote = readStoredList(STORAGE_KEYS.quote);
+
+  const renderList = (items, emptyLabel) => {
+    if (!items.length) {
+      return `<p class="utility-empty">${emptyLabel}</p>`;
+    }
+
+    return items
+      .map((item) => {
+        const project = projects.find((entry) => entry.id === item.id);
+        const label = project ? project.title : item.title;
+        const itemType = project ? (project.workType === "3d" ? "3D concept" : "Wallpaper") : "Saved selection";
+        return `
+          <div class="utility-item">
+            <div>
+              <strong>${label}</strong>
+              <span>${itemType}</span>
+            </div>
+            <button type="button" data-remove-item="${item.id}" data-storage-key="${item.type || "saved"}">Remove</button>
+          </div>
+        `;
+      })
+      .join("");
+  };
+
+  const savedEntries = saved
+    .map((projectId) => ({ id: projectId, type: "saved" }))
+    .filter((entry) => projects.some((project) => project.id === entry.id));
+  const downloadEntries = downloads
+    .filter((entry) => entry && projects.some((project) => project.id === entry.id))
+    .map((entry) => ({ ...entry, type: "downloads" }))
+    .filter((entry) => entry && (projects.some((project) => project.id === entry.id) || entry.title));
+  const quoteEntries = quote
+    .filter((entry) => entry && projects.some((project) => project.id === entry.id))
+    .map((entry) => ({ ...entry, type: "quote" }))
+    .filter((entry) => entry && (projects.some((project) => project.id === entry.id) || entry.title));
+
+  savedContainer.innerHTML = renderList(savedEntries, "No saved designs yet.");
+  downloadsContainer.innerHTML = renderList(downloadEntries, "No downloads yet.");
+  quoteContainer.innerHTML = renderList(quoteEntries, "No designs in the quote list yet.");
+
+  document.querySelectorAll("[data-remove-item]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const { removeItem, storageKey } = button.dataset;
+      if (!removeItem) {
+        return;
+      }
+
+      if (storageKey === "downloads") {
+        const list = readStoredList(STORAGE_KEYS.downloads).filter((entry) => entry.id !== removeItem);
+        writeStoredList(STORAGE_KEYS.downloads, list);
+      } else if (storageKey === "quote") {
+        const list = readStoredList(STORAGE_KEYS.quote).filter((entry) => entry.id !== removeItem);
+        writeStoredList(STORAGE_KEYS.quote, list);
+      } else {
+        const list = readStoredList(STORAGE_KEYS.saved).filter((id) => id !== removeItem);
+        writeStoredList(STORAGE_KEYS.saved, list);
+      }
+
+      renderSavedCollections();
+    });
+  });
+}
+
+function applyModeClass(mode) {
+  applyStudioTheme(mode);
 }
 
 function createObserverManager() {
@@ -329,11 +530,6 @@ function getProjectsByMode(mode) {
   return projects.filter((project) => project.workType === mode);
 }
 
-function getUniqueYears(mode) {
-  return [...new Set(getProjectsByMode(mode).map((project) => project.year))].sort(
-    (left, right) => Number(right) - Number(left)
-  );
-}
 
 function getUniqueThemes(mode) {
   return [...new Set(getProjectsByMode(mode).map((project) => project.theme))]
@@ -376,19 +572,19 @@ function enhanceCards(scope) {
   initRippleEffect(scope);
 }
 
-const initialMode = getStoredMode() || "wallpaper";
+function getPageMode() {
+  return readStudioMode();
+}
+
+const initialMode = getPageMode();
 const root = document.documentElement;
 const revealMode = () => root.classList.add("mode-ready");
 
 applyModeClass(initialMode);
 requestAnimationFrame(revealMode);
 
-const cursor = document.querySelector(".cursor");
-if (cursor && window.innerWidth < 768) {
-  cursor.style.display = "none";
-}
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await authReady;
   if (enforceProtectedAccess()) {
     return;
   }
@@ -406,16 +602,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const menu = document.querySelector(".fullscreen-menu");
   const closeBtn = document.querySelector(".menu-close");
   const header = document.querySelector(".site-header");
+  const menuActionButtons = document.querySelectorAll("[data-menu-action]");
 
   const grid = document.getElementById("work-grid");
   const homeCollections = document.getElementById("home-collections");
-  const yearSelect = document.getElementById("filter-year");
-  const ownershipSelect = document.getElementById("filter-ownership");
-  const themeSelect = document.getElementById("filter-theme");
   const searchInput = document.getElementById("filter-search");
   const clearBtn = document.getElementById("clear-filters");
+  const catalogueFilters = initCatalogueFilters(() => applyFilters());
   const workCount = document.getElementById("work-count");
   const modeToggles = document.querySelectorAll("[data-mode-toggle]");
+  const catalogueTitle = document.getElementById("catalogue-title");
+  const catalogueIntro = document.getElementById("catalogue-intro");
 
   const estimatorSection = document.querySelector("[data-estimator]");
   const estimatorThemeSelect = document.getElementById("price-theme");
@@ -444,6 +641,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const quoteWhatsappLink = document.getElementById("quote-whatsapp-link");
   const projectOrderSection = document.getElementById("project-order-section");
 
+  document.querySelector("[data-clear-saved]")?.addEventListener("click", () => {
+    writeStoredList(STORAGE_KEYS.saved, []);
+    renderSavedCollections();
+  });
+
+  document.querySelector("[data-clear-downloads]")?.addEventListener("click", () => {
+    writeStoredList(STORAGE_KEYS.downloads, []);
+    renderSavedCollections();
+  });
+
+  document.querySelector("[data-clear-quote]")?.addEventListener("click", () => {
+    writeStoredList(STORAGE_KEYS.quote, []);
+    renderSavedCollections();
+  });
+
+  initCommerce({ onChange: renderSavedCollections });
+  if (grid) initWallpaperViewer();
+
+  renderSavedCollections();
+
   let currentWorkType = initialMode;
   let activeProject = null;
   let currentWhatsAppMessage = "Hello Studio Viana";
@@ -458,65 +675,62 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (toggle && menu) {
-    toggle.addEventListener("click", () => {
-      toggle.classList.toggle("active");
-      menu.classList.toggle("active");
-      document.body.classList.toggle("menu-open");
-
-      if (window.gsap && menu.classList.contains("active")) {
-        gsap.fromTo(
-          ".menu-links a",
-          { y: 20, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.08, ease: "power2.out" }
-        );
+    menu.id = "studio-navigation";
+    menu.setAttribute("role", "dialog");
+    menu.setAttribute("aria-modal", "true");
+    menu.setAttribute("aria-label", "Studio navigation");
+    menu.inert = true;
+    toggle.setAttribute("aria-controls", menu.id);
+    toggle.setAttribute("aria-expanded", "false");
+    const heading = document.createElement("p");
+    heading.className = "menu-overline";
+    heading.textContent = "STUDIO VIANA / EXPLORE";
+    menu.querySelector(".menu-left").prepend(heading);
+    const shortcuts = document.createElement("div");
+    shortcuts.className = "menu-shortcuts";
+    shortcuts.innerHTML = '<button type="button" data-menu-commerce="cart">Your cart <span aria-hidden="true">&#8599;</span></button><button type="button" data-menu-commerce="downloads">Downloads <span aria-hidden="true">&#8599;</span></button><a href="mailto:vickyranagovind@gmail.com">Have a project? Email the studio &#8599;</a>';
+    menu.querySelector(".menu-left").append(shortcuts);
+    const setMenu = (open) => {
+      toggle.classList.toggle("active", open);
+      menu.classList.toggle("active", open);
+      document.body.classList.toggle("menu-open", open);
+      menu.inert = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      if (open) closeBtn?.focus(); else toggle.focus();
+    };
+    toggle.addEventListener("click", () => setMenu(!menu.classList.contains("active")));
+    closeBtn?.addEventListener("click", () => setMenu(false));
+    shortcuts.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-menu-commerce]");
+      if (button) { setMenu(false); openCommerce(button.dataset.menuCommerce); }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (!menu.classList.contains("active")) return;
+      if (event.key === "Escape") { event.preventDefault(); setMenu(false); }
+      if (event.key === "Tab") {
+        const targets = [...menu.querySelectorAll('a[href], button, input, select, textarea')].filter((el) => !el.disabled && el.getClientRects().length);
+        const first = targets[0], last = targets.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }
-    });
-
-    toggle.addEventListener("click", () => {
-      toggle.classList.remove("ripple");
-      void toggle.offsetWidth;
-      toggle.classList.add("ripple");
-    });
-
-    closeBtn?.addEventListener("click", () => {
-      toggle.classList.remove("active");
-      menu.classList.remove("active");
-      document.body.classList.remove("menu-open");
-    });
-
-    toggle.addEventListener("mousemove", (event) => {
-      const rect = toggle.getBoundingClientRect();
-      const x = event.clientX - rect.left - rect.width / 2;
-      const y = event.clientY - rect.top - rect.height / 2;
-      const limit = 6;
-      const moveX = Math.max(-limit, Math.min(limit, x * 0.2));
-      const moveY = Math.max(-limit, Math.min(limit, y * 0.2));
-      toggle.style.setProperty("--mag-x", `${moveX}px`);
-      toggle.style.setProperty("--mag-y", `${moveY}px`);
-    });
-
-    toggle.addEventListener("mouseleave", () => {
-      toggle.style.setProperty("--mag-x", "0px");
-      toggle.style.setProperty("--mag-y", "0px");
     });
   }
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape") {
-      return;
-    }
-
-    toggle?.classList.remove("active");
-    menu?.classList.remove("active");
-    document.body.classList.remove("menu-open");
+  menuActionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.menuAction;
+      if (action === "quote" || action === "downloads") {
+        openCommerce(action === "quote" ? "cart" : "downloads");
+      } else {
+        openUtilityPanel(action);
+      }
+    });
   });
 
   function initMediaProtection() {
-    if (isAdminSession()) {
-      return;
-    }
-
-    const protectedSelector = "img, .protected-media-block, .preview-frame";
+    initMediaDeterrents();
+    const protectedSelector = "img, .catalogue-card-image, .hero-carousel-stage, .project-gallery-item, .preview-frame, .marquee-row";
     const isProtectedTarget = (target) =>
       target instanceof Element && Boolean(target.closest(protectedSelector));
     const selectionTouchesProtectedContent = () => {
@@ -567,35 +781,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    document.addEventListener("keydown", (event) => {
-      const key = event.key.toLowerCase();
-      const usesModifier = event.ctrlKey || event.metaKey;
-      const shouldBlock =
-        (usesModifier && (key === "s" || key === "u" || key === "p" || key === "c")) ||
-        key === "f12" ||
-        key === "printscreen" ||
-        (usesModifier && event.shiftKey && (key === "i" || key === "j" || key === "c"));
-
-      if (shouldBlock) {
-        event.preventDefault();
-
-        if (key === "printscreen") {
-          try {
-            navigator.clipboard?.writeText("");
-          } catch {
-            // Ignore clipboard failures.
-          }
-        }
-      }
-    });
-
-    window.addEventListener("beforeprint", () => {
-      document.documentElement.classList.add("print-guard");
-    });
-
-    window.addEventListener("afterprint", () => {
-      document.documentElement.classList.remove("print-guard");
-    });
   }
 
   if (header) {
@@ -636,22 +821,26 @@ document.addEventListener("DOMContentLoaded", () => {
       element.href = `project.html?id=${project.id}`;
     }
     element.className = `work-card protected-media-block${featured ? " full" : ""}`;
+    const inBasket = readStoredList(STORAGE_KEYS.quote).some((entry) => entry?.id === project.id);
 
     element.innerHTML = isCatalogue
       ? `
-        <a class="catalogue-card-image" href="project.html?id=${project.id}" aria-label="View details for ${project.title}">
+        <button type="button" class="catalogue-card-image" data-preview-design="${project.id}" aria-label="Open large preview of ${project.title}">
           <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
-          <span class="catalogue-plus" aria-hidden="true">+</span>
           <span class="catalogue-badge">${project.ownership === "owned" ? "Studio collection" : "Curated edition"}</span>
-        </a>
+        </button>
         <div class="catalogue-card-copy">
-          <h3>${project.title}</h3>
+          <h3><a href="project.html?id=${project.id}">${project.title}</a></h3>
           <p>${theme?.label ?? project.theme} · ${project.mediumLabel} · ${project.location}</p>
-          <a class="catalogue-plus" href="project.html?id=${project.id}" aria-label="View details for ${project.title}">+</a>
         </div>
         <div class="catalogue-actions">
-          <button type="button" class="catalogue-add" data-add-design="${project.id}">+ Add to quote</button>
-          <button type="button" class="catalogue-download" data-download-brief="${project.id}">↓ Download brief</button>
+          <button type="button" class="catalogue-add ${inBasket ? "is-added" : ""}" data-add-design="${project.id}" aria-label="${inBasket ? "Added to cart. Remove" : "Add to cart:"} ${project.title}" aria-pressed="${inBasket}" title="${inBasket ? "Remove from cart" : "Add to cart"}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3-4 6m12-6 4 6M3 9h18l-2 11H5L3 9Z"/><path d="M9 13v3m6-3v3"/></svg>
+            <span class="catalogue-basket-label" aria-live="polite">${inBasket ? "Added to cart" : ""}</span>
+          </button>
+          <button type="button" class="catalogue-download" data-download-image="${project.id}" aria-label="Download ${project.title}" title="Download design">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>
+          </button>
         </div>
       `
       : `
@@ -665,42 +854,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isCatalogue) {
       element.querySelector("[data-add-design]")?.addEventListener("click", () => {
-        estimatorState.theme = project.theme;
-        if (estimatorThemeSelect) estimatorThemeSelect.value = project.theme;
-        updateEstimator();
-        estimatorSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+        addProjectToQuote(project);
       });
-      element.querySelector("[data-download-brief]")?.addEventListener("click", () => {
-        const brief = [
-          "STUDIO VIANA — DESIGN BRIEF",
-          "",
-          `Design: ${project.title}`,
-          `Collection: ${project.mediumLabel}`,
-          `Style: ${theme?.label ?? project.theme}`,
-          `Location: ${project.location}`,
-          `Year: ${project.year}`,
-          "",
-          project.summary,
-          "",
-          "For custom sizing, paper options and a final quote, contact Studio Viana.",
-        ].join("\n");
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(new Blob([brief], { type: "text/plain" }));
-        link.download = `${project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-brief.txt`;
-        link.click();
-        URL.revokeObjectURL(link.href);
+      element.querySelector("[data-download-image]")?.addEventListener("click", () => {
+        downloadProjectImage(project);
       });
     }
 
     return element;
   }
 
-  function renderProjects(list) {
+  let catalogueList = [];
+  let catalogueLimit = 24;
+  const loadMore = grid ? document.createElement('button') : null;
+  if (loadMore) {
+    loadMore.type = 'button';
+    loadMore.className = 'catalogue-load-more';
+    loadMore.hidden = true;
+    grid.after(loadMore);
+    loadMore.addEventListener('click', () => renderProjects(catalogueList, catalogueLimit + 24));
+  }
+
+  function renderProjects(list, limit = 24) {
     if (!grid) {
       return;
     }
 
     grid.innerHTML = "";
+    catalogueList = list;
+    catalogueLimit = limit;
+    loadMore.hidden = list.length <= limit;
+    loadMore.textContent = `Load more (${Math.max(0, list.length - limit)} remaining)`;
 
     if (!list.length) {
       grid.innerHTML = `
@@ -714,12 +898,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const cards = list.map((project) => renderProjectCard(project));
+    const cards = list.slice(0, limit).map((project) => renderProjectCard(project));
     cards.forEach((card) => grid.appendChild(card));
 
     workCount.textContent = `${list.length} ${list.length === 1 ? "piece" : "pieces"}`;
     animateCards(cards);
     enhanceCards(grid);
+    renderSavedCollections();
   }
 
   function renderHomeCollections(list) {
@@ -743,53 +928,38 @@ document.addEventListener("DOMContentLoaded", () => {
     enhanceCards(homeCollections);
   }
 
-  function populateFilterOptions() {
-    populateSelect(
-      yearSelect,
-      getUniqueYears(currentWorkType).map((year) => ({ value: year, label: year })),
-      "All years"
-    );
-
-    populateSelect(
-      themeSelect,
-      getUniqueThemes(currentWorkType).map((theme) => ({
-        value: theme.id,
-        label: theme.label,
-      })),
-      "All themes"
-    );
-  }
-
-  function applyFilters() {
-    if (!grid) {
+  function renderShowcaseTrack(track, list) {
+    if (!track) {
       return;
     }
 
-    let filtered = [...getProjectsByMode(currentWorkType)];
+    track.innerHTML = list
+      .map(
+        (project) => `
+          <a href="project.html?id=${project.id}" class="showcase-item">
+            <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy">
+            <div class="showcase-item-cap">
+              <span>${project.theme ? getThemeDetails(project.theme)?.label ?? project.theme : project.mediumLabel} &middot; ${project.year}</span>
+              <strong>${project.title}</strong>
+            </div>
+          </a>
+        `
+      )
+      .join("");
+  }
 
-    if (yearSelect?.value) {
-      filtered = filtered.filter((project) => project.year === yearSelect.value);
-    }
+  function updateShowcaseSections() {
+    const wallpaperTrack = document.querySelector(".showcase-track.show-wallpaper");
+    const threeDTrack = document.querySelector(".showcase-track.show-3d");
 
-    if (ownershipSelect?.value) {
-      filtered = filtered.filter((project) => project.ownership === ownershipSelect.value);
-    }
+    renderShowcaseTrack(wallpaperTrack, getProjectsByMode("wallpaper").slice(0, 6));
+    renderShowcaseTrack(threeDTrack, getProjectsByMode("3d").slice(0, 4));
+  }
 
-    if (themeSelect?.value) {
-      filtered = filtered.filter((project) => project.theme === themeSelect.value);
-    }
-
-    const query = searchInput?.value.trim().toLowerCase();
-    if (query) {
-      filtered = filtered.filter((project) =>
-        [project.title, project.summary, project.location, project.mediumLabel, project.theme]
-          .join(" ")
-          .toLowerCase()
-          .includes(query)
-      );
-    }
-
-    renderProjects(filtered);
+  function applyFilters() {
+    if (!grid) return;
+    const collection = getProjectsByMode(currentWorkType);
+    renderProjects(catalogueFilters ? catalogueFilters.filter(collection) : collection);
   }
 
   function updateToggleUI() {
@@ -804,12 +974,18 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleElement.querySelector(`.pill-btn[data-type="${currentWorkType}"]`) || buttons[0];
 
       buttons.forEach((button) => {
-        button.classList.toggle("active", button === activeButton);
+        const isActive = button === activeButton;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-pressed", String(isActive));
       });
 
       if (slider && activeButton) {
-        slider.style.width = `${activeButton.offsetWidth}px`;
-        slider.style.transform = `translateX(${activeButton.offsetLeft}px)`;
+        const toggleBounds = toggleElement.getBoundingClientRect();
+        const buttonBounds = activeButton.getBoundingClientRect();
+        slider.style.top = `${buttonBounds.top - toggleBounds.top}px`;
+        slider.style.width = `${buttonBounds.width}px`;
+        slider.style.height = `${buttonBounds.height}px`;
+        slider.style.transform = `translate3d(${buttonBounds.left - toggleBounds.left}px, 0, 0)`;
       }
     });
   }
@@ -819,27 +995,43 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    currentWorkType = mode;
-    applyModeClass(mode);
+    const permittedMode = mode;
+    currentWorkType = permittedMode;
+    applyModeClass(permittedMode);
+    updateModeContent(permittedMode);
+
+    const isWallpaperMode = permittedMode === "wallpaper";
+    if (estimatorSection) {
+      estimatorSection.hidden = !isWallpaperMode;
+    }
+    if (catalogueTitle) {
+      catalogueTitle.textContent = isWallpaperMode ? "Wallpapers & visual stories" : "3D Art & visual studies";
+    }
+    if (catalogueIntro) {
+      catalogueIntro.textContent = isWallpaperMode
+        ? "Explore Studio Viana’s mural catalogue. Filter a direction, open a design for full details, or add it to your custom quote in one click."
+        : "Explore Studio Viana’s 3D art collection. Filter the collection, preview a concept, or add a design to your cart.";
+    }
 
     if (persist) {
       try {
-        localStorage.setItem(MODE_KEY, mode);
+        localStorage.setItem(MODE_KEY, permittedMode);
       } catch {
         // Ignore storage errors.
       }
     }
 
-    populateFilterOptions();
+    renderSavedCollections();
+
+    catalogueFilters?.setCollection(getProjectsByMode(permittedMode), permittedMode);
     updateToggleUI();
 
-    if (themeSelect && !getUniqueThemes(currentWorkType).some((theme) => theme.id === themeSelect.value)) {
-      themeSelect.value = "";
-    }
 
     if (homeCollections) {
       renderHomeCollections(getProjectsByMode(currentWorkType));
     }
+
+    updateShowcaseSections();
 
     if (grid) {
       applyFilters();
@@ -905,17 +1097,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const theme = getThemeDetails(estimatorState.theme) ?? pricingThemes[0];
     const paper = paperTypes.find((item) => item.id === estimatorState.paper) ?? paperTypes[0];
-    const width = Math.min(500, Math.max(40, Number(estimatorState.width) || 40));
-    const height = Math.min(500, Math.max(40, Number(estimatorState.height) || 40));
+    const unit = estimatorWidthInput?.dataset.unit === 'in' ? 'in' : 'cm';
+    const { width, height, dimensionFactor, rateMultiplier, centimeters } =
+      estimateDimensions(estimatorState.width, estimatorState.height, unit);
     const quantity = Math.min(12, Math.max(1, Number(estimatorState.quantity) || 1));
-    const dimensionFactor = width + height;
     const selectedDesign = activeProject?.title ?? theme.title;
     const previewSource = activeProject?.cover ?? theme.preview;
     const previewHeading = activeProject?.title ?? theme.title;
     const previewBody = activeProject?.summary ?? theme.description;
     const previewEyebrow = activeProject ? "Selected wallpaper" : theme.label;
 
-    const baseAmount = dimensionFactor * theme.rate;
+    const baseAmount = centimeters * theme.rate;
     const multipliedAmount = baseAmount * paper.multiplier;
     const total = (multipliedAmount + theme.setupFee) * quantity;
     const rangeStart = total * 0.9;
@@ -956,10 +1148,13 @@ document.addEventListener("DOMContentLoaded", () => {
       estimatorQuantityInput.value = `${quantity}`;
     }
     if (dimensionOutput) {
-      dimensionOutput.textContent = `${dimensionFactor} cm`;
+      dimensionOutput.textContent = `${dimensionFactor} ${unit}`;
     }
     if (themeRateOutput) {
-      themeRateOutput.textContent = `${formatPrice(theme.rate)} / cm`;
+      const rate = (theme.rate * rateMultiplier).toLocaleString('en-IN', {
+        style: 'currency', currency: 'INR', maximumFractionDigits: 2,
+      });
+      themeRateOutput.textContent = `${rate} / ${unit}`;
     }
     if (paperNoteOutput) {
       paperNoteOutput.textContent = paper.note;
@@ -985,7 +1180,7 @@ document.addEventListener("DOMContentLoaded", () => {
         projectImageReference,
         `Theme: ${theme.label}`,
         `Paper finish: ${paper.label}`,
-        `Wall size: ${width} cm x ${height} cm`,
+        `Wall size: ${width} ${unit} x ${height} ${unit}`,
         `Quantity: ${quantity}`,
         `Estimated price: ${formatPrice(total)}`,
         `Estimated price range: ${formatPrice(rangeStart)} to ${formatPrice(rangeEnd)}`,
@@ -1021,7 +1216,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     [estimatorWidthInput, estimatorHeightInput].forEach((input) => {
-      input?.addEventListener("input", () => {
+      input?.addEventListener("change", () => {
         estimatorState.width = Number(estimatorWidthInput?.value || 0);
         estimatorState.height = Number(estimatorHeightInput?.value || 0);
         updateEstimator();
@@ -1046,6 +1241,80 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = currentWhatsAppLink;
       }
     });
+  }
+
+  function initHeroCarousel() {
+    const stage = document.querySelector(".hero-carousel-stage");
+    const slides = document.querySelectorAll(".hero-slide");
+
+    if (!stage || !slides.length) {
+      return;
+    }
+
+    let activeIndex = 0;
+    let pointer = null;
+    let timer;
+    let suppressClick = false;
+
+    const showSlide = (index) => {
+      activeIndex = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("active", slideIndex === activeIndex);
+        slide.setAttribute("aria-hidden", String(slideIndex !== activeIndex));
+      });
+    };
+    const restartAutoplay = () => {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        if (!pointer && !document.hidden) showSlide(activeIndex + 1);
+      }, 3000);
+    };
+    stage.querySelectorAll("img").forEach((image) => { image.draggable = false; });
+    stage.addEventListener("dragstart", (event) => event.preventDefault());
+    stage.addEventListener("pointerdown", (event) => {
+      if (!event.isPrimary || event.button !== 0 || pointer) return;
+      if (event.target.closest("button, a, input, select, textarea")) return;
+      pointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+      suppressClick = false;
+      clearInterval(timer);
+      stage.setPointerCapture(event.pointerId);
+      stage.classList.add("is-dragging");
+    });
+    stage.addEventListener("pointermove", (event) => {
+      if (!pointer || event.pointerId !== pointer.id) return;
+      if (Math.abs(event.clientX - pointer.x) > 8) suppressClick = true;
+    });
+    const finishDrag = (event) => {
+      if (!pointer || event.pointerId !== pointer.id) return;
+      const dx = event.clientX - pointer.x;
+      const dy = event.clientY - pointer.y;
+      const id = pointer.id;
+      pointer = null;
+      stage.classList.remove("is-dragging");
+      if (stage.hasPointerCapture(id)) stage.releasePointerCapture(id);
+      if (event.type === "pointerup" && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        showSlide(activeIndex + (dx < 0 ? 1 : -1));
+      }
+      restartAutoplay();
+    };
+    stage.addEventListener("pointerup", finishDrag);
+    stage.addEventListener("pointercancel", finishDrag);
+    stage.addEventListener("lostpointercapture", finishDrag);
+    stage.addEventListener("click", (event) => {
+      if (!suppressClick) return;
+      event.preventDefault();
+      event.stopPropagation();
+      suppressClick = false;
+    }, true);
+    stage.tabIndex = 0;
+    stage.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      showSlide(activeIndex + (event.key === "ArrowRight" ? 1 : -1));
+      restartAutoplay();
+    });
+    showSlide(0);
+    restartAutoplay();
   }
 
   function renderProjectDetail() {
@@ -1086,7 +1355,7 @@ document.addEventListener("DOMContentLoaded", () => {
       title.textContent = project.title;
     }
     if (meta) {
-      meta.textContent = `${project.year} / ${theme?.label ?? project.theme} / ${project.location}`;
+      meta.textContent = [project.collection, project.year, theme?.label ?? project.theme, project.location].filter(Boolean).join(' / ');
     }
     if (description) {
       description.textContent = project.summary;
@@ -1139,34 +1408,45 @@ document.addEventListener("DOMContentLoaded", () => {
       button.addEventListener("click", () => {
         setMode(button.dataset.type);
       });
+
+      button.addEventListener("keydown", (event) => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+          return;
+        }
+
+        const buttons = [...toggleElement.querySelectorAll(".pill-btn")];
+        const currentIndex = buttons.indexOf(button);
+        const nextIndex = event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? buttons.length - 1
+            : (currentIndex + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+
+        event.preventDefault();
+        buttons[nextIndex]?.focus();
+        setMode(buttons[nextIndex]?.dataset.type);
+      });
     });
   });
 
-  yearSelect?.addEventListener("change", applyFilters);
-  ownershipSelect?.addEventListener("change", applyFilters);
-  themeSelect?.addEventListener("change", applyFilters);
   searchInput?.addEventListener("input", applyFilters);
   clearBtn?.addEventListener("click", () => {
-    if (yearSelect) {
-      yearSelect.value = "";
-    }
-    if (ownershipSelect) {
-      ownershipSelect.value = "";
-    }
-    if (themeSelect) {
-      themeSelect.value = "";
-    }
+    catalogueFilters?.clear();
     if (searchInput) {
       searchInput.value = "";
     }
+    activeProject = null;
+    updateEstimator();
     applyFilters();
   });
+
 
   initMediaProtection();
 
   window.addEventListener("resize", updateToggleUI);
   setMode(currentWorkType, { persist: false });
   revealMode();
+  initHeroCarousel();
   renderProjectDetail();
   populateEstimatorOptions();
   renderEstimatorThemePills();
@@ -1182,8 +1462,7 @@ document.addEventListener("DOMContentLoaded", () => {
     applyAuthStateToDocument();
     syncAuthLinks();
     gateProtectedNavigation();
-    const storedMode = getStoredMode() || "wallpaper";
-    setMode(storedMode, { persist: false });
+    setMode(getPageMode(), { persist: false });
   });
 
   window.addEventListener("storage", (event) => {
@@ -1195,16 +1474,14 @@ document.addEventListener("DOMContentLoaded", () => {
     syncAuthLinks();
     gateProtectedNavigation();
 
-    if (event.key !== MODE_KEY) {
+    if (event.key && event.key !== MODE_KEY) {
       return;
     }
 
-    const storedMode = getStoredMode() || "wallpaper";
-    setMode(storedMode, { persist: false });
+    setMode(getPageMode(), { persist: false });
   });
 });
 
 window.goBack = function goBack() {
   window.location.href = "work.html";
 };
-

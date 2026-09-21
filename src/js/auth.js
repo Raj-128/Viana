@@ -1,75 +1,19 @@
-const USERS_KEY = "studioVianaUsers";
+import "./site-mode.js";
+import { getLoginIdentifier, rememberLoginIdentifier } from "./login-identifier.js";
+
+const identifierStorage = {
+  getItem: (key) => localStorage.getItem(key),
+  setItem: (key, value) => localStorage.setItem(key, value),
+};
 const SESSION_KEY = "studioVianaSession";
-const OWNER_EMAIL = "vickyranagovind@gmail.com";
-const OWNER_PHONE = "+91 9737711570";
 const PUBLIC_PAGES = new Set(["", "index.html", "login.html", "admin-login.html"]);
 const ADMIN_HOLD_DURATION = 950;
-const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
-
-function readStorage(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeStorage(key, value) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 function removeStorage(key) {
   try {
     localStorage.removeItem(key);
   } catch {
     // Ignore storage errors.
-  }
-}
-
-function normalizeEmail(value = "") {
-  return value.trim().toLowerCase();
-}
-
-function normalizePhone(value = "") {
-  const digits = value.replace(/\D/g, "");
-  if (!digits) {
-    return "";
-  }
-
-  if (digits.length === 10) {
-    return `91${digits}`;
-  }
-
-  if (digits.length === 12 && digits.startsWith("91")) {
-    return digits;
-  }
-
-  return digits;
-}
-
-function formatPhoneForDisplay(value = "") {
-  const digits = normalizePhone(value);
-  if (digits.length === 12 && digits.startsWith("91")) {
-    return `+91 ${digits.slice(2)}`;
-  }
-
-  return value.trim();
-}
-
-function getUsers() {
-  const users = readStorage(USERS_KEY, []);
-  return Array.isArray(users) ? users : [];
-}
-
-function saveUsers(users) {
-  if (!writeStorage(USERS_KEY, users)) {
-    throw new Error("Browser storage is unavailable or full. Enable storage for this site and try again.");
   }
 }
 
@@ -139,64 +83,6 @@ function getRequestedClientView() {
   }
 
   return "login";
-}
-
-async function hashSecret(secret) {
-  const normalized = secret.trim();
-  if (!normalized) {
-    return "";
-  }
-
-  if (globalThis.crypto?.subtle) {
-    const encoded = new TextEncoder().encode(normalized);
-    const buffer = await crypto.subtle.digest("SHA-256", encoded);
-    return [...new Uint8Array(buffer)].map((chunk) => chunk.toString(16).padStart(2, "0")).join("");
-  }
-
-  return btoa(normalized);
-}
-
-function validatePassword(password) {
-  const trimmed = password.trim();
-  if (trimmed.length < 8) {
-    return "Password must be at least 8 characters.";
-  }
-
-  if (!/[a-z]/i.test(trimmed) || !/\d/.test(trimmed)) {
-    return "Password must include letters and numbers.";
-  }
-
-  return "";
-}
-
-function createSessionPayload(user) {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    role: user.role,
-    lastLoginAt: new Date().toISOString(),
-  };
-}
-
-function setSession(user) {
-  if (!writeStorage(SESSION_KEY, createSessionPayload(user))) {
-    throw new Error("Could not save your session. Enable browser storage and try again.");
-  }
-}
-
-function findUserByIdentifier(identifier, role = "") {
-  const cleanIdentifier = identifier.trim();
-  const emailValue = normalizeEmail(cleanIdentifier);
-  const phoneValue = normalizePhone(cleanIdentifier);
-
-  return getUsers().find((user) => {
-    const matchesIdentifier =
-      user.emailNormalized === emailValue || user.phoneNormalized === phoneValue;
-    const matchesRole = !role || user.role === role;
-    return matchesIdentifier && matchesRole;
-  });
 }
 
 function setStatus(target, message, kind = "neutral") {
@@ -367,195 +253,51 @@ function initHiddenAdminAccess() {
   });
 }
 
-export function getSession() {
-  const session = readStorage(SESSION_KEY, null);
-  if (!session?.id || !session?.lastLoginAt) {
-    return null;
-  }
-
-  const lastLoginTime = Date.parse(session.lastLoginAt);
-  if (!Number.isFinite(lastLoginTime) || Date.now() - lastLoginTime > SESSION_TTL_MS) {
-    removeStorage(SESSION_KEY);
-    return null;
-  }
-
-  return session;
+let serverSession = null;
+let adminConfigured = false;
+async function authRequest(action, data) {
+  const response = await fetch(new URL('api/auth/' + action, new URL('./', window.location.href)), {
+    method: data ? 'POST' : 'GET', credentials: 'same-origin', cache: 'no-store',
+    headers: data ? { 'Content-Type': 'application/json' } : {},
+    body: data ? JSON.stringify(data) : undefined,
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || 'Authentication service unavailable.');
+  return result;
 }
-
-export function getCurrentUser() {
-  const session = getSession();
-  if (!session?.id) {
-    return null;
-  }
-
-  return getUsers().find((user) => user.id === session.id) || null;
+export async function refreshAuthSession() {
+  const result = await authRequest('session');
+  serverSession = result.user;
+  adminConfigured = result.adminConfigured;
 }
-
-export function logoutUser() {
+export const authReady = refreshAuthSession().catch(() => { serverSession = null; });
+export function getSession() { return serverSession; }
+export function getCurrentUser() { return serverSession; }
+export async function logoutUser() {
+  await authRequest('logout', {});
+  serverSession = null;
   removeStorage(SESSION_KEY);
 }
-
-export function isAdminSession() {
-  return getSession()?.role === "admin";
+export function isAdminSession() { return serverSession?.role === 'admin'; }
+export function isAuthenticated() { return Boolean(serverSession); }
+export function isAdminConfigured() { return adminConfigured; }
+export async function registerUser(data) {
+  const result = await authRequest('register', data);
+  serverSession = result.user;
+  rememberLoginIdentifier(identifierStorage, serverSession);
+  return serverSession;
 }
-
-export function isAuthenticated() {
-  return Boolean(getSession());
+export async function loginUser(data) {
+  const result = await authRequest('login', data);
+  serverSession = result.user;
+  rememberLoginIdentifier(identifierStorage, serverSession, data.identifier);
+  return serverSession;
 }
-
-export function isAdminConfigured() {
-  return getUsers().some((user) => user.role === "admin");
-}
-
-export async function setupAdmin({ name, identifier, password, confirmPassword }) {
-  if (isAdminConfigured()) {
-    throw new Error("Admin access is already configured.");
-  }
-
-  const passwordError = validatePassword(password);
-  if (passwordError) {
-    throw new Error(passwordError);
-  }
-
-  const cleanIdentifier = identifier.trim();
-  const identifierIsOwner =
-    normalizeEmail(cleanIdentifier) === normalizeEmail(OWNER_EMAIL) ||
-    normalizePhone(cleanIdentifier) === normalizePhone(OWNER_PHONE);
-  if (!identifierIsOwner) {
-    throw new Error('Use the registered owner email or phone number.');
-  }
-
-  if (password !== confirmPassword) {
-    throw new Error("Admin passwords do not match.");
-  }
-
-  const users = getUsers();
-  const adminRecord = {
-    id: "studio-viana-admin",
-    name: name.trim() || "Studio Viana Admin",
-    email: cleanIdentifier.includes('@') ? normalizeEmail(cleanIdentifier) : OWNER_EMAIL,
-    emailNormalized: cleanIdentifier.includes('@') ? normalizeEmail(cleanIdentifier) : normalizeEmail(OWNER_EMAIL),
-    phone: cleanIdentifier.includes('@') ? OWNER_PHONE : formatPhoneForDisplay(cleanIdentifier),
-    phoneNormalized: cleanIdentifier.includes('@') ? normalizePhone(OWNER_PHONE) : normalizePhone(cleanIdentifier),
-    role: "admin",
-    passwordHash: await hashSecret(password),
-    createdAt: new Date().toISOString(),
-  };
-
-  users.push(adminRecord);
-  saveUsers(users);
-  setSession(adminRecord);
-
-  return adminRecord;
-}
-
-export async function registerUser({ name, email, phone, password, confirmPassword }) {
-  const cleanName = name.trim();
-  const cleanEmail = normalizeEmail(email);
-  const cleanPhone = normalizePhone(phone);
-  const users = getUsers();
-
-  if (!cleanName) {
-    throw new Error("Please enter your full name.");
-  }
-
-  if (!cleanEmail || !cleanEmail.includes("@")) {
-    throw new Error("Please enter a valid email.");
-  }
-
-  if (!cleanPhone || cleanPhone.length < 12) {
-    throw new Error("Please enter a valid Indian phone number.");
-  }
-
-  if (
-    cleanEmail === normalizeEmail(OWNER_EMAIL) ||
-    cleanPhone === normalizePhone(OWNER_PHONE)
-  ) {
-    throw new Error("That email or phone is reserved for the Studio Viana admin.");
-  }
-
-  if (users.some((user) => user.emailNormalized === cleanEmail)) {
-    throw new Error("That email is already registered.");
-  }
-
-  if (users.some((user) => user.phoneNormalized === cleanPhone)) {
-    throw new Error("That phone number is already registered.");
-  }
-
-  const passwordError = validatePassword(password);
-  if (passwordError) {
-    throw new Error(passwordError);
-  }
-
-  const cleanIdentifier = identifier.trim();
-  const identifierIsOwner =
-    normalizeEmail(cleanIdentifier) === normalizeEmail(OWNER_EMAIL) ||
-    normalizePhone(cleanIdentifier) === normalizePhone(OWNER_PHONE);
-  if (!identifierIsOwner) {
-    throw new Error('Use the registered owner email or phone number.');
-  }
-
-  if (password !== confirmPassword) {
-    throw new Error("Passwords do not match.");
-  }
-
-  const userRecord = {
-    id: `user-${Date.now()}`,
-    name: cleanName,
-    email: cleanEmail,
-    emailNormalized: cleanEmail,
-    phone: formatPhoneForDisplay(phone),
-    phoneNormalized: cleanPhone,
-    role: "user",
-    passwordHash: await hashSecret(password),
-    createdAt: new Date().toISOString(),
-  };
-
-  users.push(userRecord);
-  saveUsers(users);
-  setSession(userRecord);
-
-  return userRecord;
-}
-
-export async function loginUser({ identifier, password }) {
-  const cleanIdentifier = identifier.trim();
-  if (!cleanIdentifier) {
-    throw new Error("Enter your email or phone number.");
-  }
-
-  const user = findUserByIdentifier(cleanIdentifier);
-  if (!user) {
-    throw new Error("No account found with that email or phone.");
-  }
-
-  const passwordHash = await hashSecret(password);
-  if (user.passwordHash !== passwordHash) {
-    throw new Error("Incorrect password.");
-  }
-
-  setSession(user);
-  return user;
-}
-
-export async function loginAdmin({ identifier, password }) {
-  const cleanIdentifier = identifier.trim();
-  if (!cleanIdentifier) {
-    throw new Error("Enter the owner email or phone.");
-  }
-
-  const user = findUserByIdentifier(cleanIdentifier, "admin");
-  if (!user) {
-    throw new Error("No admin account found with that identifier.");
-  }
-
-  const passwordHash = await hashSecret(password);
-  if (user.passwordHash !== passwordHash) {
-    throw new Error("Incorrect admin password.");
-  }
-
-  setSession(user);
-  return user;
+export async function loginAdmin(data) {
+  const result = await authRequest('admin-login', data);
+  serverSession = result.user;
+  rememberLoginIdentifier(identifierStorage, serverSession, data.identifier);
+  return serverSession;
 }
 
 export function getAuthDestination() {
@@ -570,7 +312,7 @@ export function getAuthDestination() {
 
   const firstName = session.name?.trim().split(/\s+/)[0] || (session.role === "admin" ? "Admin" : "Account");
   return {
-    href: session.role === "admin" ? "admin-login.html#account" : "login.html#account",
+    href: session.role === "admin" ? "admin-downloads.html" : "login.html#account",
     label: session.role === "admin" ? "Admin" : "Account",
     chipLabel: firstName,
   };
@@ -668,6 +410,17 @@ export function enforceProtectedAccess() {
   return true;
 }
 
+// Keep signed-in controls outside the live DOM until a server session exists.
+function createAccountPanel(root) {
+  return root.querySelector('[data-account-template]').content.firstElementChild.cloneNode(true);
+}
+function showAccountPanel(root, panel, visible) {
+  panel.hidden = !visible;
+  panel.inert = !visible;
+  if (visible && !panel.isConnected) root.querySelector('[data-account-template]').after(panel);
+  if (!visible) panel.remove();
+}
+
 function initClientAuthPage() {
   const authRoot = document.querySelector("[data-auth-page]");
   if (!authRoot) {
@@ -691,15 +444,16 @@ function initClientAuthPage() {
   const clientViews = [...authRoot.querySelectorAll("[data-auth-view]")];
   const clientStage = authRoot.querySelector("[data-client-stage]");
   const authInterface = authRoot.querySelector("[data-auth-interface]");
-  const accountPanel = authRoot.querySelector("[data-account-panel]");
+  const accountPanel = createAccountPanel(authRoot);
   const loginForm = authRoot.querySelector("[data-login-form]");
+  if (loginForm) loginForm.elements.identifier.value = getLoginIdentifier(identifierStorage, { session: getSession() });
   const registerForm = authRoot.querySelector("[data-register-form]");
-  const logoutButton = authRoot.querySelector("[data-logout-button]");
+  const logoutButton = accountPanel.querySelector("[data-logout-button]");
   const authStatus = authRoot.querySelector("[data-auth-status]");
-  const accountName = authRoot.querySelector("[data-account-name]");
-  const accountRole = authRoot.querySelector("[data-account-role]");
-  const accountCopy = authRoot.querySelector("[data-account-copy]");
-  const accountContinue = authRoot.querySelector("[data-account-continue]");
+  const accountName = accountPanel.querySelector("[data-account-name]");
+  const accountRole = accountPanel.querySelector("[data-account-role]");
+  const accountCopy = accountPanel.querySelector("[data-account-copy]");
+  const accountContinue = accountPanel.querySelector("[data-account-continue]");
   let currentClientView = requestedClientView;
 
   const syncLightState = () => {
@@ -726,7 +480,7 @@ function initClientAuthPage() {
   const renderAccountPanel = () => {
     const session = getSession();
     authInterface.hidden = Boolean(session);
-    accountPanel.hidden = !session;
+    showAccountPanel(authRoot, accountPanel, Boolean(session));
 
     if (!session) {
       return;
@@ -853,8 +607,8 @@ function initClientAuthPage() {
     }
   });
 
-  logoutButton?.addEventListener("click", () => {
-    logoutUser();
+  logoutButton?.addEventListener("click", async () => {
+    try { await logoutUser(); } catch { window.alert("Sign out failed. Check your connection and try again."); return; }
     currentClientView = "login";
     renderAuthState();
     setStatus(authStatus, "Signed out.", "neutral");
@@ -881,24 +635,25 @@ function initAdminAuthPage() {
   const redirectTarget = getRedirectTarget();
   const lampToggles = authRoot.querySelectorAll("[data-lamp-toggle]");
   const authInterface = authRoot.querySelector("[data-auth-interface]");
-  const accountPanel = authRoot.querySelector("[data-account-panel]");
+  const accountPanel = createAccountPanel(authRoot);
   const adminViews = [...authRoot.querySelectorAll("[data-admin-view]")];
   const adminStage = authRoot.querySelector("[data-admin-stage]");
-  const adminSetupForm = authRoot.querySelector("[data-admin-setup-form]");
+  const refreshAdminButton = authRoot.querySelector("[data-refresh-admin]");
   const adminLoginForm = authRoot.querySelector("[data-admin-login-form]");
+  if (adminLoginForm) adminLoginForm.elements.identifier.value = getLoginIdentifier(identifierStorage, { admin: true, session: getSession() });
   const adminStatus = authRoot.querySelector("[data-admin-status]");
-  const accountName = authRoot.querySelector("[data-account-name]");
-  const accountRole = authRoot.querySelector("[data-account-role]");
-  const accountCopy = authRoot.querySelector("[data-account-copy]");
-  const accountContinue = authRoot.querySelector("[data-account-continue]");
-  const logoutButton = authRoot.querySelector("[data-logout-button]");
+  const accountName = accountPanel.querySelector("[data-account-name]");
+  const accountRole = accountPanel.querySelector("[data-account-role]");
+  const accountCopy = accountPanel.querySelector("[data-account-copy]");
+  const accountContinue = accountPanel.querySelector("[data-account-continue]");
+  const logoutButton = accountPanel.querySelector("[data-logout-button]");
   const adminNote = authRoot.querySelector("[data-admin-note]");
 
 
   const syncLightState = () => {
     const lightsOn = document.body.classList.contains("lights-on");
     if (authInterface) authInterface.hidden = !lightsOn || Boolean(getSession()?.role === "admin");
-    if (adminSetupForm) adminSetupForm.inert = !lightsOn;
+    if (refreshAdminButton) refreshAdminButton.disabled = !lightsOn;
     if (adminLoginForm) adminLoginForm.inert = !lightsOn;
   };
 
@@ -922,7 +677,7 @@ function initAdminAuthPage() {
     if (adminNote) {
       adminNote.textContent = adminReady
         ? "Use the owner credentials only. This page is separate from client access."
-        : "Create the owner account once on this device, then use it for admin login only.";
+        : "Create the owner account in the server terminal with npm run server:admin, then reload this page to sign in.";
     }
   };
 
@@ -930,7 +685,7 @@ function initAdminAuthPage() {
     const session = getSession();
     const isAdmin = session?.role === "admin";
     authInterface.hidden = isAdmin;
-    accountPanel.hidden = !isAdmin;
+    showAccountPanel(authRoot, accountPanel, isAdmin);
 
     if (!isAdmin) {
       return;
@@ -978,27 +733,26 @@ function initAdminAuthPage() {
     toggle.addEventListener("click", toggleLights);
   });
 
-  adminSetupForm?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    setStatus(adminStatus, "");
-
-    const formData = new FormData(adminSetupForm);
+  let refreshingAdmin = false;
+  const refreshAdminState = async () => {
+    if (refreshingAdmin) return;
+    refreshingAdmin = true;
+    if (refreshAdminButton) refreshAdminButton.disabled = true;
     try {
-      await setupAdmin({
-        name: `${formData.get("name") || ""}`,
-        identifier: String(formData.get("identifier") || ""),
-        password: `${formData.get("password") || ""}`,
-        confirmPassword: `${formData.get("confirmPassword") || ""}`,
-      });
-
-      adminSetupForm.reset();
+      await refreshAuthSession();
       renderAuthState();
-      if (!redirectAfterSuccess("Admin setup complete.", adminStatus)) {
-        setStatus(adminStatus, "Admin setup complete. You are signed in.", "success");
-      }
-    } catch (error) {
-      setStatus(adminStatus, error.message, "error");
+      setStatus(adminStatus, isAdminConfigured() ? "" : "No owner account found yet. Complete the terminal setup, then check again.");
+    } catch {
+      setStatus(adminStatus, "Cannot reach the server. Keep npm run dev running and try again.", "error");
+    } finally {
+      refreshingAdmin = false;
+      syncLightState();
     }
+  };
+  refreshAdminButton?.addEventListener("click", refreshAdminState);
+  window.addEventListener("focus", refreshAdminState);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshAdminState();
   });
 
   adminLoginForm?.addEventListener("submit", async (event) => {
@@ -1022,8 +776,8 @@ function initAdminAuthPage() {
     }
   });
 
-  logoutButton?.addEventListener("click", () => {
-    logoutUser();
+  logoutButton?.addEventListener("click", async () => {
+    try { await logoutUser(); } catch { window.alert("Sign out failed. Check your connection and try again."); return; }
     renderAuthState();
     setStatus(adminStatus, "Signed out.", "neutral");
   });
@@ -1035,9 +789,40 @@ function initAdminAuthPage() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function initPasswordVisibility() {
+  document.querySelectorAll('input[type="password"]').forEach((input, index) => {
+    if (input.closest(".password-input-wrap")) return;
+    const wrapper = document.createElement("span");
+    wrapper.className = "password-input-wrap";
+    input.before(wrapper);
+    wrapper.append(input);
+    if (!input.id) input.id = `auth-password-${index}`;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "password-visibility-toggle";
+    button.setAttribute("aria-controls", input.id);
+    const update = (visible) => {
+      input.type = visible ? "text" : "password";
+      const label = `${visible ? "Hide" : "Show"} ${input.name === "confirmPassword" ? "confirmation password" : "password"}`;
+      button.setAttribute("aria-label", label);
+      button.setAttribute("aria-pressed", String(visible));
+      button.title = label;
+      button.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>${visible ? '<path d="m3 3 18 18"/>' : ''}</svg>`;
+    };
+    update(false);
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      update(input.type === "password");
+    });
+    input.form?.addEventListener("reset", () => update(false));
+    wrapper.append(button);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  initPasswordVisibility();
+  await authReady;
   initHiddenAdminAccess();
   initClientAuthPage();
   initAdminAuthPage();
 });
-

@@ -1,9 +1,14 @@
-﻿import wallpaperBranch from "../assets/images/wallpapers/optimized/1.jpg";
-import wallpaperFairy from "../assets/images/wallpapers/optimized/2.jpg";
-import wallpaperForest from "../assets/images/wallpapers/optimized/3.jpg";
-import wallpaperArchTree from "../assets/images/wallpapers/optimized/4.jpg";
-import wallpaperJungle from "../assets/images/wallpapers/optimized/5.jpg";
-import wallpaperClassicGarden from "../assets/images/wallpapers/optimized/6.jpg";
+﻿import wallpaperBranch from "../assets/images/wallpapers/previews/1.jpg";
+import wallpaperFairy from "../assets/images/wallpapers/previews/2.jpg";
+import localWallpapers from '../generated/wallpaper-catalogue.js';
+import wallpaperForest from "../assets/images/wallpapers/previews/3.jpg";
+import wallpaperArchTree from "../assets/images/wallpapers/previews/4.jpg";
+import wallpaperJungle from "../assets/images/wallpapers/previews/5.jpg";
+import wallpaperClassicGarden from "../assets/images/wallpapers/previews/6.jpg";
+import lunarConsole from "../assets/images/three-d-lunar-console.png";
+import petalLamp from "../assets/images/three-d-petal-lamp.png";
+import pixelPlayroom from "../assets/images/three-d-playroom.png";
+import canyonVoid from "../assets/images/three-d-canyon-void.png";
 
 export const wallpaperShowcaseImages = [
   wallpaperBranch,
@@ -74,6 +79,7 @@ export const pricingThemes = [
 ];
 
 export const projects = [
+  ...localWallpapers,
   {
     id: "floral-branch-wall", title: "Floral Branch Customized Wallpaper",
     year: "2025", workType: "wallpaper", theme: "floral", ownership: "owned",
@@ -144,33 +150,32 @@ export const projects = [
     cover: wallpaperJungle, gallery: [wallpaperJungle],
     summary: "Geometric rhythm and soft metallic contrast for brand-led interiors and feature walls.",
   },
-  // 3D Projects use real wallpaper images as visual context
   {
     id: "lunar-console-study", title: "Lunar Console Study",
     year: "2026", workType: "3d", theme: "luxury", ownership: "owned",
     mediumLabel: "3D Concept Object", location: "Chennai",
-    cover: wallpaperClassicGarden, gallery: [wallpaperClassicGarden, wallpaperArchTree],
+    cover: petalLamp, gallery: [petalLamp],
     summary: "A sculptural 3D furniture study balancing polished surfaces with soft architectural light.",
   },
   {
     id: "petal-lamp-render", title: "Petal Lamp Render",
     year: "2025", workType: "3d", theme: "floral", ownership: "curated",
     mediumLabel: "3D Lighting Visual", location: "Jaipur",
-    cover: wallpaperBranch, gallery: [wallpaperBranch, wallpaperForest],
+    cover: pixelPlayroom, gallery: [pixelPlayroom],
     summary: "Floral geometry translated into a product-lighting concept with cinematic framing.",
   },
   {
     id: "pixel-playroom-scene", title: "Pixel Playroom Scene",
     year: "2024", workType: "3d", theme: "child", ownership: "owned",
     mediumLabel: "3D Spatial Story", location: "Surat",
-    cover: wallpaperFairy, gallery: [wallpaperFairy, wallpaperBranch],
+    cover: canyonVoid, gallery: [canyonVoid],
     summary: "A cheerful 3D room visualization for kid-centered retail and interactive brand campaigns.",
   },
   {
     id: "canyon-void-frame", title: "Canyon Void Frame",
     year: "2023", workType: "3d", theme: "abstract", ownership: "curated",
     mediumLabel: "3D Motion Still", location: "Goa",
-    cover: wallpaperJungle, gallery: [wallpaperJungle, wallpaperArchTree],
+    cover: lunarConsole, gallery: [lunarConsole],
     summary: "Atmospheric abstract rendering with depth-led framing for campaign stills and motion posters.",
   },
 ];

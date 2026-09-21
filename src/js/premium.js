@@ -134,40 +134,6 @@ function initDragScroll() {
 
 
 /* ===========================
-   CURSOR TEXT ON HOVER
-=========================== */
-function initCursorText() {
-  const cursorText = document.getElementById('cursor-text');
-  if (!cursorText || window.innerWidth < 768) return;
-
-  document.addEventListener('mousemove', (e) => {
-    cursorText.style.left = e.clientX + 'px';
-    cursorText.style.top = e.clientY + 'px';
-  });
-
-  document.querySelectorAll('.showcase-item, .work-card, .testimonial-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursorText.textContent = 'View';
-      cursorText.classList.add('visible');
-    });
-    el.addEventListener('mouseleave', () => {
-      cursorText.classList.remove('visible');
-    });
-  });
-
-  document.querySelectorAll('.showcase-scroll-wrapper').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursorText.textContent = 'Drag';
-      cursorText.classList.add('visible');
-    });
-    el.addEventListener('mouseleave', () => {
-      cursorText.classList.remove('visible');
-    });
-  });
-}
-
-
-/* ===========================
    PAGE TRANSITIONS
 =========================== */
 function initPageTransitions() {
@@ -363,7 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initTrustMarquee();
   initCounters();
   initDragScroll();
-  initCursorText();
   initPageTransitions();
   initHeroParallax();
   initContactForm();

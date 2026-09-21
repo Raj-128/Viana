@@ -9,6 +9,8 @@
   left: 0;
   pointer-events: none;
   z-index: 9999;
+  opacity: 0;
+  transition: opacity 160ms ease;
 }
 
 .cursor-dot {
@@ -18,6 +20,8 @@
   border-radius: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
+  transition: width 180ms ease, height 180ms ease, background-color 180ms ease;
+  will-change: transform;
 }
 
 .cursor-outline {
@@ -27,7 +31,44 @@
   border-radius: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
-  transition: transform 0.25s ease, width 0.25s ease, height 0.25s ease;
+  transition: width 180ms ease, height 180ms ease, border-color 180ms ease, background-color 180ms ease;
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
+  }
+
+  .cursor.is-visible {
+    opacity: 1;
+  }
+
+  .cursor.is-interactive .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: #fff;
+  }
+
+  .cursor.is-interactive .cursor-outline {
+    width: 54px;
+    height: 54px;
+    border-color: #6e4f45;
+    background: rgba(216, 163, 168, 0.18);
+  }
+
+  .cursor.is-pressed .cursor-outline {
+    width: 30px;
+    height: 30px;
+    background: rgba(110, 79, 69, 0.24);
+  }
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor {
+    display: none !important;
+  }
 }
 
 
