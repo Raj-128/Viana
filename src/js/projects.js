@@ -1,9 +1,10 @@
-﻿import wallpaperBranch from "../assets/images/wallpapers/optimized/1.jpg";
-import wallpaperFairy from "../assets/images/wallpapers/optimized/2.jpg";
-import wallpaperForest from "../assets/images/wallpapers/optimized/3.jpg";
-import wallpaperArchTree from "../assets/images/wallpapers/optimized/4.jpg";
-import wallpaperJungle from "../assets/images/wallpapers/optimized/5.jpg";
-import wallpaperClassicGarden from "../assets/images/wallpapers/optimized/6.jpg";
+﻿import wallpaperBranch from "../assets/images/wallpapers/previews/1.jpg";
+import wallpaperFairy from "../assets/images/wallpapers/previews/2.jpg";
+import localWallpapers from '../generated/wallpaper-catalogue.js';
+import wallpaperForest from "../assets/images/wallpapers/previews/3.jpg";
+import wallpaperArchTree from "../assets/images/wallpapers/previews/4.jpg";
+import wallpaperJungle from "../assets/images/wallpapers/previews/5.jpg";
+import wallpaperClassicGarden from "../assets/images/wallpapers/previews/6.jpg";
 import lunarConsole from "../assets/images/three-d-lunar-console.png";
 import petalLamp from "../assets/images/three-d-petal-lamp.png";
 import pixelPlayroom from "../assets/images/three-d-playroom.png";
@@ -78,6 +79,7 @@ export const pricingThemes = [
 ];
 
 export const projects = [
+  ...localWallpapers,
   {
     id: "floral-branch-wall", title: "Floral Branch Customized Wallpaper",
     year: "2025", workType: "wallpaper", theme: "floral", ownership: "owned",

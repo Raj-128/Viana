@@ -1,4 +1,5 @@
 import { MODE_KEY, readStudioMode, applyStudioTheme } from "./site-mode.js";
+import { estimateDimensions } from "./estimate-dimensions.js";
 import { updateModeContent } from "./mode-content.js";
 import { initCatalogueFilters } from "./catalogue-filters.js";
 import { initCommerce, renderCommerce, addToCart, openCommerce, downloadDesign } from "./commerce.js";
@@ -829,7 +830,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <span class="catalogue-badge">${project.ownership === "owned" ? "Studio collection" : "Curated edition"}</span>
         </button>
         <div class="catalogue-card-copy">
-          <h3>${project.title}</h3>
+          <h3><a href="project.html?id=${project.id}">${project.title}</a></h3>
           <p>${theme?.label ?? project.theme} · ${project.mediumLabel} · ${project.location}</p>
         </div>
         <div class="catalogue-actions">
@@ -863,12 +864,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     return element;
   }
 
-  function renderProjects(list) {
+  let catalogueList = [];
+  let catalogueLimit = 24;
+  const loadMore = grid ? document.createElement('button') : null;
+  if (loadMore) {
+    loadMore.type = 'button';
+    loadMore.className = 'catalogue-load-more';
+    loadMore.hidden = true;
+    grid.after(loadMore);
+    loadMore.addEventListener('click', () => renderProjects(catalogueList, catalogueLimit + 24));
+  }
+
+  function renderProjects(list, limit = 24) {
     if (!grid) {
       return;
     }
 
     grid.innerHTML = "";
+    catalogueList = list;
+    catalogueLimit = limit;
+    loadMore.hidden = list.length <= limit;
+    loadMore.textContent = `Load more (${Math.max(0, list.length - limit)} remaining)`;
 
     if (!list.length) {
       grid.innerHTML = `
@@ -882,7 +898,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const cards = list.map((project) => renderProjectCard(project));
+    const cards = list.slice(0, limit).map((project) => renderProjectCard(project));
     cards.forEach((card) => grid.appendChild(card));
 
     workCount.textContent = `${list.length} ${list.length === 1 ? "piece" : "pieces"}`;
@@ -1081,17 +1097,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const theme = getThemeDetails(estimatorState.theme) ?? pricingThemes[0];
     const paper = paperTypes.find((item) => item.id === estimatorState.paper) ?? paperTypes[0];
-    const width = Math.min(500, Math.max(40, Number(estimatorState.width) || 40));
-    const height = Math.min(500, Math.max(40, Number(estimatorState.height) || 40));
+    const unit = estimatorWidthInput?.dataset.unit === 'in' ? 'in' : 'cm';
+    const { width, height, dimensionFactor, rateMultiplier, centimeters } =
+      estimateDimensions(estimatorState.width, estimatorState.height, unit);
     const quantity = Math.min(12, Math.max(1, Number(estimatorState.quantity) || 1));
-    const dimensionFactor = width + height;
     const selectedDesign = activeProject?.title ?? theme.title;
     const previewSource = activeProject?.cover ?? theme.preview;
     const previewHeading = activeProject?.title ?? theme.title;
     const previewBody = activeProject?.summary ?? theme.description;
     const previewEyebrow = activeProject ? "Selected wallpaper" : theme.label;
 
-    const baseAmount = dimensionFactor * theme.rate;
+    const baseAmount = centimeters * theme.rate;
     const multipliedAmount = baseAmount * paper.multiplier;
     const total = (multipliedAmount + theme.setupFee) * quantity;
     const rangeStart = total * 0.9;
@@ -1132,10 +1148,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       estimatorQuantityInput.value = `${quantity}`;
     }
     if (dimensionOutput) {
-      dimensionOutput.textContent = `${dimensionFactor} cm`;
+      dimensionOutput.textContent = `${dimensionFactor} ${unit}`;
     }
     if (themeRateOutput) {
-      themeRateOutput.textContent = `${formatPrice(theme.rate)} / cm`;
+      const rate = (theme.rate * rateMultiplier).toLocaleString('en-IN', {
+        style: 'currency', currency: 'INR', maximumFractionDigits: 2,
+      });
+      themeRateOutput.textContent = `${rate} / ${unit}`;
     }
     if (paperNoteOutput) {
       paperNoteOutput.textContent = paper.note;
@@ -1161,7 +1180,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         projectImageReference,
         `Theme: ${theme.label}`,
         `Paper finish: ${paper.label}`,
-        `Wall size: ${width} cm x ${height} cm`,
+        `Wall size: ${width} ${unit} x ${height} ${unit}`,
         `Quantity: ${quantity}`,
         `Estimated price: ${formatPrice(total)}`,
         `Estimated price range: ${formatPrice(rangeStart)} to ${formatPrice(rangeEnd)}`,
@@ -1197,7 +1216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     [estimatorWidthInput, estimatorHeightInput].forEach((input) => {
-      input?.addEventListener("input", () => {
+      input?.addEventListener("change", () => {
         estimatorState.width = Number(estimatorWidthInput?.value || 0);
         estimatorState.height = Number(estimatorHeightInput?.value || 0);
         updateEstimator();
@@ -1336,7 +1355,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       title.textContent = project.title;
     }
     if (meta) {
-      meta.textContent = `${project.year} / ${theme?.label ?? project.theme} / ${project.location}`;
+      meta.textContent = [project.collection, project.year, theme?.label ?? project.theme, project.location].filter(Boolean).join(' / ');
     }
     if (description) {
       description.textContent = project.summary;

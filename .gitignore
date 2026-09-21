@@ -13,6 +13,17 @@ dist
 dist-ssr
 *.local
 
+# Local wallpaper originals stay off GitHub; only protected previews are shared.
+src/assets/images/*/
+!src/assets/images/wallpapers/
+src/assets/images/wallpapers/*
+!src/assets/images/wallpapers/previews/
+.gsd/*-results.txt
+.gsd/catalogue-build.txt
+.gsd/catalogue-tests.txt
+.gsd/protected-preview-build.txt
+.gsd/protected-preview-tests.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

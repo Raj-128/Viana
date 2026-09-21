@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import { apiPlugin } from "./server/vite-plugin.js";
+import { wallpaperCataloguePlugin } from "./server/wallpaper-catalogue.js";
 
 const securityHeaders = {
   "X-Content-Type-Options": "nosniff",
@@ -14,9 +15,9 @@ export default defineConfig({
   base: "./",
   cacheDir: "node_modules/.vite-viana",
   appType: "mpa",
-  server: { headers: securityHeaders, port: 5173, strictPort: true, fs: { deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/.private/**", "**/server/**"] } },
+  server: { headers: securityHeaders, port: 5173, strictPort: true, fs: { deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/.private/**", "**/server/**", "**/wallpapers/optimized/**", "**/wallpapers/*.jpeg"] } },
   preview: { headers: securityHeaders },
-  plugins: [apiPlugin(), {
+  plugins: [wallpaperCataloguePlugin(), apiPlugin(), {
     name: "baseline-security-meta",
     transformIndexHtml() {
       return [

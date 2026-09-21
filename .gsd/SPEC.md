@@ -17,3 +17,9 @@ Status: FINALIZED
 - Add a local server with persistent users, hashed passwords, cookie sessions and per-design entitlement checks, plus owner-only terminal provisioning.
 - Keep originals in a private directory denied by the development server and excluded from builds.
 - Each catalogue image opens a large keyboard/swipe-accessible viewer. Repeat STUDIO VIANA across wallpaper previews and retain the cart action on each card.
+
+## Image stream homepage hero
+Status: FINALIZED
+- Adapt the supplied mirrored perspective corridor to the existing vanilla Vite site, using local wallpaper and 3D previews.
+- Center the heading above the stream and collection CTA below; support mobile, theme changes, reduced motion and pause control.
+- Verify production build, existing tests, and browser screenshots.

@@ -64,3 +64,6 @@ body.mode-3d .catalogue-filter-panel { border-radius: 4px; background: #101114; 
   .catalogue-filter-panel > summary { padding: 16px; }
   .catalogue-filter-body { padding: 0 16px 16px; }
 }
+.catalogue-load-more { display: block; margin: 32px auto; padding: 14px 24px; border: 1px solid var(--line); border-radius: 999px; color: var(--text); background: var(--surface); font: inherit; cursor: pointer; }
+.catalogue-load-more[hidden] { display: none; }
+.catalogue-load-more:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }

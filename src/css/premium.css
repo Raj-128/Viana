@@ -547,7 +547,7 @@ body.mode-3d .hero-carousel-nav {
 body.mode-3d .catalogue-hero {
   background:
     linear-gradient(90deg, rgba(8, 8, 8, 0.86) 0%, rgba(10,10,10,0.76) 30%, rgba(16,16,16,0.52) 58%, rgba(17,17,17,0.28) 100%),
-    url('../assets/images/wallpapers/optimized/5.jpg') center 45% / cover;
+    url('../assets/images/wallpapers/previews/5.jpg') center 45% / cover;
   color: #f7f7f7;
 }
 body.mode-3d .catalogue-hero::before {
@@ -781,7 +781,7 @@ body.mode-3d .type-tabs .pill-btn.active { color: #fff; }
 body.mode-3d .catalogue-hero {
   background:
     linear-gradient(90deg, rgba(5, 5, 5, 0.76) 0%, rgba(5, 5, 5, 0.62) 40%, rgba(5, 5, 5, 0.3) 100%),
-    url('../assets/images/wallpapers/optimized/5.jpg') center 42% / cover;
+    url('../assets/images/wallpapers/previews/5.jpg') center 42% / cover;
   color: #f7f7f7;
 }
 body.mode-3d .catalogue-filters .filters-bar,
@@ -2322,7 +2322,7 @@ a {
 }
 
 /* Keep protected artwork out of browser print output. */
-.artwork-concealed :is(.catalogue-card-image, .hero-slide, .project-gallery-item, .preview-frame, .wallpaper-viewer-artwork, .marquee-row, .showcase-item, .work-card, .commerce-item) img {
+.artwork-concealed :is(.project-hero-shell, .image-stream-card, .catalogue-card-image, .hero-slide, .project-gallery-item, .preview-frame, .wallpaper-viewer-artwork, .marquee-row, .showcase-item, .work-card, .commerce-item) img {
   visibility: hidden !important;
 }
 

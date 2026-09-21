@@ -1,6 +1,6 @@
 import "../css/catalogue-filters.css";
 
-const groups = { theme: "Style", year: "Year", ownership: "Source" };
+const groups = { collection: "Collection", category: "Category", theme: "Style", year: "Year", ownership: "Source" };
 const labelFor = (key, value) => key === "ownership"
   ? ({ owned: "Studio owned", curated: "Curated sources" }[value] || value)
   : String(value).replace(/(^|[-_ ])\w/g, (part) => part.replace(/[-_]/g, " ").toUpperCase());
@@ -9,7 +9,7 @@ export function filterCatalogue(projects, selected = {}, query = "", sort = "fea
   const search = query.trim().toLowerCase();
   const result = projects.filter((project) => Object.keys(groups).every((key) =>
     !selected[key]?.size || selected[key].has(String(project[key]))) &&
-    (!search || [project.title, project.summary, project.location, project.mediumLabel, project.theme]
+    (!search || [project.title, project.summary, project.location, project.mediumLabel, project.theme, project.collection, project.category]
       .join(" ").toLowerCase().includes(search)));
   if (sort === "newest") result.sort((a, b) => Number(b.year) - Number(a.year));
   if (sort === "az" || sort === "za") result.sort((a, b) => a.title.localeCompare(b.title) * (sort === "za" ? -1 : 1));

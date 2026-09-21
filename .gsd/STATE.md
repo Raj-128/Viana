@@ -35,3 +35,15 @@
 - Added email/phone remembrance (no password storage), removed stale browser admin setup form, and refresh admin setup status when returning to the tab.
 - Account cards now live in inert templates until signed in and detach on logout.
 - Added terminal-only `server:reset-admin`, hidden password confirmation for create/reset, fresh salted hash, and revocation of existing admin sessions. Tests verify old-password rejection and new-password success through both login routes; all 14 tests pass. User must run reset and enter their own password if needed.
+
+## Image stream hero (2026-09-21)
+- Replaced homepage collage with the reference's mirrored perspective corridor, adapted to vanilla JS/CSS and local artwork in both modes.
+- Added responsive sizing, reduced-motion handling, pause control and offscreen suspension.
+- Verification: npm.cmd run build passed; npm.cmd test passed 25/25. Browser connector reports no browser available; screenshot verification remains outstanding.
+
+## Automatic local wallpaper library
+- Organized eight supplied collections under src/assets/images/wallpapers/library.
+- Automatic import/watch, protected cached previews, duplicate detection, gallery grouping, collection/category filters, 24-card batches.
+- Imported 1,774 designs from 1,960 unique images; 50 duplicate files; no image errors.
+- Hero uses 18 distinct wallpapers across two rails, balanced across collections.
+- Verified live source URL=403, generated catalogue=200, no raw library files in production output; 31 tests pass.
