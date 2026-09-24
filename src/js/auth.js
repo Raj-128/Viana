@@ -1,4 +1,5 @@
 import "./site-mode.js";
+import { fetchApi, setStoredToken } from "./api-config.js";
 const SESSION_KEY = "studioVianaSession";
 const PUBLIC_PAGES = new Set(["", "index.html", "login.html", "admin-login.html"]);
 const ADMIN_HOLD_DURATION = 950;
@@ -254,13 +255,22 @@ function initHiddenAdminAccess() {
 let serverSession = null;
 let adminConfigured = false;
 async function authRequest(action, data) {
-  const response = await fetch(new URL('api/auth/' + action, new URL('./', window.location.href)), {
-    method: data ? 'POST' : 'GET', credentials: 'same-origin', cache: 'no-store',
+  const response = await fetchApi('api/auth/' + action, {
+    method: data ? 'POST' : 'GET',
+    cache: 'no-store',
     headers: data ? { 'Content-Type': 'application/json' } : {},
     body: data ? JSON.stringify(data) : undefined,
   });
-  const result = await response.json();
+  let result;
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error('Authentication service unavailable. Check your backend URL or server status.');
+  }
   if (!response.ok) throw new Error(result.error || 'Authentication service unavailable.');
+  if (result.token) {
+    setStoredToken(result.token);
+  }
   return result;
 }
 export async function refreshAuthSession() {
@@ -272,8 +282,13 @@ export const authReady = refreshAuthSession().catch(() => { serverSession = null
 export function getSession() { return serverSession; }
 export function getCurrentUser() { return serverSession; }
 export async function logoutUser() {
-  await authRequest('logout', {});
+  try {
+    await authRequest('logout', {});
+  } catch {
+    // Ignore network error on logout
+  }
   serverSession = null;
+  setStoredToken("");
   removeStorage(SESSION_KEY);
 }
 export function isAdminSession() { return serverSession?.role === 'admin'; }

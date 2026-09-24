@@ -24,25 +24,39 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
     CREATE TABLE IF NOT EXISTS limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);`);
   const fail = (status, message) => Object.assign(new Error(message), { status });
   const json = (res, status, value) => { res.writeHead(status, { "Content-Type": "application/json" }); res.end(JSON.stringify(value)); };
-  const cookie = (req) => req.headers.cookie?.match(/(?:^|;\s*)viana_session=([a-f0-9]{64})(?:;|$)/)?.[1];
-  const setCookie = (res, token, maxAge) => res.setHeader("Set-Cookie", `viana_session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${secureCookies ? "; Secure" : ""}`);
+  
+  const extractToken = (req) => {
+    const bearer = req.headers.authorization?.match(/^Bearer\s+([a-f0-9]{64})$/i)?.[1];
+    if (bearer) return bearer;
+    return req.headers.cookie?.match(/(?:^|;\s*)viana_session=([a-f0-9]{64})(?:;|$)/)?.[1];
+  };
+
+  const setCookie = (res, token, maxAge) => {
+    res.setHeader("Set-Cookie", `viana_session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${secureCookies ? "; Secure" : ""}`);
+  };
+
   const sessionUser = (req) => {
-    const token = cookie(req);
+    const token = extractToken(req);
     return token ? db.prepare("SELECT users.* FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token=? AND sessions.expires>?").get(hash(token), Date.now()) : null;
   };
+
   const startSession = (req, res, user) => {
-    if (cookie(req)) db.prepare("DELETE FROM sessions WHERE token=?").run(hash(cookie(req)));
+    const existingToken = extractToken(req);
+    if (existingToken) db.prepare("DELETE FROM sessions WHERE token=?").run(hash(existingToken));
     db.prepare("DELETE FROM sessions WHERE expires<=?").run(Date.now());
     const token = randomBytes(32).toString("hex");
     db.prepare("INSERT INTO sessions VALUES (?,?,?)").run(hash(token), user.id, Date.now() + 86400000);
     setCookie(res, token, 86400);
+    return token;
   };
+
   const limit = (key, maximum) => {
     const now = Date.now();
     db.prepare("DELETE FROM limits WHERE expires<=?").run(now);
     db.prepare("INSERT INTO limits VALUES (?,1,?) ON CONFLICT(key) DO UPDATE SET count=count+1").run(key, now + 900000);
     if (db.prepare("SELECT count FROM limits WHERE key=?").get(key).count > maximum) throw fail(429, "Too many requests. Try again in 15 minutes.");
   };
+
   const readBody = async (req) => {
     if (!req.headers["content-type"]?.startsWith("application/json")) throw fail(415, "JSON is required.");
     const chunks = []; let size = 0;
@@ -50,7 +64,9 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
     try { const data = JSON.parse(Buffer.concat(chunks).toString()); if (!data || Array.isArray(data) || typeof data !== "object") throw new Error(); return data; }
     catch { throw fail(400, "Invalid request."); }
   };
+
   const handleDownloadAdmin = createDownloadAdmin({ db, filesRoot, sessionUser, readBody, json, fail, limit });
+
   async function createUser(data, role = "user") {
     const name = String(data.name || "").trim();
     const email = String(data.email || "").trim().toLowerCase();
@@ -66,24 +82,58 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
     catch (error) { if (error.code?.startsWith("ERR_SQLITE")) throw fail(409, "An account with those details already exists."); throw error; }
     return user;
   }
+
+  const isOriginAllowed = (req, reqOrigin) => {
+    if (!reqOrigin) return true;
+    const defaultHostOrigin = `${req.socket.encrypted ? "https" : "http"}://${req.headers.host}`;
+    if (reqOrigin === defaultHostOrigin) return true;
+    if (origin) {
+      const explicit = origin.split(",").map(s => s.trim().toLowerCase());
+      return explicit.includes(reqOrigin.toLowerCase());
+    }
+    const allowed = (process.env.ALLOWED_ORIGINS || process.env.APP_ORIGIN || "https://raj-128.github.io,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000")
+      .split(",")
+      .map(s => s.trim().toLowerCase());
+    return allowed.includes("*") || allowed.includes(reqOrigin.toLowerCase()) || reqOrigin.endsWith(".github.io");
+  };
+
   async function handler(req, res, next = () => { res.writeHead(404); res.end(); }) {
     const path = new URL(req.url, "http://localhost").pathname;
     if (!path.startsWith("/api/")) return next();
+
+    const reqOrigin = req.headers.origin;
+    if (reqOrigin && isOriginAllowed(req, reqOrigin)) {
+      res.setHeader("Access-Control-Allow-Origin", reqOrigin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    }
+
+    if (req.method === "OPTIONS") {
+      res.writeHead(204);
+      return res.end();
+    }
+
     res.setHeader("Cache-Control", "private, no-store");
     res.setHeader("X-Content-Type-Options", "nosniff");
+
     try {
       if (!["GET", "POST"].includes(req.method)) throw fail(405, "Method not allowed.");
+
       if (req.method === "POST") {
-        const expectedOrigin = origin || `${req.socket.encrypted ? "https" : "http"}://${req.headers.host}`;
-        if (req.headers.origin !== expectedOrigin || req.headers["sec-fetch-site"] === "cross-site") throw fail(403, "Request origin is not allowed.");
+        if (reqOrigin && !isOriginAllowed(req, reqOrigin)) {
+          throw fail(403, "Request origin is not allowed.");
+        }
       }
+
       if (path === "/api/health" && req.method === "GET") return json(res, 200, { ok: true });
       if (path === "/api/auth/session" && req.method === "GET") {
         const user = sessionUser(req);
         return json(res, 200, { user: user ? safeUser(user) : null, adminConfigured: Boolean(db.prepare("SELECT 1 FROM users WHERE role='admin'").get()) });
       }
       if (path === "/api/auth/logout" && req.method === "POST") {
-        if (cookie(req)) db.prepare("DELETE FROM sessions WHERE token=?").run(hash(cookie(req)));
+        const token = extractToken(req);
+        if (token) db.prepare("DELETE FROM sessions WHERE token=?").run(hash(token));
         setCookie(res, "", 0);
         return json(res, 200, { user: null });
       }
@@ -109,8 +159,8 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
             throw fail(403, "This login is for studio administrators. Use the customer login page.");
           }
         }
-        startSession(req, res, user);
-        return json(res, 200, { user: safeUser(user) });
+        const token = startSession(req, res, user);
+        return json(res, 200, { user: safeUser(user), token });
       }
       if (await handleDownloadAdmin(req, res, path)) return;
       const match = path.match(/^\/api\/designs\/([a-z0-9-]+)\/download$/);

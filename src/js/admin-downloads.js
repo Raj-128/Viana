@@ -1,12 +1,14 @@
 import { authReady, getSession } from "./auth.js";
 import { projects } from "./projects.js";
+import { fetchApi } from "./api-config.js";
 
 const $ = (id) => document.getElementById(id);
 const status = $("approval-status");
 let state, busy = false;
 async function api(path, body, file) {
-  const response = await fetch(path, {
-    method: body || file ? "POST" : "GET", credentials: "same-origin", cache: "no-store",
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+  const response = await fetchApi(cleanPath, {
+    method: body || file ? "POST" : "GET", cache: "no-store",
     headers: body ? { "Content-Type": "application/json" } : file ? { "Content-Type": file.type } : {},
     body: file || (body ? JSON.stringify(body) : undefined),
   });

@@ -4,9 +4,14 @@ import { stat } from "node:fs/promises";
 import { resolve, relative, isAbsolute, extname } from "node:path";
 import { createApi } from "./api.js";
 
-if (process.env.NODE_ENV === "production" && !process.env.APP_ORIGIN?.startsWith("https://")) throw new Error("Set APP_ORIGIN to your HTTPS website origin in production.");
-const root = realpathSync(resolve("dist"));
-const api = createApi();
+const defaultOrigin = process.env.APP_ORIGIN || "https://raj-128.github.io";
+let root = null;
+try {
+  root = realpathSync(resolve("dist"));
+} catch {
+  // dist folder not built yet, API routes will still work
+}
+const api = createApi({ origin: defaultOrigin });
 const mime = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".jpg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml", ".webp": "image/webp", ".woff2": "font/woff2" };
 const server = createServer((req, res) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -16,6 +21,7 @@ const server = createServer((req, res) => {
   res.setHeader("Content-Security-Policy", "object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
   api.handler(req, res, async () => {
     try {
+      if (!root) { res.writeHead(404); return res.end("Studio Viana API Server (Static frontend not built on this host)"); }
       if (!["GET", "HEAD"].includes(req.method)) { res.writeHead(405); return res.end(); }
       const path = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
       const file = realpathSync(resolve(root, `.${path === "/" ? "/index.html" : path}`));
@@ -29,5 +35,8 @@ const server = createServer((req, res) => {
     } catch { res.writeHead(404); res.end("Not found"); }
   });
 });
-server.listen(Number(process.env.PORT || 3000), process.env.HOST || "127.0.0.1", () => console.log(`Studio Viana server: http://${process.env.HOST || "127.0.0.1"}:${process.env.PORT || 3000}`));
+const host = process.env.HOST || "0.0.0.0";
+const port = Number(process.env.PORT || 3000);
+server.listen(port, host, () => console.log(`Studio Viana server running on http://${host}:${port}`));
 server.on("close", () => api.close());
+

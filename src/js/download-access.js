@@ -1,8 +1,10 @@
+import { fetchApi, buildApiUrl } from "./api-config.js";
+
 // This endpoint must authorize the signed-in user and purchase on the server.
 // Browser-local roles/payment flags are never accepted as download credentials.
-export async function requestProtectedDownload(projectId, fetcher = fetch) {
-  const endpoint = new URL(`api/designs/${encodeURIComponent(projectId)}/download`, new URL("./", window.location.href));
-  const response = await fetcher(endpoint, {
+export async function requestProtectedDownload(projectId, fetcher = fetchApi) {
+  const targetUrl = fetcher === fetchApi ? buildApiUrl(`api/designs/${encodeURIComponent(projectId)}/download`) : new URL(`api/designs/${encodeURIComponent(projectId)}/download`, new URL("./", window.location.href));
+  const response = await fetcher(targetUrl, {
     credentials: "same-origin",
     cache: "no-store",
     headers: { Accept: "image/*, application/octet-stream" },

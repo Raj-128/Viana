@@ -3,6 +3,7 @@ import { CART_KEY, DOWNLOADS_KEY, createCommerceStore } from "./commerce-store.j
 import "../css/commerce.css";
 import { requestProtectedDownload } from "./download-access.js";
 import { createPreviewDownload } from "./preview-download.js";
+import { fetchApi } from "./api-config.js";
 
 const basketIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3-4 6m12-6 4 6M3 9h18l-2 11H5L3 9Z"/><path d="M9 13v3m6-3v3"/></svg>';
 const downloadIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>';
@@ -14,7 +15,7 @@ let selectedDownload;
 let accessRequests = [], approvedDesigns = [], requestBusy = false;
 async function refreshDownloadRequests() {
   try {
-    const response = await fetch("/api/download-requests", { credentials: "same-origin", cache: "no-store" });
+    const response = await fetchApi("api/download-requests", { cache: "no-store" });
     if (response.status === 401) { accessRequests = []; approvedDesigns = []; }
     else {
       const data = await response.json();
@@ -30,7 +31,7 @@ async function requestOriginalAccess() {
   const project = selectedDownload;
   requestBusy = true; renderCommerce();
   try {
-    const response = await fetch("/api/download-requests", { method: "POST", credentials: "same-origin",
+    const response = await fetchApi("api/download-requests", { method: "POST",
       headers: { "Content-Type": "application/json" }, body: JSON.stringify({ designId: project.id }) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Could not send your request.");
