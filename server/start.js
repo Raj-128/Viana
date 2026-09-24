@@ -35,6 +35,24 @@ const server = createServer((req, res) => {
     } catch { res.writeHead(404); res.end("Not found"); }
   });
 });
+async function initAdminFromEnv() {
+  const email = process.env.ADMIN_EMAIL || "vickyranagovind@gmail.com";
+  const password = process.env.ADMIN_PASSWORD || "StudioViana2026";
+  const name = process.env.ADMIN_NAME || "Vicky Rana";
+  const phone = process.env.ADMIN_PHONE || "9737711570";
+
+  const adminExists = Boolean(api.db.prepare("SELECT 1 FROM users WHERE role='admin'").get());
+  if (!adminExists && email && password) {
+    try {
+      await api.createUser({ name, email, phone, password }, "admin");
+      console.log(`[Admin Setup] Initialized admin account for ${email}`);
+    } catch (err) {
+      console.warn(`[Admin Setup] Could not auto-create admin:`, err.message);
+    }
+  }
+}
+initAdminFromEnv();
+
 const host = process.env.HOST || "0.0.0.0";
 const port = Number(process.env.PORT || 3000);
 server.listen(port, host, () => console.log(`Studio Viana server running on http://${host}:${port}`));
