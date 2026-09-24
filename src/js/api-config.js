@@ -1,6 +1,6 @@
 // Configuration for backend API connectivity (works with local dev & remote cloud hosting like Render/Vercel)
 
-const DEFAULT_REMOTE_API = ""; // User can paste Render URL here e.g. "https://viana-backend.onrender.com"
+const DEFAULT_REMOTE_API = "https://viana-fpph.onrender.com"; // Live Render backend URL
 
 export function getApiBaseUrl() {
   if (typeof window === "undefined") return "";
