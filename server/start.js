@@ -36,16 +36,16 @@ const server = createServer((req, res) => {
   });
 });
 async function initAdminFromEnv() {
-  const email = process.env.ADMIN_EMAIL || "vickyranagovind@gmail.com";
-  const password = process.env.ADMIN_PASSWORD || "StudioViana2026";
-  const name = process.env.ADMIN_NAME || "Vicky Rana";
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const name = process.env.ADMIN_NAME || "Studio Owner";
   const phone = process.env.ADMIN_PHONE || "9737711570";
 
   const adminExists = Boolean(api.db.prepare("SELECT 1 FROM users WHERE role='admin'").get());
   if (!adminExists && email && password) {
     try {
       await api.createUser({ name, email, phone, password }, "admin");
-      console.log(`[Admin Setup] Initialized admin account for ${email}`);
+      console.log(`[Admin Setup] Initialized secure admin account`);
     } catch (err) {
       console.warn(`[Admin Setup] Could not auto-create admin:`, err.message);
     }
