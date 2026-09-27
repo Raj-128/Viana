@@ -2322,7 +2322,7 @@ a {
 }
 
 /* Keep protected artwork out of browser print output. */
-.artwork-concealed :is(.project-hero-shell, .image-stream-card, .catalogue-card-image, .hero-slide, .project-gallery-item, .preview-frame, .wallpaper-viewer-artwork, .marquee-row, .showcase-item, .work-card, .commerce-item) img {
+.artwork-concealed :is(.project-hero-shell, .catalogue-card-image, .hero-slide, .project-gallery-item, .preview-frame, .wallpaper-viewer-artwork, .marquee-row, .showcase-item, .work-card, .commerce-item) img {
   visibility: hidden !important;
 }
 

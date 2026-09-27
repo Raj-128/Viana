@@ -1,28 +1,16 @@
 import { projects } from './projects.js';
 import { selectHeroDesigns } from './hero-designs.js';
+import { corridorFrames, corridorTransform, galleryFrames, galleryTransform } from './hero-motion.js';
 import '../css/image-stream-hero.css';
-
-// Equal apparent-size ratios keep the more spacious stream moving evenly.
-function corridorFrames(direction, name) {
-  const steps = Array.from({ length: 25 }, (_, index) => {
-    const u = index / 24;
-    const scale = (2.6 / 25) * Math.pow(46 / 2.6, u);
-    const depth = 30 * (1 - 1 / scale);
-    const rail = 44 - 55 * Math.pow(1 - u, 3.3);
-    const turn = 6 + 22 * u;
-    return `${u * 100}% { transform: translate3d(${direction * rail}cqw, 0, ${depth}cqw) rotateY(${-direction * turn}deg); }`;
-  });
-  return `@keyframes ${name} { ${steps.join('')} }`;
-}
 
 const hero = document.querySelector('[data-image-stream-hero]');
 if (hero) {
   const style = document.createElement('style');
-  style.textContent = corridorFrames(1, 'stream-right') + corridorFrames(-1, 'stream-left');
+  style.textContent = corridorFrames(1, 'stream-right') + corridorFrames(-1, 'stream-left') + galleryFrames();
   hero.append(style);
 
   const collections = {
-    wallpaper: selectHeroDesigns(projects),
+    wallpaper: selectHeroDesigns(projects.filter(project => project.heroCover)),
     '3d': projects.filter(project => project.workType === '3d'),
   };
   const stages = [...hero.querySelectorAll('[data-stream-mode]')];
@@ -43,27 +31,37 @@ if (hero) {
     if (!designs.length) return;
     const rail = document.createElement('div');
     rail.className = 'image-stream-rail';
+    stage.style.setProperty('--stream-count', String(count));
     const directions = mode === '3d' ? ['gallery'] : ['right', 'left'];
     const duration = mode === '3d' ? 32 : 24;
     for (const direction of directions) {
       for (let index = 0; index < count; index++) {
         const offset = direction === 'left' ? count : 0;
         const design = designs[(offset + index) % designs.length];
+        const slot = document.createElement('div');
+        slot.className = 'image-stream-slot';
+        const progress = (index + .5) / count;
+        slot.style.animationName = `stream-${direction}`;
+        slot.style.animationDuration = `${duration}s`;
+        slot.style.animationDelay = `${-progress * duration}s`;
+        slot.style.transform = mode === '3d' ? galleryTransform(progress)
+          : corridorTransform(progress, direction === 'right' ? 1 : -1);
         const card = document.createElement('a');
         card.className = 'image-stream-card';
         card.href = `project.html?id=${encodeURIComponent(design.id)}`;
         card.setAttribute('aria-label', `View ${design.title}`);
         card.draggable = false;
-        card.style.animationName = `stream-${direction}`;
-        card.style.animationDuration = `${duration}s`;
-        card.style.animationDelay = `${-index * duration / count}s`;
+        const surface = document.createElement('span');
+        surface.className = 'image-stream-surface';
         const image = document.createElement('img');
-        image.src = design.cover;
+        image.src = design.heroCover || design.cover;
         image.alt = '';
         image.draggable = false;
         image.decoding = 'async';
-        card.append(image);
-        rail.append(card);
+        surface.append(image);
+        card.append(surface);
+        slot.append(card);
+        rail.append(slot);
       }
     }
     stage.append(rail);

@@ -4,6 +4,11 @@ const DEFAULT_REMOTE_API = "https://viana-fpph.onrender.com"; // Live Render bac
 
 export function getApiBaseUrl() {
   if (typeof window === "undefined") return "";
+  // Vite and the local production server already mount /api. Do not send
+  // localhost login requests to Render (or a stale saved cloud override).
+  if (/^(localhost|127(?:\.\d{1,3}){3}|\[?::1\]?|0\.0\.0\.0)$/i.test(window.location.hostname)) {
+    return window.location.origin;
+  }
   
   // 1. Check window override if defined in HTML or script
   if (window.VIANA_API_URL) {
@@ -73,7 +78,8 @@ export async function fetchApi(path, options = {}) {
     ...(options.headers || {}),
   };
 
-  if (token && !headers["Authorization"]) {
+  const sameOrigin = new URL(url, window.location.href).origin === window.location.origin;
+  if (token && !sameOrigin && !headers["Authorization"]) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 

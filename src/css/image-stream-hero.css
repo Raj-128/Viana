@@ -9,6 +9,8 @@ body.mode-3d .home-hero.image-stream-hero {
   margin-top: 90px;
   padding: 0;
   overflow: hidden;
+  /* Unlike hidden, clip cannot auto-scroll to an offscreen moving link. */
+  overflow: clip;
   background: var(--bg);
 }
 .hero-mode-toggle {
@@ -39,52 +41,63 @@ body.mode-3d .home-hero.image-stream-hero {
 }
 .image-stream-stage {
   position: absolute;
+  z-index: 0;
+  isolation: isolate;
   inset: 0;
   pointer-events: none;
-  perspective: 30cqw;
-  perspective-origin: 50% 55%;
 }
-.image-stream-rail { position: absolute; inset: 0; transform-style: preserve-3d; }
-.image-stream-card {
+.image-stream-rail { position: absolute; inset: 0; pointer-events: none; }
+.image-stream-slot {
   position: absolute;
-  display: block;
-  pointer-events: auto;
-  cursor: pointer;
+  pointer-events: none;
   left: 50%;
   top: 55%;
   width: 18cqw;
   height: 25cqw;
   margin: -12.5cqw 0 0 -9cqw;
-  overflow: hidden;
-  border-radius: .4cqw;
-  background: var(--surface);
-  backface-visibility: hidden;
-  animation: 24s linear infinite;
-  transition: scale .25s ease, translate .25s ease, box-shadow .25s ease;
+  animation: 24s linear infinite both;
 }
-.image-stream-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.image-stream-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  cursor: pointer;
+  border-radius: .4cqw;
+}
+.image-stream-surface {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--surface);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.image-stream-surface img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 /* 3D work travels along one horizontal gallery, with a gentle depth arc. */
 .image-stream-stage[data-stream-mode="3d"] {
   inset: 0;
   container-type: normal;
-  perspective: 1100px;
-  perspective-origin: 50% 58%;
+  --gallery-width: clamp(200px, 26cqw, 380px);
+  --gallery-height: clamp(160px, 20cqw, 280px);
+  --gallery-gap: clamp(24px, 3cqw, 52px);
+  --gallery-span: calc((var(--gallery-width) + var(--gallery-gap)) * var(--stream-count, 9));
+}
+[data-stream-mode="3d"] .image-stream-slot {
+  top: 58%;
+  width: var(--gallery-width);
+  height: var(--gallery-height);
+  margin: calc(var(--gallery-height) / -2) 0 0 calc(var(--gallery-width) / -2);
 }
 [data-stream-mode="3d"] .image-stream-card {
-  top: 58%;
-  width: clamp(200px, 26cqw, 380px);
-  height: clamp(160px, 20cqw, 280px);
-  margin: 0;
-  border: 1px solid #ffffff26;
   border-radius: 12px;
-  box-shadow: 0 24px 45px #0005;
 }
-@keyframes stream-gallery {
-  0% { transform: translate(-50%, -50%) translate3d(90cqw, 0, -80px) rotateY(-18deg); }
-  25% { transform: translate(-50%, -50%) translate3d(45cqw, 0, -20px) rotateY(-10deg); }
-  50% { transform: translate(-50%, -50%) translate3d(0, 0, 35px) rotateY(0deg); }
-  75% { transform: translate(-50%, -50%) translate3d(-45cqw, 0, -20px) rotateY(10deg); }
-  100% { transform: translate(-50%, -50%) translate3d(-90cqw, 0, -80px) rotateY(18deg); }
+[data-stream-mode="3d"] .image-stream-surface {
+  border: 1px solid #ffffff26;
+  box-shadow: 0 24px 45px #0005;
 }
 .image-stream-footer {
   position: absolute;
@@ -100,36 +113,34 @@ body.mode-3d .home-hero.image-stream-hero {
 }
 .image-stream-footer p { max-width: 400px; font-size: 14px; line-height: 1.6; color: var(--muted); text-wrap: balance; }
 .image-stream-footer .cta-link { margin: 0; }
-.image-stream-stage:has(.image-stream-card:focus-visible) .image-stream-card,
-.stream-background .image-stream-card,
-.stream-offscreen .image-stream-card { animation-play-state: paused; }
+.image-stream-stage:has(.image-stream-card:focus-visible) .image-stream-slot,
+.stream-background .image-stream-slot,
+.stream-offscreen .image-stream-slot { animation-play-state: paused; }
 .image-stream-card:focus-visible {
   outline: 3px solid var(--text);
   outline-offset: 4px;
-  scale: 1.07;
-  translate: 0 -8px;
 }
+.image-stream-card:focus-visible .image-stream-surface { transform: translateY(-6px) scale(1.04); }
 @media (hover: hover) and (pointer: fine) {
-  .image-stream-stage:has(.image-stream-card:hover) .image-stream-card { animation-play-state: paused; }
-  /* Individual transforms leave the paused corridor transform intact. */
-  .image-stream-card:hover {
-    scale: 1.07;
-    translate: 0 -8px;
+  .image-stream-stage:has(.image-stream-card:hover) .image-stream-slot { animation-play-state: paused; }
+  /* Only the visual surface lifts; the travel path and hit area stay put. */
+  .image-stream-card:hover .image-stream-surface {
+    transform: translateY(-6px) scale(1.04);
     box-shadow: 0 22px 45px #0004, 0 0 0 1px #ffffff55;
   }
-  [data-stream-mode="3d"] .image-stream-card:hover { scale: 1.04; translate: 0 -5px; }
 }
 @media (max-width: 600px) {
   .home-hero.image-stream-hero,
   body.mode-3d .home-hero.image-stream-hero { height: 740px; min-height: 740px; margin-top: 80px; }
   .image-stream-copy { padding-top: 26px; }
-  .image-stream-stage { left: -45%; right: -45%; container-type: inline-size; perspective: 57cqw; }
-  [data-stream-mode="3d"] .image-stream-card { width: 42cqw; height: 48cqw; }
+  .image-stream-stage { left: -45%; right: -45%; container-type: inline-size; }
+  .image-stream-stage[data-stream-mode="3d"] { --gallery-width: 42cqw; --gallery-height: 48cqw; }
   .image-stream-footer { bottom: 30px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .image-stream-card { animation-play-state: paused; transition: none; }
-  .image-stream-card:hover,
-  .image-stream-card:focus-visible,
-  [data-stream-mode="3d"] .image-stream-card:hover { scale: 1; translate: none; }
+  /* Keep authored delays/durations: the global .01ms rule otherwise stacks cards. */
+  .image-stream-slot { animation: none !important; }
+  .image-stream-surface { transition: none; }
+  .image-stream-card:hover .image-stream-surface,
+  .image-stream-card:focus-visible .image-stream-surface { transform: none; }
 }

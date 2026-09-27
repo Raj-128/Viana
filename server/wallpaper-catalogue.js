@@ -2,6 +2,7 @@ import { readdir, readFile, writeFile, mkdir, stat, access } from 'node:fs/promi
 import { resolve, relative, extname, basename, dirname, sep, posix } from 'node:path';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
+import { selectHeroDesigns } from '../src/js/hero-designs.js';
 
 const extensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif', '.tif', '.tiff']);
 const siteImages = new Set(['flower.png', 'vt-logo-black.png', 'vicky-profile.jpeg', 'vicky-profile-2.png', 'three-d-lunar-console.png', 'three-d-petal-lamp.png', 'three-d-playroom.png', 'three-d-canyon-void.png']);
@@ -61,6 +62,7 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
   }
   const cache = JSON.parse(cacheText || '{}');
   const nextCache = {}, seen = new Set(), designs = [], errors = [];
+  const sourceFiles = new Map();
   for (const file of files) {
     const key = relative(root, file).split(sep).join('/');
     try {
@@ -72,9 +74,10 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
       nextCache[key] = { signature, hash };
       if (seen.has(hash)) continue;
       seen.add(hash);
+      sourceFiles.set(`${hash}.jpg`, file);
       const output = resolve(previews, `${hash}.jpg`);
       if (!await access(output).then(() => true, () => false)) {
-        const { data, info: resized } = await sharp(source || file, { limitInputPixels: 80000000 })
+        const { data, info: resized } = await sharp(source || await readFile(file), { limitInputPixels: 80000000 })
           .rotate().resize({ width: 1000, height: 1000, fit: 'inside', withoutEnlargement: true })
           .flatten({ background: '#eee9e2' }).png().toBuffer({ resolveWithObject: true });
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${resized.width}" height="${resized.height}"><defs><pattern id="mark" width="230" height="130" patternUnits="userSpaceOnUse"><text x="12" y="75" transform="rotate(-28 110 65)" font-family="Arial,sans-serif" font-size="19" font-weight="bold" fill="white" fill-opacity=".6" stroke="#222" stroke-opacity=".4" stroke-width=".6">STUDIO VIANA</text></pattern></defs><rect width="100%" height="100%" fill="url(#mark)"/></svg>`;
@@ -108,9 +111,28 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
     grouped.get(id).previews.push(preview);
   }
   const imageNames = new Map(designs.map((design, index) => [design.preview, `image${index}`]));
-  const imports = designs.map((design, index) => `import image${index} from './wallpaper-previews/${design.preview}';`);
+  // Static new URL references still bundle in production, but avoid thousands
+  // of individual ?import module requests on the local Vite server.
+  const imports = designs.map((design, index) => `const image${index} = new URL('./wallpaper-previews/${design.preview}', import.meta.url).href;`);
+  // Only hero selections get clean, smaller thumbnails. Detail covers/galleries
+  // continue to use the separately generated, baked-in watermarks.
+  const heroFolder = resolve(generated, 'hero-previews');
+  await mkdir(heroFolder, { recursive: true });
+  const heroImages = new Map();
+  const featured = selectHeroDesigns([...grouped.values()].map(design => ({ ...design, cover: design.previews[0] })));
+  for (const [index, design] of featured.entries()) {
+    const filename = design.previews[0];
+    const output = resolve(heroFolder, filename);
+    if (!await access(output).then(() => true, () => false)) {
+      await sharp(await readFile(sourceFiles.get(filename)), { limitInputPixels: 80000000 }).rotate()
+        .resize({ width: 640, height: 640, fit: 'inside', withoutEnlargement: true })
+        .flatten({ background: '#eee9e2' }).jpeg({ quality: 76 }).toFile(output);
+    }
+    imports.push(`const hero${index} = new URL('./hero-previews/${filename}', import.meta.url).href;`);
+    heroImages.set(design.id, `hero${index}`);
+  }
   const rows = [...grouped.values()].map(({ previews: images, ...design }) =>
-    `{...${JSON.stringify(design)},cover:${imageNames.get(images[0])},gallery:[${images.map(image => imageNames.get(image)).join(',')}]}`);
+    `{...${JSON.stringify(design)},${heroImages.has(design.id) ? `heroCover:${heroImages.get(design.id)},` : ''}cover:${imageNames.get(images[0])},gallery:[${images.map(image => imageNames.get(image)).join(',')}]}`);
   const code = `${imports.join('\n')}\nexport default [\n${rows.join(',\n')}\n];\n`;
   const moduleFile = resolve(generated, 'wallpaper-catalogue.js');
   const changed = code !== await readFile(moduleFile, 'utf8').catch(() => '');
