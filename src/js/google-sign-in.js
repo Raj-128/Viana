@@ -49,7 +49,18 @@ export async function initGoogleSignIn(root, request, onSuccess) {
     nonce = config.nonce;
     google.initialize({ client_id: config.clientId, nonce, auto_select: false, ux_mode: 'popup',
       callback: response => { credential = response.credential; form.reset(); form.hidden = true; submit(); } });
-    google.renderButton(host, { type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', shape: 'pill', width: Math.min(360, Math.max(200, host.clientWidth)) });
+    let renderedWidth = 0;
+    const renderButton = () => {
+      // Google's standard button supports up to 400px. Match the form column
+      // without stretching its iframe or overriding Google's branded contents.
+      const width = Math.min(400, Math.floor(host.clientWidth));
+      if (width < 200 || width === renderedWidth) return;
+      renderedWidth = width;
+      host.replaceChildren();
+      google.renderButton(host, { type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', shape: 'pill', width });
+    };
+    renderButton();
+    new ResizeObserver(renderButton).observe(host);
     status.textContent = '';
   } catch (error) { status.textContent = 'Google sign-in is unavailable right now. You can still use email and password.'; }
 }

@@ -70,3 +70,5 @@ updated: 2026-09-27
 - 3D detail download correction: dark label on the light CTA, full-width accessible target, and project-specific instructions so 3D pages no longer tell customers to choose nonexistent wallpaper dimensions. No download authorization changes. Browser visual inspection unavailable.
 
 - Google customer sign-in: supplied public client ID, official Google verifier, one-use nonce challenges, phone completion, password-confirmed account linking, explicit owner rejection and unchanged original-file authorization. Added Google CSP allowances and client login UI. 52 tests pass. Real Google popup not verified because no browser surface is connected. Dependency audit reports three pre-existing transitive toolchain packages (nanoid, picomatch, postcss); no forced dependency upgrades performed.
+
+- Login alignment: shared centered 400px content column for heading, Google button, divider, tabs and forms; responsive Google button width (no iframe stretching), full-width tab block, compact empty-status spacing and updated intro text. Browser visual verification unavailable.
