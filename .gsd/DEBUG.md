@@ -66,3 +66,5 @@ updated: 2026-09-27
 - Live hero root cause confirmed in deployed main-t2VfA3pE.css: unnamed animation shorthand optimized to animation:none, discarding infinite iteration and linear timing. Set timing/iteration/fill explicitly with the runtime animation name, leave play-state in CSS for hover/focus pause.
 
 - Live request endpoint returns 404 on old Render backend. Customer panel now isolates unavailable size requests from existing approvals, shows a truthful retry state instead of an empty list, gives a clear unsent-request message, and overrides global section spacing inside the drawer. Backend deployment remains dependent on Render repo/branch and persistent-storage confirmation. All 50 tests pass.
+
+- 3D detail download correction: dark label on the light CTA, full-width accessible target, and project-specific instructions so 3D pages no longer tell customers to choose nonexistent wallpaper dimensions. No download authorization changes. Browser visual inspection unavailable.

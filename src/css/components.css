@@ -1571,6 +1571,10 @@ body.mode-3d .wallpaper-marquee {
   color: var(--muted);
 }
 
+body.mode-3d .quote-cta { background: #f5f5f5; color: #171717; }
+.project-description .quote-cta { width: 100%; min-height: 48px; cursor: pointer; line-height: 1.5; }
+.project-description .quote-cta:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
+
 body.mode-3d .studio-estimator {
   display: none;
 }

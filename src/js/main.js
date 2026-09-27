@@ -1360,6 +1360,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const description = document.getElementById("project-description");
     const gallery = document.getElementById("project-gallery");
     const isWallpaperProject = project.workType === "wallpaper";
+    const downloadNote = document.querySelector('[data-project-download-note]');
+    if (downloadNote) downloadNote.textContent = isWallpaperProject
+      ? 'Choose your size below and send a design request. Once approved, download your print-ready file from Your requests and downloads.'
+      : 'Download a free watermarked preview, or request access to the original image. Original downloads require studio approval.';
     document.querySelectorAll("[data-project-download]").forEach(button => {
       button.textContent = isWallpaperProject ? "Choose size and request design" : "Download options";
       button.onclick = () => isWallpaperProject ? projectOrderSection.scrollIntoView({ behavior: "smooth", block: "start" }) : downloadProjectImage(project);
