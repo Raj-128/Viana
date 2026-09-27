@@ -55,3 +55,5 @@ updated: 2026-09-27
 - Right-click verification: all 46 tests pass; build exit 0 in 23.21s. Local only.
 - Capture timing follow-up: keyboard listeners moved to window capture phase; detected capture immediately adds a separate no-transition/no-animation concealment state for all img/canvas/video, including hero thumbnails. Keydown does not schedule reveal; keyup restores after two seconds, with focused-page interaction recovery if the OS swallowed keyup. Browser repaint/OS capture timing remains outside JavaScript control. All 46 tests pass.
 - Capture change build: exit 0 in 27.08s. No OS screenshot timing or browser visual verification claimed. Local only.
+
+- Request inbox repair: standalone admin shell now visible before auth; customer panel actually fetches size requests; admin filters refresh both lists; old requests visible; customer account links directly to requests. 48 tests pass; browser inventory empty, visual verification unavailable.

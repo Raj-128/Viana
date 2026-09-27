@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="mode-ready">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
@@ -27,7 +27,7 @@
       </div>
       <section class="approval-card"><div class="approval-heading"><div><span class="approval-eyebrow">INBOX</span><h2>Customer requests</h2></div><button id="refresh-requests" type="button" class="approval-secondary">Refresh &orarr;</button></div><p>Each request shows the customer's exact size. Upload their finished print file, check it, then approve or decline.</p>
         <div class="approval-request-tools"><div class="approval-filters" aria-label="Filter requests"><button type="button" data-request-filter="pending" aria-pressed="true">Pending</button><button type="button" data-request-filter="approved" aria-pressed="false">Approved</button><button type="button" data-request-filter="all" aria-pressed="false">All requests</button></div><label class="approval-search"><span class="sr-only">Search customers or designs</span><input id="request-search" type="search" placeholder="Search customer or design…"></label></div>
-        <div id="print-requests" aria-live="polite"></div><details><summary>Earlier design-only requests</summary><div id="approval-requests" aria-live="polite"></div></details></section>
+        <h3>Requests with print dimensions</h3><div id="print-requests" aria-live="polite"></div><section><h3>Design-only access requests</h3><div id="approval-requests" aria-live="polite"></div></section></section>
       <details class="approval-card"><summary>Earlier shared originals and access</summary><p>These tools are for previous design-only approvals. For a custom-size order, upload its file directly in the customer request above.</p><div class="approval-columns">
         <section class="approval-card"><span class="approval-eyebrow">01 / YOUR ORIGINALS</span><h2>Upload an original</h2><p>Upload the clean, watermark-free image once. Only approved customers can download it.</p>
           <form id="original-form"><label>Design<select id="original-design" required></select></label><div class="approval-design-preview"><img id="original-preview" alt=""><div><strong id="original-preview-title"></strong><small>Catalogue reference</small></div></div><label class="approval-file-zone"><span class="approval-upload-symbol" aria-hidden="true">&uarr;</span><strong>Choose your original file</strong><span>JPG, PNG or WebP · up to 25 MB</span><input id="original-file" type="file" accept="image/jpeg,image/png,image/webp" required></label><button type="submit">Upload original &uarr;</button></form>

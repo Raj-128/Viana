@@ -44,6 +44,7 @@ function uploadState() {
 let requestFilter = "pending";
 function renderRequests() {
   if (!state) return;
+  renderPrintRequests();
   const search = $("request-search").value.trim().toLowerCase();
   const filtered = state.requests.filter((r) => (requestFilter === "all" || r.status === requestFilter) && [r.name, r.email, title(r.design_id)].join(" ").toLowerCase().includes(search));
   const requests = $("approval-requests"); requests.replaceChildren();
@@ -53,7 +54,7 @@ function renderRequests() {
       const available = state.designs.some((d) => d.id === request.design_id);
       actions.append(button(available ? "Approve" : "Upload original first", () => {
         if (available) changeAccess(request.email, request.design_id, "grant");
-        else { $("original-design").value = request.design_id; uploadState(); $("original-file").focus(); status.textContent = "Choose and upload the clean original, then approve this request."; }
+        else { $("original-design").value = request.design_id; uploadState(); $("original-file").closest("details").open = true; $("original-file").focus(); status.textContent = "Choose and upload the clean original, then approve this request."; }
       }), button("Decline", () => changeAccess(request.email, request.design_id, "reject")));
     }
     el.append(actions); requests.append(el);
@@ -141,6 +142,7 @@ await authReady;
 if (getSession()?.role !== "admin") {
   status.textContent = "This page is only available to the studio owner. ";
   const link = document.createElement("a"); link.href = "admin-login.html?redirect=admin-downloads.html"; link.textContent = "Sign in as admin"; status.append(link);
+  const customerLink = document.createElement('a'); customerLink.href = 'work.html#requests'; customerLink.textContent = ' View my requests as a customer'; status.append(customerLink);
 } else {
   document.querySelectorAll("[data-request-filter]").forEach((button) => button.addEventListener("click", () => {
     requestFilter = button.dataset.requestFilter;

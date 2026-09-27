@@ -18,6 +18,7 @@ let accessRequests = [], approvedDesigns = [], printRequests = [], requestBusy =
 const printDownloads = new Set();
 async function refreshDownloadRequests() {
   try {
+    printRequests = await getPrintRequests();
     const response = await fetchApi("api/download-requests", { cache: "no-store" });
     if (response.status === 401) { accessRequests = []; approvedDesigns = []; }
     else {
@@ -27,7 +28,7 @@ async function refreshDownloadRequests() {
       approvedDesigns = data.access.map((entry) => entry.design_id);
     }
     renderCommerce();
-  } catch (error) { announce(error.message); }
+  } catch (error) { notice = error.message; renderCommerce(); announce(error.message); }
 }
 function checkApprovalStatus() {
   if (getSession()?.role === "admin") {
@@ -181,7 +182,7 @@ export function renderCommerce() {
     button.setAttribute("aria-busy", String(button.disabled));
   });
   const list = activeTab === "cart" ? cart : downloads;
-  dialog.querySelector("#commerce-title").textContent = activeTab === "cart" ? "Your cart" : "Your downloads";
+  dialog.querySelector("#commerce-title").textContent = activeTab === "cart" ? "Your cart" : "Your requests and downloads";
   dialog.querySelectorAll("[data-commerce-tab]").forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.commerceTab === activeTab));
   });
@@ -239,7 +240,7 @@ export function initCommerce(options) {
     <p class="commerce-notice" role="status"></p><section data-print-requests hidden><h3>Your design requests</h3><div data-print-list></div></section><div class="commerce-items"></div>
     <section class="commerce-requests" hidden><h3>Approval status</h3><button type="button" data-check-approvals>Check approval status</button><div data-request-list></div></section>
     <footer class="commerce-footer"><strong class="commerce-summary"></strong><p>Made to measure. Final pricing is confirmed after your wall size and finish are selected.</p><a class="commerce-checkout" target="_blank" rel="noopener noreferrer">Request quote on WhatsApp</a><button type="button" data-commerce-close>Continue browsing</button></footer>
-    <p class="commerce-storage-note">Saved in this browser.</p>`;
+    <p class="commerce-storage-note">Design requests belong to your signed-in account. Cart and download history are saved in this browser.</p>`;
   const status = document.createElement("div");
   status.id = "commerce-status";
   status.className = "commerce-toast";
@@ -280,7 +281,13 @@ export function initCommerce(options) {
     if (button.hasAttribute("data-commerce-close")) return dialog.close();
     if (button.dataset.commerceTab) return openCommerce(button.dataset.commerceTab);
     if (button.dataset.downloadVariant) return downloadDesign(selectedDownload, button.dataset.downloadVariant);
-    if (button.hasAttribute("data-request-original")) return requestOriginalAccess();
+    if (button.hasAttribute("data-request-original")) {
+      if (selectedDownload?.workType === 'wallpaper') {
+        window.location.href = 'project.html?id=' + encodeURIComponent(selectedDownload.id) + '#project-order-section';
+        return;
+      }
+      return requestOriginalAccess();
+    }
     if (button.hasAttribute("data-check-approvals")) return checkApprovalStatus();
     if (button.dataset.requestDesign) return downloadDesign(projects.find((p) => p.id === button.dataset.requestDesign), approvedDesigns.includes(button.dataset.requestDesign) ? "original" : undefined);
     if (button.dataset.redownload) return downloadDesign(projects.find((project) => project.id === button.dataset.redownload));
@@ -303,4 +310,7 @@ export function initCommerce(options) {
     if (!event.key || event.key === CART_KEY || event.key === DOWNLOADS_KEY) onChange();
   });
   renderCommerce();
+  const openRequests = () => { if (window.location.hash === '#requests') openCommerce('downloads'); };
+  window.addEventListener('hashchange', openRequests);
+  openRequests();
 }
