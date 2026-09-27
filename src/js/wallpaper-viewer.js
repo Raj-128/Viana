@@ -1,5 +1,5 @@
 import { projects } from "./projects.js";
-import { addToCart, downloadDesign, renderCommerce } from "./commerce.js";
+import { addToCart, renderCommerce } from "./commerce.js";
 import { createCommerceStore } from "./commerce-store.js";
 
 export function initWallpaperViewer() {
@@ -29,7 +29,7 @@ export function initWallpaperViewer() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3-4 6m12-6 4 6M3 9h18l-2 11H5L3 9Z"/><path d="M9 13v3m6-3v3"/></svg>
           <span class="catalogue-basket-label" aria-live="polite"></span>
         </button>
-        <button type="button" class="catalogue-download" data-download-image="" aria-label="Download wallpaper" title="Download wallpaper">
+        <button type="button" class="catalogue-download" data-download-image="" aria-label="View design details and request" title="View design and request">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>
         </button>
       </div>
@@ -54,8 +54,8 @@ export function initWallpaperViewer() {
     basket.querySelector(".catalogue-basket-label").textContent = added ? "Added to cart" : "";
     const download = dialog.querySelector("[data-download-image]");
     download.dataset.downloadImage = project.id;
-    download.setAttribute("aria-label", 'Download ' + project.title);
-    download.title = "Download design";
+    download.setAttribute("aria-label", 'View details and request ' + project.title);
+    download.title = "View design and request";
     renderCommerce();
   };
   document.addEventListener("click", (event) => {
@@ -76,7 +76,7 @@ export function initWallpaperViewer() {
     pointer = null;
   });
   dialog.querySelector("[data-add-design]").addEventListener("click", () => addToCart(designs[index]));
-  dialog.querySelector("[data-download-image]").addEventListener("click", () => downloadDesign(designs[index]));
+  dialog.querySelector("[data-download-image]").addEventListener("click", () => { window.location.href = `project.html?id=${encodeURIComponent(designs[index].id)}`; });
   dialog.querySelector("[data-viewer-close]").addEventListener("click", () => dialog.close());
   dialog.querySelector("[data-viewer-previous]").addEventListener("click", () => show(index - 1));
   dialog.querySelector("[data-viewer-next]").addEventListener("click", () => show(index + 1));

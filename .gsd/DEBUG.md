@@ -33,3 +33,9 @@ updated: 2026-09-27
 - Owner Check approval status now opens admin-downloads.html, which already supports private upload, Approve and Decline. Customers refresh on return and poll pending requests every 15 seconds while the download panel is visible; original download stays disabled until approved. API authorization remains unchanged.
 - Automated tests: 39 passing, including owner/customer navigation and approved/declined download authorization. Local work page, admin page and health endpoint return HTTP 200. Catalogue has 1,774 clean thumbnails, 1,774 protected covers and 18 hero selections. Browser connection inventory is empty; visual verification unavailable. No push/deploy.
 - Final production build: exit 0, completed in 22.70s; catalogue bundle-size warning remains. No live server changes.
+
+
+## Design-first download entry (2026-09-27)
+- Work card and enlarged-viewer download actions now open the matching project detail page, rather than immediately opening the download drawer. Labels explain the destination.
+- Detail page exposes Request download access for both wallpaper and 3D designs; the existing selected-design estimator, inch dimensions and WhatsApp request remain intact. Permission checks and admin approval flow are unchanged.
+- Verified: 39 tests pass; production build exit 0 in 23.27s. Browser visual verification unavailable (no connected browser). No push or deployment.

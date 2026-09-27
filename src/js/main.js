@@ -838,7 +838,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3-4 6m12-6 4 6M3 9h18l-2 11H5L3 9Z"/><path d="M9 13v3m6-3v3"/></svg>
             <span class="catalogue-basket-label" aria-live="polite">${inBasket ? "Added to cart" : ""}</span>
           </button>
-          <button type="button" class="catalogue-download" data-download-image="${project.id}" aria-label="Download ${project.title}" title="Download design">
+          <button type="button" class="catalogue-download" data-download-image="${project.id}" aria-label="View details and request ${project.title}" title="View design and request">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>
           </button>
         </div>
@@ -857,7 +857,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         addProjectToQuote(project);
       });
       element.querySelector("[data-download-image]")?.addEventListener("click", () => {
-        downloadProjectImage(project);
+        window.location.href = `project.html?id=${encodeURIComponent(project.id)}`;
       });
     }
 
@@ -1350,6 +1350,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const description = document.getElementById("project-description");
     const gallery = document.getElementById("project-gallery");
     const isWallpaperProject = project.workType === "wallpaper";
+    document.querySelectorAll("[data-project-download]").forEach(button => {
+      button.onclick = () => downloadProjectImage(project);
+    });
 
     if (projectOrderSection) {
       projectOrderSection.hidden = !isWallpaperProject;
