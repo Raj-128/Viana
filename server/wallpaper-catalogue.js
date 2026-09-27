@@ -114,13 +114,14 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
   // Static new URL references still bundle in production, but avoid thousands
   // of individual ?import module requests on the local Vite server.
   const imports = designs.map((design, index) => `const image${index} = new URL('./wallpaper-previews/${design.preview}', import.meta.url).href;`);
-  // Only hero selections get clean, smaller thumbnails. Detail covers/galleries
+  // Browsing cards use clean, smaller thumbnails. Detail covers/galleries
   // continue to use the separately generated, baked-in watermarks.
   const heroFolder = resolve(generated, 'hero-previews');
   await mkdir(heroFolder, { recursive: true });
   const heroImages = new Map();
-  const featured = selectHeroDesigns([...grouped.values()].map(design => ({ ...design, cover: design.previews[0] })));
-  for (const [index, design] of featured.entries()) {
+  const catalogue = [...grouped.values()];
+  const featuredIds = new Set(selectHeroDesigns(catalogue.map(design => ({ ...design, cover: design.previews[0] }))).map(design => design.id));
+  for (const [index, design] of catalogue.entries()) {
     const filename = design.previews[0];
     const output = resolve(heroFolder, filename);
     if (!await access(output).then(() => true, () => false)) {
@@ -132,7 +133,7 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
     heroImages.set(design.id, `hero${index}`);
   }
   const rows = [...grouped.values()].map(({ previews: images, ...design }) =>
-    `{...${JSON.stringify(design)},${heroImages.has(design.id) ? `heroCover:${heroImages.get(design.id)},` : ''}cover:${imageNames.get(images[0])},gallery:[${images.map(image => imageNames.get(image)).join(',')}]}`);
+    `{...${JSON.stringify(design)},thumbnail:${heroImages.get(design.id)},${featuredIds.has(design.id) ? `heroCover:${heroImages.get(design.id)},` : ''}cover:${imageNames.get(images[0])},gallery:[${images.map(image => imageNames.get(image)).join(',')}]}`);
   const code = `${imports.join('\n')}\nexport default [\n${rows.join(',\n')}\n];\n`;
   const moduleFile = resolve(generated, 'wallpaper-catalogue.js');
   const changed = code !== await readFile(moduleFile, 'utf8').catch(() => '');

@@ -1,3 +1,4 @@
+import { getSession } from "./auth.js";
 import { projects } from "./projects.js";
 import { CART_KEY, DOWNLOADS_KEY, createCommerceStore } from "./commerce-store.js";
 import "../css/commerce.css";
@@ -25,6 +26,13 @@ async function refreshDownloadRequests() {
     }
     renderCommerce();
   } catch (error) { announce(error.message); }
+}
+function checkApprovalStatus() {
+  if (getSession()?.role === "admin") {
+    window.location.href = "admin-downloads.html";
+    return;
+  }
+  return refreshDownloadRequests();
 }
 async function requestOriginalAccess() {
   if (!selectedDownload || requestBusy) return;
@@ -132,14 +140,17 @@ export function renderCommerce() {
     const requestButton = choices.querySelector("[data-request-original]");
     const approved = approvedDesigns.includes(selectedDownload.id);
     const pending = accessRequests.some((r) => r.design_id === selectedDownload.id && r.status === "pending");
+    choices.querySelector('[data-download-variant="original"]').disabled = downloading.has(selectedDownload.id) || (getSession()?.role !== "admin" && !approved);
     requestButton.disabled = requestBusy || approved || pending;
     requestButton.textContent = requestBusy ? "Sending request…" : approved ? "Access approved" : pending ? "Request pending approval" : "Request original access";
   }
+  choices.querySelector('a[href="login.html"]').hidden = Boolean(getSession());
   const requestsPanel = dialog.querySelector(".commerce-requests");
+  requestsPanel.querySelector("[data-check-approvals]").textContent = getSession()?.role === "admin" ? "Check approval status / Review requests" : "Check approval status";
   requestsPanel.hidden = activeTab !== "downloads";
   requestsPanel.querySelector("[data-request-list]").innerHTML = accessRequests.length ? accessRequests.map((request) => {
     const approved = approvedDesigns.includes(request.design_id);
-    return `<div class="commerce-request"><strong>${escape(projects.find((p) => p.id === request.design_id)?.title || request.design_id)}</strong><p>${escape(approved ? "Approved — original ready to download" : request.status)}</p><button type="button" data-request-design="${escape(request.design_id)}">${approved ? "Download original" : "View download options"}</button></div>`;
+    return `<div class="commerce-request"><strong>${escape(projects.find((p) => p.id === request.design_id)?.title || request.design_id)}</strong><p>${escape(approved ? "Approved — original ready to download" : ({ pending: "Pending studio approval", rejected: "Declined by the studio", revoked: "Access revoked" }[request.status] || request.status))}</p><button type="button" data-request-design="${escape(request.design_id)}">${approved ? "Download original" : "View download options"}</button></div>`;
   }).join("") : "<p>Sign in and request original access from a design's download options. Your requests will appear here.</p>";
   const cart = store.cart();
   const downloads = store.downloads();
@@ -220,6 +231,12 @@ export function initCommerce(options) {
     if (cursor && cursorHome) cursorHome.replaceWith(cursor);
     cursorHome = null;
   });
+  window.addEventListener("focus", () => {
+    if (dialog.open && activeTab === "downloads") refreshDownloadRequests();
+  });
+  setInterval(() => {
+    if (dialog.open && activeTab === "downloads" && !document.hidden && accessRequests.some(request => request.status === "pending")) refreshDownloadRequests();
+  }, 15000);
   let toastTimer;
   new MutationObserver(() => {
     clearTimeout(toastTimer);
@@ -236,7 +253,7 @@ export function initCommerce(options) {
     if (button.dataset.commerceTab) return openCommerce(button.dataset.commerceTab);
     if (button.dataset.downloadVariant) return downloadDesign(selectedDownload, button.dataset.downloadVariant);
     if (button.hasAttribute("data-request-original")) return requestOriginalAccess();
-    if (button.hasAttribute("data-check-approvals")) return refreshDownloadRequests();
+    if (button.hasAttribute("data-check-approvals")) return checkApprovalStatus();
     if (button.dataset.requestDesign) return downloadDesign(projects.find((p) => p.id === button.dataset.requestDesign), approvedDesigns.includes(button.dataset.requestDesign) ? "original" : undefined);
     if (button.dataset.redownload) return downloadDesign(projects.find((project) => project.id === button.dataset.redownload));
     const focusKey = button.dataset.quantity ? `[data-quantity="${button.dataset.quantity}"][data-step="${button.dataset.step}"]` : null;

@@ -1,3 +1,9 @@
+import thumbnailClassicGarden from '../generated/hero-previews/legacy-6.jpg';
+import thumbnailJungle from '../generated/hero-previews/legacy-5.jpg';
+import thumbnailArchTree from '../generated/hero-previews/legacy-4.jpg';
+import thumbnailForest from '../generated/hero-previews/legacy-3.jpg';
+import thumbnailFairy from '../generated/hero-previews/legacy-2.jpg';
+import thumbnailBranch from '../generated/hero-previews/legacy-1.jpg';
 ﻿import wallpaperBranch from "../assets/images/wallpapers/previews/1.jpg";
 import wallpaperFairy from "../assets/images/wallpapers/previews/2.jpg";
 import localWallpapers from '../generated/wallpaper-catalogue.js';
@@ -84,42 +90,42 @@ export const projects = [
     id: "floral-branch-wall", title: "Floral Branch Customized Wallpaper",
     year: "2025", workType: "wallpaper", theme: "floral", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    cover: wallpaperBranch, gallery: [wallpaperBranch],
+    thumbnail: thumbnailBranch, cover: wallpaperBranch, gallery: [wallpaperBranch],
     summary: "Customized floral branch wallpaper installed for a residential entrance wall with soft neutral background and hand illustrated blossoms.",
   },
   {
     id: "fairy-garden-wall", title: "Fairy Garden Kids Room Wallpaper",
     year: "2025", workType: "wallpaper", theme: "child", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    cover: wallpaperFairy, gallery: [wallpaperFairy],
+    thumbnail: thumbnailFairy, cover: wallpaperFairy, gallery: [wallpaperFairy],
     summary: "Custom kids room wallpaper featuring a fairy character and nature landscape designed to create a dreamy playful space.",
   },
   {
     id: "misty-forest-wall", title: "Misty Forest Wallpaper",
     year: "2025", workType: "wallpaper", theme: "nature", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    cover: wallpaperForest, gallery: [wallpaperForest],
+    thumbnail: thumbnailForest, cover: wallpaperForest, gallery: [wallpaperForest],
     summary: "Minimal forest themed wallpaper installed in a modern bedroom with soft neutral tones and depth illusion.",
   },
   {
     id: "arch-tree-mural", title: "Arch Frame Tree Wallpaper",
     year: "2025", workType: "wallpaper", theme: "minimal", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    cover: wallpaperArchTree, gallery: [wallpaperArchTree],
+    thumbnail: thumbnailArchTree, cover: wallpaperArchTree, gallery: [wallpaperArchTree],
     summary: "Decorative arch framed wallpaper mural creating a focal wall with a calm tree silhouette composition.",
   },
   {
     id: "jungle-classic-wall", title: "Classic Jungle Landscape Wallpaper",
     year: "2025", workType: "wallpaper", theme: "nature", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    cover: wallpaperJungle, gallery: [wallpaperJungle],
+    thumbnail: thumbnailJungle, cover: wallpaperJungle, gallery: [wallpaperJungle],
     summary: "Large scale jungle landscape mural inspired by classic botanical illustration used for a feature wall.",
   },
   {
     id: "stone-bloom-signature", title: "Stone Bloom Signature",
     year: "2024", workType: "wallpaper", theme: "luxury", ownership: "curated",
     mediumLabel: "Wallpaper Collection", location: "Hyderabad",
-    cover: wallpaperClassicGarden, gallery: [wallpaperClassicGarden],
+    thumbnail: thumbnailClassicGarden, cover: wallpaperClassicGarden, gallery: [wallpaperClassicGarden],
     summary: "A high-end mural language built around stone tones, sculpted blooms, and calm drama.",
   },
   {

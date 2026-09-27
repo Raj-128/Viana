@@ -69,7 +69,7 @@ test('nested collections import once, resize/watermark, retain IDs on rename and
     assert.equal((await cleanHero.metadata()).width, 640);
     const heroStats = await cleanHero.stats();
     assert.ok(heroStats.channels.every(channel => channel.stdev < 1), 'hero thumbnail has no added watermark');
-    assert.match(code, /heroCover:hero0,cover:image0/);
+    assert.match(code, /thumbnail:hero0,heroCover:hero0,cover:image0/);
     await rm(resolve(folder, 'Moon-copy.png'));
     await rename(resolve(folder, 'Moon.png'), resolve(folder, 'Renamed.png'));
     await generateWallpaperCatalogue(root, () => {});

@@ -60,6 +60,8 @@ test("customer request, private upload, admin approval and revocation work over 
     await request("/api/download-requests", customer, { designId: payload.designId });
     assert.equal((await request("/api/admin/download-access", admin, { ...payload, action: "reject" })).status, 200);
     assert.equal((await (await request("/api/download-requests", customer)).json()).requests[0].status, "rejected");
+    assert.equal((await request(`/api/designs/${payload.designId}/download`, customer)).status, 403);
+    assert.equal((await (await request("/api/download-requests", customer)).json()).access.length, 0);
     const second = createApi({ dataDir: directory, secureCookies: false });
     assert.equal(second.db.prepare("SELECT status FROM download_requests").get().status, "rejected");
     second.close();

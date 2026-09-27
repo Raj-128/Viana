@@ -26,3 +26,10 @@ updated: 2026-09-27
 - Production build passes. Local homepage, motion module, API module, both thumbnail variants and session endpoint return HTTP 200.
 - Browser connector reports no available browsers/apps. Final interactive screenshot validation remains unavailable; no claim of visual reproduction or browser verification.
 - Changes remain local on main. No deployment or remote push performed.
+
+
+## Work previews and approval navigation (2026-09-27)
+- User requested clean work carousel/cards and watermark only after opening the design. Generate clean 640px thumbnails for every catalogue entry; protected cover/gallery URLs remain separate. Six legacy clean thumbnails recovered from original Git assets without publishing full originals.
+- Owner Check approval status now opens admin-downloads.html, which already supports private upload, Approve and Decline. Customers refresh on return and poll pending requests every 15 seconds while the download panel is visible; original download stays disabled until approved. API authorization remains unchanged.
+- Automated tests: 39 passing, including owner/customer navigation and approved/declined download authorization. Local work page, admin page and health endpoint return HTTP 200. Catalogue has 1,774 clean thumbnails, 1,774 protected covers and 18 hero selections. Browser connection inventory is empty; visual verification unavailable. No push/deploy.
+- Final production build: exit 0, completed in 22.70s; catalogue bundle-size warning remains. No live server changes.

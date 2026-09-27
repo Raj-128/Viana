@@ -826,7 +826,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     element.innerHTML = isCatalogue
       ? `
         <button type="button" class="catalogue-card-image" data-preview-design="${project.id}" aria-label="Open large preview of ${project.title}">
-          <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
+          <img src="${project.thumbnail || project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
           <span class="catalogue-badge">${project.ownership === "owned" ? "Studio collection" : "Curated edition"}</span>
         </button>
         <div class="catalogue-card-copy">
@@ -844,7 +844,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       `
       : `
-        <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
+        <img src="${project.thumbnail || project.cover}" alt="${project.title}" draggable="false" loading="lazy" decoding="async">
         <div class="work-info">
           <span>${project.mediumLabel}</span>
           <h3>${project.title}</h3>
@@ -937,7 +937,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .map(
         (project) => `
           <a href="project.html?id=${project.id}" class="showcase-item">
-            <img src="${project.cover}" alt="${project.title}" draggable="false" loading="lazy">
+            <img src="${project.thumbnail || project.cover}" alt="${project.title}" draggable="false" loading="lazy">
             <div class="showcase-item-cap">
               <span>${project.theme ? getThemeDetails(project.theme)?.label ?? project.theme : project.mediumLabel} &middot; ${project.year}</span>
               <strong>${project.title}</strong>
@@ -1306,7 +1306,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       event.stopPropagation();
       suppressClick = false;
     }, true);
+    stage.addEventListener("click", (event) => {
+      if (event.target.closest("button, a, input, select, textarea")) return;
+      const id = slides[activeIndex].dataset.projectId;
+      if (id) window.location.href = 'project.html?id=' + encodeURIComponent(id);
+    });
+    stage.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      const id = slides[activeIndex].dataset.projectId;
+      if (id) window.location.href = 'project.html?id=' + encodeURIComponent(id);
+    });
     stage.tabIndex = 0;
+    stage.setAttribute("role", "link");
+    stage.setAttribute("aria-label", "Open featured design. Use arrow keys to browse designs.");
     stage.addEventListener("keydown", (event) => {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       event.preventDefault();

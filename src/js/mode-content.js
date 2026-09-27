@@ -44,13 +44,18 @@ export function updateModeContent(mode) {
       container.append(figure);
     }
   }
-  if (page === "work") scenes.forEach((project, index) => {
-    const base = `.hero-slide:nth-child(${index + 1})`;
-    change(`${base} img`, project.cover, active, "src");
-    change(`${base} img`, project.title, active, "alt");
-    change(`${base} strong`, project.title, active);
-    change(`${base} .hero-slide-caption span`, "3D concept", active);
-  });
+  if (page === "work") {
+    const designs = active ? scenes : projects.filter(project => project.heroCover);
+    document.querySelectorAll(".hero-slide").forEach((slide, index) => {
+      const project = designs[index % designs.length];
+      if (!project) return;
+      slide.querySelector("img").src = project.thumbnail || project.heroCover || project.cover;
+      slide.querySelector("img").alt = project.title;
+      slide.querySelector("strong").textContent = project.title;
+      slide.querySelector(".hero-slide-caption span").textContent = active ? "3D concept" : "Wallpaper";
+      slide.dataset.projectId = project.id;
+    });
+  }
   if (page === "about") {
     change(".about-text > p:nth-of-type(1)", "Studio Viana is a digital art practice led by Vicky Rana. Our 3D work turns ideas into carefully composed environments, objects and visual stories.", active);
     change(".about-text > p:nth-of-type(2)", "Each scene starts with a question of space, light and material. We develop the form, explore surfaces and refine the camera until the image communicates its idea clearly.", active);

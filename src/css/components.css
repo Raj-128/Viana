@@ -2066,3 +2066,6 @@ body.mode-3d .pill-btn.active {
   }
 }
 
+
+/* Clean browsing thumbnails; enlarged previews retain their watermarks. */
+.work-card.protected-media-block::before { display: none; }
