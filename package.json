@@ -13,6 +13,8 @@
     "start": "node server/start.js",
     "server:admin": "node server/manage.js admin",
     "server:reset-admin": "node server/manage.js reset-admin",
+    "server:admin-mfa": "node server/manage.js admin-mfa",
+    "server:recover-admin-mfa": "node server/manage.js recover-admin-mfa",
     "server:grant": "node server/manage.js grant",
     "server:revoke": "node server/manage.js revoke",
     "test": "node --test tests/*.test.js",

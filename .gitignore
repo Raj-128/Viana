@@ -41,3 +41,4 @@ src/assets/images/wallpapers/*
 !.env.example
 *.sqlite
 *.sqlite-*
+mfa.key

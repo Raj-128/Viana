@@ -57,3 +57,6 @@ updated: 2026-09-27
 - Capture change build: exit 0 in 27.08s. No OS screenshot timing or browser visual verification claimed. Local only.
 
 - Request inbox repair: standalone admin shell now visible before auth; customer panel actually fetches size requests; admin filters refresh both lists; old requests visible; customer account links directly to requests. 48 tests pass; browser inventory empty, visual verification unavailable.
+
+- Security follow-up: exact CORS origins, 30-minute API idle timeout, persisted five-failure account cooldown, compatible stronger scrypt, encrypted per-owner TOTP enrollment/replay prevention and terminal recovery. Password upgrade guards concurrent resets. No real owner enrollment, external WAF, DNS or deployment changes.
+- Verification: 50 tests passed; after the password-upgrade race guard, 3 focused HTTP/TOTP tests passed again. Build exit 0 in 28.32s. Request repair build previously passed in 27.66s. Browser inventory remains empty, so no visual UI verification claimed.

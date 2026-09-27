@@ -772,6 +772,7 @@ function initAdminAuthPage() {
       await loginAdmin({
         identifier: `${formData.get("identifier") || ""}`,
         password: `${formData.get("password") || ""}`,
+        otp: `${formData.get("otp") || ""}`,
       });
 
       adminLoginForm.reset();

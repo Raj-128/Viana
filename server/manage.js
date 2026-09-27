@@ -3,11 +3,31 @@ import { createInterface } from "node:readline/promises";
 import { Writable } from "node:stream";
 import { copyFile, realpath } from "node:fs/promises";
 import { resolve, extname } from "node:path";
+import { createTotpSecret } from './totp.js';
 
 const api = createApi();
 try {
   const [command, email, designId, source] = process.argv.slice(2);
-  if (command === "admin" || command === "reset-admin") {
+  if (command === 'admin-mfa' || command === 'recover-admin-mfa') {
+    const prompt = createInterface({ input: process.stdin, output: process.stdout });
+    try {
+      const identifier = await prompt.question('Existing owner email or phone: ');
+      if (command === 'recover-admin-mfa') {
+        const confirm = await prompt.question('This disables owner MFA and signs out owner sessions. Type DISABLE to recover: ');
+        if (confirm !== 'DISABLE') throw new Error('Cancelled. Nothing changed.');
+        api.setAdminMfa(identifier, null);
+        console.log('MFA disabled. Re-enroll immediately with npm run server:admin-mfa.');
+      } else {
+        const secret = createTotpSecret();
+        console.log('In your authenticator app, add a time-based account named Studio Viana with this setup key:');
+        console.log(secret);
+        console.log('Keep this key private. Do not share screenshots or commit it.');
+        const code = await prompt.question('Enter the current six-digit code to confirm enrollment: ');
+        api.setAdminMfa(identifier, secret, code.trim());
+        console.log('MFA enabled. Owner sessions signed out. Wait for a new code, then sign in on admin-login.html.');
+      }
+    } finally { prompt.close(); }
+  } else if (command === "admin" || command === "reset-admin") {
     let hidden = false;
     const output = new Writable({ write(chunk, encoding, callback) { if (!hidden) process.stdout.write(chunk); callback(); } });
     const prompt = createInterface({ input: process.stdin, output, terminal: true });

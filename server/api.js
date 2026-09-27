@@ -3,13 +3,14 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, realpathSync, createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { resolve, relative, isAbsolute, extname } from "node:path";
-import { randomBytes, randomUUID, createHash, scrypt, timingSafeEqual } from "node:crypto";
-import { promisify } from "node:util";
+import { randomBytes, randomUUID, createHash } from "node:crypto";
+import { hashPassword, verifyPassword, needsPasswordUpgrade } from './passwords.js';
+import { verifyTotp } from './totp.js';
+import { createMfaVault } from './mfa-vault.js';
 import { createDownloadAdmin } from "./download-admin.js";
 import { createPrintRequests } from "./print-requests.js";
 import { createAccountRecords } from "./account-records.js";
 
-const derive = promisify(scrypt);
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 const phone = (value = "") => { const digits = String(value).replace(/\D/g, ""); return digits.length === 10 ? `91${digits}` : digits; };
 const safeUser = ({ id, name, email, phone, role }) => ({ id, name, email, phone, role });
@@ -18,6 +19,7 @@ const types = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"
 export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".private"), origin = process.env.APP_ORIGIN, secureCookies = process.env.NODE_ENV === "production" } = {}) {
   mkdirSync(resolve(dataDir, "files"), { recursive: true });
   const filesRoot = realpathSync(resolve(dataDir, "files"));
+  const mfaVault = createMfaVault(dataDir);
   const db = new DatabaseSync(resolve(dataDir, "studio.sqlite"), { timeout: 5000 });
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
     CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, phone TEXT UNIQUE NOT NULL, role TEXT NOT NULL, salt TEXT NOT NULL, password TEXT NOT NULL);
@@ -25,6 +27,11 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
     CREATE TABLE IF NOT EXISTS designs (id TEXT PRIMARY KEY, file TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS entitlements (user_id TEXT NOT NULL REFERENCES users(id), design_id TEXT NOT NULL REFERENCES designs(id), PRIMARY KEY(user_id,design_id));
     CREATE TABLE IF NOT EXISTS limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);`);
+  if (!db.prepare('PRAGMA table_info(sessions)').all().some(column => column.name === 'last_seen')) {
+    db.exec('ALTER TABLE sessions ADD COLUMN last_seen INTEGER NOT NULL DEFAULT 0');
+    db.prepare('UPDATE sessions SET last_seen=?').run(Date.now());
+  }
+  db.exec('CREATE TABLE IF NOT EXISTS admin_mfa (user_id TEXT PRIMARY KEY REFERENCES users(id), secret TEXT NOT NULL, last_counter INTEGER NOT NULL DEFAULT -1)');
   const fail = (status, message) => Object.assign(new Error(message), { status });
   const json = (res, status, value) => { res.writeHead(status, { "Content-Type": "application/json" }); res.end(JSON.stringify(value)); };
   
@@ -40,7 +47,13 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
 
   const sessionUser = (req) => {
     const token = extractToken(req);
-    return token ? db.prepare("SELECT users.* FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token=? AND sessions.expires>?").get(hash(token), Date.now()) : null;
+    if (!token) return null;
+    const now = Date.now(), tokenHash = hash(token);
+    const user = db.prepare("SELECT users.* FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token=? AND sessions.expires>? AND sessions.last_seen>?").get(tokenHash, now, now - 30 * 60000);
+    if (!user) { db.prepare('DELETE FROM sessions WHERE token=?').run(tokenHash); return null; }
+    // Session checks alone must not keep an unattended browser signed in forever.
+    if (new URL(req.url, 'http://localhost').pathname !== '/api/auth/session') db.prepare('UPDATE sessions SET last_seen=? WHERE token=?').run(now, tokenHash);
+    return user;
   };
 
   const startSession = (req, res, user) => {
@@ -48,7 +61,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
     if (existingToken) db.prepare("DELETE FROM sessions WHERE token=?").run(hash(existingToken));
     db.prepare("DELETE FROM sessions WHERE expires<=?").run(Date.now());
     const token = randomBytes(32).toString("hex");
-    db.prepare("INSERT INTO sessions VALUES (?,?,?)").run(hash(token), user.id, Date.now() + 86400000);
+    db.prepare("INSERT INTO sessions (token,user_id,expires,last_seen) VALUES (?,?,?,?)").run(hash(token), user.id, Date.now() + 86400000, Date.now());
     setCookie(res, token, 86400);
     return token;
   };
@@ -81,9 +94,9 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
     if (password.length < 10 || password.length > 128 || !/[a-z]/i.test(password) || !/\d/.test(password)) throw fail(400, "Password must contain letters and numbers and be 10–128 characters.");
     if (role === "user" && (email === "vickyranagovind@gmail.com" || normalizedPhone === "919737711570")) throw fail(400, "This contact is reserved for the studio owner.");
     const salt = randomBytes(16).toString("hex");
-    const derived = await derive(password, salt, 64);
+    const derived = await hashPassword(password, salt);
     const user = { id: randomUUID(), name, email, phone: normalizedPhone, role };
-    try { db.prepare("INSERT INTO users VALUES (?,?,?,?,?,?,?)").run(user.id, name, email, normalizedPhone, role, salt, derived.toString("hex")); }
+    try { db.prepare("INSERT INTO users VALUES (?,?,?,?,?,?,?)").run(user.id, name, email, normalizedPhone, role, salt, derived); }
     catch (error) { if (error.code?.startsWith("ERR_SQLITE")) throw fail(409, "An account with those details already exists."); throw error; }
     accounts.record(user.id, "registered");
     return user;
@@ -100,7 +113,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
     const allowed = (process.env.ALLOWED_ORIGINS || process.env.APP_ORIGIN || "https://raj-128.github.io,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000")
       .split(",")
       .map(s => s.trim().toLowerCase());
-    return allowed.includes("*") || allowed.includes(reqOrigin.toLowerCase()) || reqOrigin.endsWith(".github.io");
+    return allowed.includes(reqOrigin.toLowerCase());
   };
 
   async function handler(req, res, next = () => { res.writeHead(404); res.end(); }) {
@@ -108,6 +121,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
     if (!path.startsWith("/api/")) return next();
 
     const reqOrigin = req.headers.origin;
+    res.setHeader('Vary', 'Origin');
     if (reqOrigin && isOriginAllowed(req, reqOrigin)) {
       res.setHeader("Access-Control-Allow-Origin", reqOrigin);
       res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -127,6 +141,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
       if (!["GET", "POST"].includes(req.method)) throw fail(405, "Method not allowed.");
 
       if (req.method === "POST") {
+        if (!reqOrigin && req.headers['sec-fetch-site'] === 'cross-site') throw fail(403, 'Request origin is required.');
         if (reqOrigin && !isOriginAllowed(req, reqOrigin)) {
           throw fail(403, "Request origin is not allowed.");
         }
@@ -159,13 +174,35 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
           const validPhone = /^[+\d\s()-]+$/.test(identifier) && /^\d{10,15}$/.test(phone(identifier));
           if (!validEmail && !validPhone) throw fail(400, "Enter your registered email address or phone number. A name cannot be used to sign in.");
           if (!db.prepare("SELECT 1 FROM users LIMIT 1").get()) throw fail(409, "No accounts have been created on this server yet. Register a customer account, or create the owner account using npm run server:admin in the project terminal.");
-          limit(`login:${hash(identifier)}`, 10);
           user = db.prepare("SELECT * FROM users WHERE email=? OR phone=?").get(identifier, phone(identifier));
-          const derived = await derive(data.password, user?.salt || "unknown-account-salt", 64);
-          if (!user || !timingSafeEqual(derived, Buffer.from(user.password, "hex"))) throw fail(401, "Incorrect account or password.");
+          const failureKey = `failed:${user?.id || hash(validPhone ? phone(identifier) : identifier)}`;
+          const failures = db.prepare('SELECT count,expires FROM limits WHERE key=?').get(failureKey);
+          if (failures?.expires > Date.now() && failures.count >= 5) throw fail(429, 'Too many failed logins. Try again in 15 minutes.');
+          const validPassword = await verifyPassword(data.password, user?.salt, user?.password);
+          if (!user || !validPassword) {
+            limit(failureKey, 5);
+            throw fail(401, "Incorrect account or password.");
+          }
+          if (needsPasswordUpgrade(user.password)) {
+            const upgraded = await hashPassword(data.password, user.salt);
+            if (!db.prepare('UPDATE users SET password=? WHERE id=? AND password=?').run(upgraded, user.id, user.password).changes) throw fail(401, 'Account changed. Please sign in again.');
+            user.password = upgraded;
+          }
+          const currentUser = db.prepare('SELECT * FROM users WHERE id=?').get(user.id);
+          if (!currentUser || currentUser.password !== user.password) throw fail(401, 'Account changed. Please sign in again.');
+          user = currentUser;
+          const mfa = user.role === 'admin' && db.prepare('SELECT * FROM admin_mfa WHERE user_id=?').get(user.id);
+          if (mfa) {
+            const counter = verifyTotp(mfaVault.open(mfa.secret, user.id), data.otp, mfa.last_counter);
+            if (counter === null || !db.prepare('UPDATE admin_mfa SET last_counter=? WHERE user_id=? AND last_counter<?').run(counter, user.id, counter).changes) {
+              limit(failureKey, 5);
+              throw fail(401, 'Enter a fresh authenticator code on the owner login page.');
+            }
+          }
           if (path === "/api/auth/admin-login" && user.role !== "admin") {
             throw fail(403, "This login is for studio administrators. Use the customer login page.");
           }
+          db.prepare('DELETE FROM limits WHERE key=?').run(failureKey);
         }
         const token = startSession(req, res, user);
         accounts.record(user.id, "login");
@@ -210,14 +247,29 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
       throw new Error("Password must contain letters and numbers and be 10–128 characters.");
     }
     const salt = randomBytes(16).toString("hex");
-    const derived = await derive(password, salt, 64);
+    const derived = await hashPassword(password, salt);
     db.exec("BEGIN IMMEDIATE");
     try {
-      db.prepare("UPDATE users SET salt=?, password=? WHERE id=?").run(salt, derived.toString("hex"), user.id);
+      db.prepare("UPDATE users SET salt=?, password=? WHERE id=?").run(salt, derived, user.id);
+      db.prepare('DELETE FROM limits WHERE key=?').run(`failed:${user.id}`);
       db.prepare("DELETE FROM sessions WHERE user_id=?").run(user.id);
       db.prepare("DELETE FROM limits WHERE key IN (?,?)").run(`login:${hash(user.email)}`, `login:${hash(user.phone)}`);
       db.exec("COMMIT");
     } catch (error) { db.exec("ROLLBACK"); throw error; }
   }
-  return { handler, db, createUser, resetAdminPassword, filesRoot, close: () => db.close() };
+  function setAdminMfa(identifier, secret, code) {
+    const user = db.prepare("SELECT id FROM users WHERE role='admin' AND (email=? OR phone=?)").get(identifier.trim().toLowerCase(), phone(identifier));
+    if (!user) throw new Error('Owner account not found.');
+    const counter = secret === null ? null : verifyTotp(secret, code);
+    if (secret !== null && counter === null) throw new Error('Code did not match. MFA has not changed.');
+    db.exec('BEGIN IMMEDIATE');
+    try {
+      if (secret === null) db.prepare('DELETE FROM admin_mfa WHERE user_id=?').run(user.id);
+      else db.prepare('INSERT INTO admin_mfa VALUES (?,?,?) ON CONFLICT(user_id) DO UPDATE SET secret=excluded.secret,last_counter=excluded.last_counter').run(user.id, mfaVault.seal(secret, user.id), counter);
+      db.prepare('DELETE FROM sessions WHERE user_id=?').run(user.id);
+      db.prepare('DELETE FROM limits WHERE key=?').run(`failed:${user.id}`);
+      db.exec('COMMIT');
+    } catch (error) { db.exec('ROLLBACK'); throw error; }
+  }
+  return { handler, db, createUser, resetAdminPassword, setAdminMfa, filesRoot, close: () => db.close() };
 }

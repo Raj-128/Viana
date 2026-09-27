@@ -1,0 +1,10 @@
+# Let a collaborator merge in selected repositories
+
+The owner does not need to share their GitHub account or password.
+
+1. For each personal-account repository the owner wants you to access, they open **Settings → Collaborators → Add people**, choose your GitHub username and send an invitation. You accept using your own account. This grants access to that repository, not all the owner's repositories. [GitHub instructions](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository).
+2. For an organization repository, the owner/admin adds you to that repository with **Write** access (an outside collaborator can be limited to selected repositories). Organization-wide admin/owner access is unnecessary. [Repository roles](https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization).
+3. Open the repository's **Pull requests**, select your PR, and use **Merge pull request** or **Squash and merge** when required checks/reviews pass. Write access does not override branch protection, restricted merge rights or unresolved conflicts. You cannot approve your own PR to satisfy a required reviewer approval. [Protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
+4. If the owner wants final approval, keep required reviews on `main`: you create the PR, the owner approves, and you merge after all rules pass. If the owner wants to be the only merger, they must retain an applicable restriction; do not remove protection just to make a merge button available.
+
+No repository permission or branch rule has been changed by these instructions. Current account access must be checked before attempting a merge. These website design approvals are separate from GitHub code review and pull requests.

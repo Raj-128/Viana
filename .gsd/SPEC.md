@@ -30,3 +30,6 @@ Status: FINALIZED
 - Preserve existing accounts and design-only approvals with additive SQLite tables. Record registrations and successful logins/logout for an owner-only account view.
 - Support persistent backend data directory for GitHub Pages + Render hosting; verify storage before any live release.
 - Extend native artwork deterrents without interfering with forms or approved downloads.
+
+## Security hardening follow-up (FINALIZED)
+Preserve existing accounts and approvals. Add server-enforced 30-minute idle expiry, five-failure account cooldown, exact origin allowlist, stronger compatible password hashing, and owner TOTP enrollment with replay prevention and terminal recovery. Verify with isolated HTTP tests. Document external WAF/hosting activation and repository-scoped GitHub permissions without deploying or changing accounts.
