@@ -12,15 +12,18 @@ test('customer inbox loads size requests and refreshes approval changes', async 
     fetchApi: async () => ({ ok: true, json: async () => ({ requests: [], access: [] }) }),
     renderCommerce() {}, announce() {},
   });
-  vm.runInContext('let printRequests = [], accessRequests = [], approvedDesigns = [], notice = "";' + refresh, context);
+  vm.runInContext('let printRequests = [], accessRequests = [], approvedDesigns = [], notice = "", printRequestError = "";' + refresh, context);
   await vm.runInContext('refreshDownloadRequests()', context);
   assert.equal(vm.runInContext('printRequests[0].status', context), 'pending');
   status = 'approved';
   await vm.runInContext('refreshDownloadRequests()', context);
   assert.equal(vm.runInContext('printRequests[0].status', context), 'approved');
   context.getPrintRequests = async () => { throw new Error('Server unavailable'); };
+  context.fetchApi = async () => ({ok:true, json:async()=>({requests:[],access:[{design_id:'existing-approved-design'}]})});
   await vm.runInContext('refreshDownloadRequests()', context);
-  assert.equal(vm.runInContext('notice', context), 'Server unavailable');
+  assert.equal(vm.runInContext('printRequestError', context), 'Server unavailable');
+  assert.equal(vm.runInContext('approvedDesigns[0]', context), 'existing-approved-design');
+  assert.equal(vm.runInContext('printRequests.length', context), 0);
 });
 
 test('admin shell is visible before authentication and search refreshes both inboxes', () => {

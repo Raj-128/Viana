@@ -64,3 +64,5 @@ updated: 2026-09-27
 - Customer request card: clear approved status, prominent print-ready download, separate free watermarked low-resolution preview button using existing protected preview export. Preserves pending/declined/revoked original-file restrictions. All 50 tests pass. No browser surface available for visual verification.
 
 - Live hero root cause confirmed in deployed main-t2VfA3pE.css: unnamed animation shorthand optimized to animation:none, discarding infinite iteration and linear timing. Set timing/iteration/fill explicitly with the runtime animation name, leave play-state in CSS for hover/focus pause.
+
+- Live request endpoint returns 404 on old Render backend. Customer panel now isolates unavailable size requests from existing approvals, shows a truthful retry state instead of an empty list, gives a clear unsent-request message, and overrides global section spacing inside the drawer. Backend deployment remains dependent on Render repo/branch and persistent-storage confirmation. All 50 tests pass.

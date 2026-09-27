@@ -59,6 +59,10 @@ body:has(.commerce-dialog[open]) { overflow: hidden; }
 }
 
 .commerce-dialog [hidden] { display: none !important; }
+.commerce-dialog > section { padding: 20px 0; margin: 0; min-height: 0; }
+.commerce-request-error { padding: 16px; border: 1px solid #d4cbbc; border-radius: 8px; background: #eee7db; }
+.commerce-request-error p { margin: 0 0 12px; font-size: 14px; line-height: 1.6; }
+.commerce-request-error button { padding: 10px 16px; min-height: 44px; border: 1px solid #695642; border-radius: 6px; background: transparent; }
 .commerce-request small { display: block; overflow-wrap: anywhere; }
 .commerce-print-request { margin: 16px 0; padding: 20px; border: 1px solid #d4cbbc; border-radius: 14px; background: #fff9; }
 .commerce-print-request strong { display: block; font-size: 16px; line-height: 1.5; }

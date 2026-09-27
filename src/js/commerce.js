@@ -15,10 +15,14 @@ let activeTab = "cart";
 let notice = "";
 let selectedDownload;
 let accessRequests = [], approvedDesigns = [], printRequests = [], requestBusy = false;
+let printRequestError = '';
 const printDownloads = new Set();
 async function refreshDownloadRequests() {
   try {
     printRequests = await getPrintRequests();
+    printRequestError = '';
+  } catch (error) { printRequests = []; printRequestError = error.message; }
+  try {
     const response = await fetchApi("api/download-requests", { cache: "no-store" });
     if (response.status === 401) { accessRequests = []; approvedDesigns = []; }
     else {
@@ -156,7 +160,7 @@ export function renderCommerce() {
   }
   const printPanel = dialog.querySelector('[data-print-requests]');
   printPanel.hidden = activeTab !== 'downloads';
-  printPanel.querySelector('[data-print-list]').innerHTML = printRequests.length ? printRequests.map(request => {
+  printPanel.querySelector('[data-print-list]').innerHTML = printRequestError ? '<div class="commerce-request-error" role="status"><p>' + escape(printRequestError) + '</p><button type="button" data-retry-requests>Try again</button></div>' : printRequests.length ? printRequests.map(request => {
     const project = projects.find(project => project.id === request.design_id);
     return '<article class="commerce-request commerce-print-request"><strong>' + escape(project?.title || request.design_id) + '</strong><p class="commerce-request-size">' +
       escape(printRequestSummary(request)) + '</p><small class="commerce-request-reference">Reference: ' + escape(request.id) + '</small><p class="commerce-request-status" data-status="' + escape(request.status) + '">' +
@@ -271,6 +275,7 @@ export function initCommerce(options) {
   dialog.addEventListener("click", async (event) => {
     const button = event.target.closest("button");
     if (!button) return;
+    if (button.hasAttribute('data-retry-requests')) return refreshDownloadRequests();
     if (button.dataset.requestPreview) {
       return downloadDesign(projects.find(project => project.id === button.dataset.requestPreview), 'preview');
     }

@@ -5,6 +5,7 @@ export const printRequestSummary = request => `${request.width} × ${request.hei
 export async function createPrintRequest(designId, dimensions) {
   const response = await fetchApi('api/print-requests', { method: 'POST',
     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ designId, ...dimensions }) });
+  if (response.status === 404) throw new Error('Design requests are temporarily unavailable. Your request was not sent. Please contact the studio or try again later.');
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Could not send your design request. Please try again.');
   return data.request;
@@ -12,6 +13,7 @@ export async function createPrintRequest(designId, dimensions) {
 export async function getPrintRequests() {
   const response = await fetchApi('api/print-requests', { cache: 'no-store' });
   if (response.status === 401) return [];
+  if (response.status === 404) throw new Error('Design requests are temporarily unavailable. Please try again later or contact the studio.');
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Could not check your design requests.');
   return data.requests;
