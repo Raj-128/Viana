@@ -8,7 +8,7 @@ test("media deterrents conceal and restore previews without blocking form editin
   let focused = true, concealed = false, timer;
   const document = {
     hidden: false, hasFocus: () => focused,
-    documentElement: { dataset: {}, classList: { toggle: (name, state) => { concealed = state; } } },
+    documentElement: { dataset: {}, classList: { toggle: (name, state) => { if (name === "artwork-concealed") concealed = state; } } },
     addEventListener: (type, handler) => { handlers[type] = handler; },
   };
   const window = { addEventListener: (type, handler) => { handlers[type] = handler; } };
@@ -22,12 +22,18 @@ test("media deterrents conceal and restore previews without blocking form editin
   handlers.beforeprint(); assert.equal(concealed, true);
   handlers.afterprint(); assert.equal(concealed, false);
   handlers.keydown({ key: "PrintScreen" }); assert.equal(concealed, true);
+  assert.equal(timer, undefined, 'keydown must not start an early reveal timer');
+  handlers.keyup({ key: "PrintScreen" });
   timer(); assert.equal(concealed, false);
   for (const key of ['s', '3', '4', '5']) {
     handlers.keydown({ key, metaKey: true, shiftKey: true });
     assert.equal(concealed, true, 'capture shortcuts conceal previews when the browser delivers the event');
+    handlers.keyup({ key, metaKey: true, shiftKey: true });
     timer(); assert.equal(concealed, false);
   }
+  handlers.keydown({ key: "Unidentified", code: "PrintScreen" });
+  assert.equal(concealed, true);
+  handlers.pointerdown(); assert.equal(concealed, false);
   let blocked = false;
   const event = { key: "s", ctrlKey: true, target: { closest: () => null }, preventDefault() { blocked = true; } };
   handlers.keydown(event); assert.equal(blocked, true);

@@ -25,26 +25,37 @@ export function initMediaDeterrents() {
   let captureDetected = false;
   let printing = false;
   let captureTimer;
-  const update = () => root.classList.toggle("artwork-concealed",
-    document.hidden || !document.hasFocus() || printing || captureDetected);
-  const brieflyConceal = () => {
+  const update = () => {
+    root.classList.toggle("artwork-concealed", document.hidden || !document.hasFocus() || printing || captureDetected);
+    root.classList.toggle("capture-concealed", printing || captureDetected);
+  };
+  const concealCapture = () => {
     captureDetected = true;
     clearTimeout(captureTimer);
     update();
-    captureTimer = setTimeout(() => { captureDetected = false; update(); }, 1500);
+  };
+  const restoreAfterRelease = () => {
+    clearTimeout(captureTimer);
+    captureTimer = setTimeout(() => { captureDetected = false; update(); }, 2000);
   };
   window.addEventListener("blur", update);
-  window.addEventListener("focus", update);
+  window.addEventListener("focus", () => { if (captureDetected) restoreAfterRelease(); update(); });
+  // Recover if the OS swallowed keyup. Only a new interaction in the focused page restores it.
+  document.addEventListener('pointerdown', () => {
+    if (captureDetected && document.hasFocus() && !document.hidden) {
+      captureDetected = false; clearTimeout(captureTimer); update();
+    }
+  }, true);
   document.addEventListener("visibilitychange", update);
   window.addEventListener("beforeprint", () => { printing = true; update(); });
   window.addEventListener("afterprint", () => { printing = false; update(); });
   const captureShortcut = event => {
-    const key = event.key.toLowerCase();
-    return key === 'printscreen' || (event.metaKey && event.shiftKey && ['s', '3', '4', '5'].includes(key));
+    const key = (event.key || '').toLowerCase();
+    return key === 'printscreen' || event.code === 'PrintScreen' || (event.metaKey && event.shiftKey && ['s', '3', '4', '5'].includes(key));
   };
-  document.addEventListener("keydown", (event) => {
-    const key = event.key.toLowerCase();
-    if (captureShortcut(event)) { brieflyConceal(); return; }
+  window.addEventListener("keydown", (event) => {
+    const key = (event.key || '').toLowerCase();
+    if (captureShortcut(event)) { concealCapture(); event.preventDefault?.(); return; }
     // Retain normal text editing, clipboard use and password entry.
     if (event.target?.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
     const command = event.ctrlKey || event.metaKey;
@@ -53,9 +64,9 @@ export function initMediaDeterrents() {
       event.preventDefault();
     }
   }, true);
-  document.addEventListener("keyup", (event) => {
+  window.addEventListener("keyup", (event) => {
     // Some browsers expose only keyup for this OS-reserved key, after capture may already have happened.
-    if (captureShortcut(event)) brieflyConceal();
+    if (captureShortcut(event)) { concealCapture(); restoreAfterRelease(); }
   }, true);
   update();
 }

@@ -12,7 +12,9 @@ Start the project with `npm run dev` and use http://localhost:5173. Test locally
 6. Try **Print Screen** or **Win+Shift+S** (macOS: **Cmd+Shift+3/4/5**). If the browser receives the key/focus event in time, the protected preview hides briefly. The operating system may capture first or not deliver the shortcut to the page, so a screenshot may still succeed. This is a platform limitation, not a guaranteed lock.
 7. Verify a large preview has the Studio Viana watermark and a short viewer reference. Public hero/catalogue thumbnails remain clean. The viewer reference is an overlay deterrent; the wallpaper preview also has its existing baked-in watermark.
 
-The page must restore its artwork after returning to the browser. Approved file downloads and ordinary input editing must still work. Browser menus, extensions and operating-system capture tools can bypass client-side shortcuts.
+Detected screenshot keydown now blanks all images immediately, including hero thumbnails, without a fade. Keep the key held: images should stay blank. Release it: they restore after two seconds, provided the page is focused. If the operating system swallows keyup, a new click inside the focused page restores them. Switching back to the page also schedules restoration. This does not control whether the operating system captures before a browser repaint.
+
+Approved file downloads and ordinary input editing must still work. Browser menus, extensions and operating-system capture tools can bypass client-side shortcuts.
 
 ## Customer and backend checks
 

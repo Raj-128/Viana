@@ -53,3 +53,5 @@ updated: 2026-09-27
 
 - Right-click follow-up: context menus now blocked across non-editable page areas, including blank backgrounds, using capture-phase delegation. Editable form controls retain native menus. Regression assertion added.
 - Right-click verification: all 46 tests pass; build exit 0 in 23.21s. Local only.
+- Capture timing follow-up: keyboard listeners moved to window capture phase; detected capture immediately adds a separate no-transition/no-animation concealment state for all img/canvas/video, including hero thumbnails. Keydown does not schedule reveal; keyup restores after two seconds, with focused-page interaction recovery if the OS swallowed keyup. Browser repaint/OS capture timing remains outside JavaScript control. All 46 tests pass.
+- Capture change build: exit 0 in 27.08s. No OS screenshot timing or browser visual verification claimed. Local only.
