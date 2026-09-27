@@ -23,3 +23,10 @@ Status: FINALIZED
 - Adapt the supplied mirrored perspective corridor to the existing vanilla Vite site, using local wallpaper and 3D previews.
 - Center the heading above the stream and collection CTA below; support mobile, theme changes, reduced motion and pause control.
 - Verify production build, existing tests, and browser screenshots.
+
+## Customer-specific print delivery and records
+- Save each customer design request with width/height in inches, paper, quantity and reference before WhatsApp handoff. Different sizes have independent files and approvals.
+- Owner uploads and checks PDF/TIFF/JPG/PNG per request, then approves, declines or revokes. Customer downloads only that authorized request file.
+- Preserve existing accounts and design-only approvals with additive SQLite tables. Record registrations and successful logins/logout for an owner-only account view.
+- Support persistent backend data directory for GitHub Pages + Render hosting; verify storage before any live release.
+- Extend native artwork deterrents without interfering with forms or approved downloads.

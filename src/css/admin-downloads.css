@@ -75,3 +75,9 @@ body { cursor: auto; }
 .approval-row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .approval-shell :focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
 @media (max-width: 720px) { .approval-columns { grid-template-columns: 1fr; gap: 0; } .approval-shell { padding: 24px 16px; } }
+
+.approval-print-actions { display: grid; gap: 12px; flex: 1 1 100%; }
+.approval-print-actions label { display: grid; gap: 8px; }
+.approval-print-actions .approval-print-confirm { display: flex; align-items: flex-start; gap: 10px; }
+.approval-print-confirm input { flex: 0 0 auto; }
+.approval-card summary { cursor: pointer; padding: 12px 0; }

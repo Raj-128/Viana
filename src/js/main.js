@@ -1,10 +1,11 @@
+import { createPrintRequest, printRequestSummary } from './print-requests.js';
 import { MODE_KEY, readStudioMode, applyStudioTheme } from "./site-mode.js";
 import { estimateDimensions } from "./estimate-dimensions.js";
 import { updateModeContent } from "./mode-content.js";
 import { initCatalogueFilters } from "./catalogue-filters.js";
 import { initCommerce, renderCommerce, addToCart, openCommerce, downloadDesign } from "./commerce.js";
 import { initWallpaperViewer } from "./wallpaper-viewer.js";
-import { initMediaDeterrents } from "./media-deterrents.js";
+import { initMediaDeterrents, isArtworkTarget, addViewerWatermarks } from "./media-deterrents.js";
 import { paperTypes, pricingThemes, projects, wallpaperShowcaseImages } from "./projects.js";
 import {
   initCreativeAnimations,
@@ -14,6 +15,7 @@ import {
 } from "./creative-animations.js";
 import {
   authReady,
+  getSession,
   applyAuthStateToDocument,
   enforceProtectedAccess,
   gateProtectedNavigation,
@@ -749,24 +751,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       image.draggable = false;
     });
 
-    document.addEventListener("contextmenu", (event) => {
-      if (isProtectedTarget(event.target)) {
-        event.preventDefault();
-      }
-    });
-
-    document.addEventListener("dragstart", (event) => {
-      if (isProtectedTarget(event.target)) {
-        event.preventDefault();
-      }
-    });
-
-    document.addEventListener("selectstart", (event) => {
-      if (isProtectedTarget(event.target)) {
-        event.preventDefault();
-      }
-    });
-
     ["copy", "cut"].forEach((eventName) => {
       document.addEventListener(eventName, (event) => {
         if (selectionTouchesProtectedContent() || isProtectedTarget(event.target)) {
@@ -1233,9 +1217,35 @@ document.addEventListener("DOMContentLoaded", async () => {
       updateEstimator();
     });
 
-    quoteWhatsappLink?.addEventListener("click", (event) => {
+    let sendingDesignRequest = false;
+    quoteWhatsappLink?.addEventListener("click", async (event) => {
       event.preventDefault();
 
+      if (activeProject?.workType === "wallpaper" && projectOrderSection) {
+        if (sendingDesignRequest) return;
+        const output = document.getElementById("design-request-status");
+        const followup = document.getElementById("design-request-whatsapp");
+        if (![estimatorWidthInput, estimatorHeightInput].every(input => input.reportValidity())) return;
+        sendingDesignRequest = true;
+        quoteWhatsappLink.setAttribute("aria-disabled", "true");
+        output.textContent = "Sending your design request...";
+        followup.hidden = true;
+        try {
+          // Capture exactly the configuration being submitted before awaiting the server.
+          const dimensions = { width: Number(estimatorWidthInput.value), height: Number(estimatorHeightInput.value),
+            paper: estimatorPaperSelect.value, quantity: Number(estimatorQuantityInput.value) };
+          estimatorState.width = dimensions.width; estimatorState.height = dimensions.height;
+          updateEstimator();
+          const quoteMessage = currentWhatsAppMessage;
+          const request = await createPrintRequest(activeProject.id, dimensions);
+          output.textContent = 'Request ' + request.id + ' - ' + printRequestSummary(request) + '. ' +
+            (request.status === 'approved' ? 'Your print file is ready in Downloads.' : 'Sent to the studio. Your print file will appear in Downloads after approval.');
+          followup.href = buildWhatsAppLink(quoteMessage + '\nRequest reference: ' + request.id);
+          followup.hidden = false;
+        } catch (error) { output.textContent = error.message; }
+        finally { sendingDesignRequest = false; quoteWhatsappLink.removeAttribute("aria-disabled"); }
+        return;
+      }
       const popup = window.open(currentWhatsAppLink, "_blank", "noopener,noreferrer");
       if (!popup) {
         window.location.href = currentWhatsAppLink;
@@ -1351,7 +1361,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const gallery = document.getElementById("project-gallery");
     const isWallpaperProject = project.workType === "wallpaper";
     document.querySelectorAll("[data-project-download]").forEach(button => {
-      button.onclick = () => downloadProjectImage(project);
+      button.textContent = isWallpaperProject ? "Choose size and request design" : "Download options";
+      button.onclick = () => isWallpaperProject ? projectOrderSection.scrollIntoView({ behavior: "smooth", block: "start" }) : downloadProjectImage(project);
     });
 
     if (projectOrderSection) {
@@ -1463,6 +1474,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   revealMode();
   initHeroCarousel();
   renderProjectDetail();
+  addViewerWatermarks(getSession());
   populateEstimatorOptions();
   renderEstimatorThemePills();
   syncEstimatorState();

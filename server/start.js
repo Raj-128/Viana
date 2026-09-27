@@ -1,3 +1,4 @@
+import { applySecurityHeaders } from './security-headers.js';
 import { createServer } from "node:http";
 import { createReadStream, realpathSync } from "node:fs";
 import { stat } from "node:fs/promises";
@@ -14,11 +15,7 @@ try {
 const api = createApi({ origin: defaultOrigin });
 const mime = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".jpg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml", ".webp": "image/webp", ".woff2": "font/woff2" };
 const server = createServer((req, res) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-  res.setHeader("Content-Security-Policy", "object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
+  applySecurityHeaders(req, res);
   api.handler(req, res, async () => {
     try {
       if (!root) { res.writeHead(404); return res.end("Studio Viana API Server (Static frontend not built on this host)"); }

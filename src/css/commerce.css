@@ -57,3 +57,6 @@ body:has(.commerce-dialog[open]) { overflow: hidden; }
   .site-header .logo a { letter-spacing: 1px; }
   .commerce-nav { flex-shrink: 0; }
 }
+
+.commerce-dialog [hidden] { display: none !important; }
+.commerce-request small { display: block; overflow-wrap: anywhere; }

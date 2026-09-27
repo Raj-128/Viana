@@ -2069,3 +2069,7 @@ body.mode-3d .pill-btn.active {
 
 /* Clean browsing thumbnails; enlarged previews retain their watermarks. */
 .work-card.protected-media-block::before { display: none; }
+
+#design-request-whatsapp[hidden] { display: none; }
+#design-request-status { overflow-wrap: anywhere; }
+[data-project-requests] { margin-top: 12px; }

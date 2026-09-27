@@ -34,3 +34,10 @@ src/assets/images/wallpapers/*
 *.njsproj
 *.sln
 *.sw?
+
+# Private account data, credentials and local database backups
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-*

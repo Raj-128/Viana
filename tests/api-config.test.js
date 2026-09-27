@@ -33,3 +33,17 @@ test('the deployed site still uses its Render API and bearer session', async () 
   assert.equal(requests[0].url, 'https://viana-fpph.onrender.com/api/auth/session');
   assert.equal(requests[0].options.headers.Authorization, 'Bearer remote-token');
 });
+
+test('approved original download resolves the API base exactly once', async () => {
+  const downloadSource = readFileSync(new URL('../src/js/download-access.js', import.meta.url), 'utf8')
+    .replace(/^import .*;\r?\n/gm, '').replaceAll('export ', '');
+  const { context } = client('https://raj-128.github.io/Viana/project.html', { viana_token: 'remote-token' });
+  let url;
+  context.fetch = async target => {
+    url = target;
+    return { ok: true, headers: { get: () => 'image/png' }, blob: async () => ({ size: 12 }) };
+  };
+  vm.runInContext(downloadSource, context);
+  await vm.runInContext("requestProtectedDownload('design-a')", context);
+  assert.equal(url, 'https://viana-fpph.onrender.com/api/designs/design-a/download');
+});

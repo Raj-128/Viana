@@ -1,15 +1,17 @@
+import { initAccountRecords } from './admin-accounts.js';
+import { downloadPrintFile, printRequestSummary } from './print-requests.js';
 import { authReady, getSession } from "./auth.js";
 import { projects } from "./projects.js";
 import { fetchApi } from "./api-config.js";
 
 const $ = (id) => document.getElementById(id);
 const status = $("approval-status");
-let state, busy = false;
+let state, printRequests = [], busy = false;
 async function api(path, body, file) {
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
   const response = await fetchApi(cleanPath, {
     method: body || file ? "POST" : "GET", cache: "no-store",
-    headers: body ? { "Content-Type": "application/json" } : file ? { "Content-Type": file.type } : {},
+    headers: body ? { "Content-Type": "application/json" } : file ? { "Content-Type": file.type || ({pdf:"application/pdf",tif:"image/tiff",tiff:"image/tiff",jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png"}[file.name.split(".").pop().toLowerCase()] || "application/octet-stream") } : {},
     body: file || (body ? JSON.stringify(body) : undefined),
   });
   const data = await response.json();
@@ -58,15 +60,61 @@ function renderRequests() {
   }
   if (!filtered.length) { requests.classList.add("is-empty"); requests.textContent = search ? "No requests match your search." : requestFilter === "pending" ? "All caught up. New requests will appear here." : "No requests in this view yet."; } else requests.classList.remove("is-empty");
 }
+function renderPrintRequests() {
+  const host = $("print-requests"); host.replaceChildren();
+  const search = $("request-search").value.trim().toLowerCase();
+  const requests = printRequests.filter(request => (requestFilter === 'all' || request.status === requestFilter) &&
+    [request.id, request.name, request.email, title(request.design_id), printRequestSummary(request)].join(' ').toLowerCase().includes(search));
+  for (const request of requests) {
+    const el = row(request, request.status), info = el.querySelector('.approval-row-info');
+    const size = document.createElement('p'); size.textContent = printRequestSummary(request);
+    const reference = document.createElement('small'); reference.textContent = 'Request: ' + request.id;
+    info.append(size, reference);
+    const actions = document.createElement('div'); actions.className = 'approval-print-actions';
+    const decide = action => run(() => api('/api/admin/print-requests/' + request.id + '/decision', {
+      action, confirmed: action === 'approve', fileVersion: request.file_version
+    }), action === 'approve' ? 'Approved. This customer can download the print file for this request.' : action === 'decline' ? 'Request declined.' : 'Download access revoked.');
+    if (request.file_ready) {
+      const fileInfo = document.createElement('p');
+      fileInfo.textContent = 'Uploaded ' + request.mime + ' - ' + (request.file_bytes / 1024 / 1024).toFixed(1) + ' MB';
+      actions.append(fileInfo, button('Download file to check', async () => {
+        try { await downloadPrintFile(request); } catch(error) { status.textContent = error.message; }
+      }));
+    }
+    if (request.status === 'pending') {
+      const label = document.createElement('label'); label.textContent = 'Print file for this request (PDF, TIFF, JPG or PNG - up to 250 MB)';
+      const input = document.createElement('input'); input.type = 'file'; input.accept = '.pdf,.tif,.tiff,.jpg,.jpeg,.png';
+      label.append(input);
+      actions.append(label, button(request.file_ready ? 'Replace pending file' : 'Upload print file', () => {
+        const file = input.files[0];
+        if (!file || !file.size || file.size > 250 * 1024 * 1024) { status.textContent = 'Choose a print file up to 250 MB.'; return; }
+        run(() => api('/api/admin/print-requests/' + request.id + '/file', null, file), 'File uploaded to this request. Check its print dimensions before approval.');
+      }));
+      if (request.file_ready) {
+        const confirmLabel = document.createElement('label'); confirmLabel.className = 'approval-print-confirm';
+        const checkbox = document.createElement('input'); checkbox.type = 'checkbox';
+        confirmLabel.append(checkbox, document.createTextNode('I checked this file is print-ready for ' + request.width + ' x ' + request.height + ' inches and matches this request.'));
+        const approve = button('Approve this print file', () => { if (checkbox.checked) decide('approve'); });
+        approve.disabled = true; checkbox.addEventListener('change', () => { approve.disabled = busy || !checkbox.checked; });
+        actions.append(confirmLabel, approve);
+      }
+      actions.append(button('Decline request', () => decide('decline')));
+    }
+    if (request.status === 'approved') actions.append(button('Revoke download access', () => decide('revoke')));
+    el.append(actions); host.append(el);
+  }
+  if (!requests.length) host.textContent = 'No matching size requests. New customer requests will appear here.';
+}
 async function refresh() {
-  state = await api("/api/admin/downloads");
+  const [legacy, custom] = await Promise.all([api("/api/admin/downloads"), api("/api/admin/print-requests")]);
+  state = legacy; printRequests = custom.requests;
   const previous = $("access-customer").value;
   $("access-customer").replaceChildren(option("", "Choose a registered customer"), ...state.customers.map((c) => option(c.email, `${c.name} · ${c.email}`)));
   $("access-customer").value = previous;
   renderRequests();
-  $("pending-count").textContent = state.requests.filter((r) => r.status === "pending").length;
-  $("access-count").textContent = state.access.length;
-  $("original-count").textContent = state.designs.length;
+  $("pending-count").textContent = [...state.requests, ...printRequests].filter((r) => r.status === "pending").length;
+  $("access-count").textContent = state.access.length + printRequests.filter(r => r.status === "approved").length;
+  $("original-count").textContent = state.designs.length + printRequests.filter(r => r.file_ready).length;
   const access = $("approval-access"); access.replaceChildren();
   state.access.forEach((item) => {
     const el = row(item);
@@ -80,10 +128,10 @@ async function refresh() {
 async function run(action, message) {
   if (busy) return;
   busy = true; status.textContent = "Working…";
-  $("approval-content").querySelectorAll("button").forEach((b) => { b.disabled = true; });
+  [...$("approval-content").querySelectorAll("button")].filter(button => !button.closest("#customer-records")).forEach((b) => { b.disabled = true; });
   try { await action(); await refresh(); status.textContent = message; }
   catch (error) { status.textContent = error.message; }
-  finally { busy = false; $("approval-content").querySelectorAll("button").forEach((b) => { b.disabled = false; }); uploadState(); }
+  finally { busy = false; [...$("approval-content").querySelectorAll("button")].filter(button => !button.closest("#customer-records")).forEach((b) => { b.disabled = false; }); uploadState(); renderPrintRequests(); }
 }
 function changeAccess(email, designId, action) {
   return run(() => api("/api/admin/download-access", { email, designId, action }),
@@ -111,5 +159,6 @@ if (getSession()?.role !== "admin") {
   });
   $("access-form").addEventListener("submit", (event) => { event.preventDefault(); changeAccess($("access-customer").value, $("access-design").value, "grant"); });
   $("approval-content").hidden = false;
+  initAccountRecords();
   await run(async () => {}, "Ready to review download requests.");
 }

@@ -11,6 +11,7 @@ test("approval button routes the owner to reviews and refreshes only the custome
     const requests = [];
     const context = {
       getSession: () => ({ role }),
+      getPrintRequests: async () => [],
       window: { location: { href: "work.html" } },
       fetchApi: async path => {
         requests.push(path);

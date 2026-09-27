@@ -1,3 +1,4 @@
+import { applySecurityHeaders } from './security-headers.js';
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, realpathSync, createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
@@ -5,6 +6,8 @@ import { resolve, relative, isAbsolute, extname } from "node:path";
 import { randomBytes, randomUUID, createHash, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import { createDownloadAdmin } from "./download-admin.js";
+import { createPrintRequests } from "./print-requests.js";
+import { createAccountRecords } from "./account-records.js";
 
 const derive = promisify(scrypt);
 const hash = (value) => createHash("sha256").update(value).digest("hex");
@@ -12,7 +15,7 @@ const phone = (value = "") => { const digits = String(value).replace(/\D/g, "");
 const safeUser = ({ id, name, email, phone, role }) => ({ id, name, email, phone, role });
 const types = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".avif": "image/avif" };
 
-export function createApi({ dataDir = resolve(".private"), origin = process.env.APP_ORIGIN, secureCookies = process.env.NODE_ENV === "production" } = {}) {
+export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".private"), origin = process.env.APP_ORIGIN, secureCookies = process.env.NODE_ENV === "production" } = {}) {
   mkdirSync(resolve(dataDir, "files"), { recursive: true });
   const filesRoot = realpathSync(resolve(dataDir, "files"));
   const db = new DatabaseSync(resolve(dataDir, "studio.sqlite"), { timeout: 5000 });
@@ -66,6 +69,8 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
   };
 
   const handleDownloadAdmin = createDownloadAdmin({ db, filesRoot, sessionUser, readBody, json, fail, limit });
+  const handlePrintRequests = createPrintRequests({ db, filesRoot, sessionUser, readBody, json, fail, limit });
+  const accounts = createAccountRecords({ db, sessionUser, json, fail });
 
   async function createUser(data, role = "user") {
     const name = String(data.name || "").trim();
@@ -80,6 +85,7 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
     const user = { id: randomUUID(), name, email, phone: normalizedPhone, role };
     try { db.prepare("INSERT INTO users VALUES (?,?,?,?,?,?,?)").run(user.id, name, email, normalizedPhone, role, salt, derived.toString("hex")); }
     catch (error) { if (error.code?.startsWith("ERR_SQLITE")) throw fail(409, "An account with those details already exists."); throw error; }
+    accounts.record(user.id, "registered");
     return user;
   }
 
@@ -115,7 +121,7 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
     }
 
     res.setHeader("Cache-Control", "private, no-store");
-    res.setHeader("X-Content-Type-Options", "nosniff");
+    applySecurityHeaders(req, res);
 
     try {
       if (!["GET", "POST"].includes(req.method)) throw fail(405, "Method not allowed.");
@@ -132,6 +138,8 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
         return json(res, 200, { user: user ? safeUser(user) : null, adminConfigured: Boolean(db.prepare("SELECT 1 FROM users WHERE role='admin'").get()) });
       }
       if (path === "/api/auth/logout" && req.method === "POST") {
+        const user = sessionUser(req);
+        if (user) accounts.record(user.id, "logout");
         const token = extractToken(req);
         if (token) db.prepare("DELETE FROM sessions WHERE token=?").run(hash(token));
         setCookie(res, "", 0);
@@ -160,8 +168,11 @@ export function createApi({ dataDir = resolve(".private"), origin = process.env.
           }
         }
         const token = startSession(req, res, user);
+        accounts.record(user.id, "login");
         return json(res, 200, { user: safeUser(user), token });
       }
+      if (accounts.handler(req, res, path)) return;
+      if (await handlePrintRequests(req, res, path)) return;
       if (await handleDownloadAdmin(req, res, path)) return;
       const match = path.match(/^\/api\/designs\/([a-z0-9-]+)\/download$/);
       if (match && req.method === "GET") {

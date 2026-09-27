@@ -13,15 +13,22 @@
     <header class="approval-heading"><div><p>YOUR STUDIO, IN CONTROL</p><h1>Download approvals</h1><p class="approval-intro">The right artwork. The right access. All in one place.</p></div><a class="approval-site-link" href="index.html">View website &nearr;</a></header>
     <p id="approval-status" role="status" aria-live="polite">Checking your account…</p>
     <div id="approval-content" hidden>
+      <details class="approval-card" id="customer-records"><summary>Users and sign-in history</summary>
+        <span class="approval-eyebrow">CUSTOMER RECORDS</span><h2>Users and sign-in history</h2>
+        <form id="account-search-form"><label>Find an account<input id="account-search" type="search" placeholder="Name, email or phone"></label><button type="submit">Search / refresh accounts</button></form>
+        <p id="account-records-status" role="status"></p><div id="account-records"></div>
+        <div class="approval-row-actions"><button id="account-page-prev" type="button" disabled>Previous accounts</button><button id="account-page-next" type="button" disabled>Next accounts</button></div>
+        <details><summary>Registration and sign-in activity</summary><div id="account-events"></div><button id="account-events-older" type="button" hidden>Load older activity</button></details>
+      </details>
       <div class="approval-stats" aria-label="Download overview">
         <div><span>Awaiting review</span><strong id="pending-count">0</strong><small>Customer requests</small></div>
-        <div><span>Active approvals</span><strong id="access-count">0</strong><small>Customer and design pairs</small></div>
-        <div><span>Originals ready</span><strong id="original-count">0</strong><small>Privately stored designs</small></div>
+        <div><span>Active approvals</span><strong id="access-count">0</strong><small>Approved customer files</small></div>
+        <div><span>Originals ready</span><strong id="original-count">0</strong><small>Private files</small></div>
       </div>
-      <section class="approval-card"><div class="approval-heading"><div><span class="approval-eyebrow">INBOX</span><h2>Customer requests</h2></div><button id="refresh-requests" type="button" class="approval-secondary">Refresh &orarr;</button></div><p>Review a request, check the original, then approve access.</p>
+      <section class="approval-card"><div class="approval-heading"><div><span class="approval-eyebrow">INBOX</span><h2>Customer requests</h2></div><button id="refresh-requests" type="button" class="approval-secondary">Refresh &orarr;</button></div><p>Each request shows the customer's exact size. Upload their finished print file, check it, then approve or decline.</p>
         <div class="approval-request-tools"><div class="approval-filters" aria-label="Filter requests"><button type="button" data-request-filter="pending" aria-pressed="true">Pending</button><button type="button" data-request-filter="approved" aria-pressed="false">Approved</button><button type="button" data-request-filter="all" aria-pressed="false">All requests</button></div><label class="approval-search"><span class="sr-only">Search customers or designs</span><input id="request-search" type="search" placeholder="Search customer or design…"></label></div>
-        <div id="approval-requests" aria-live="polite"></div></section>
-      <div class="approval-columns">
+        <div id="print-requests" aria-live="polite"></div><details><summary>Earlier design-only requests</summary><div id="approval-requests" aria-live="polite"></div></details></section>
+      <details class="approval-card"><summary>Earlier shared originals and access</summary><p>These tools are for previous design-only approvals. For a custom-size order, upload its file directly in the customer request above.</p><div class="approval-columns">
         <section class="approval-card"><span class="approval-eyebrow">01 / YOUR ORIGINALS</span><h2>Upload an original</h2><p>Upload the clean, watermark-free image once. Only approved customers can download it.</p>
           <form id="original-form"><label>Design<select id="original-design" required></select></label><div class="approval-design-preview"><img id="original-preview" alt=""><div><strong id="original-preview-title"></strong><small>Catalogue reference</small></div></div><label class="approval-file-zone"><span class="approval-upload-symbol" aria-hidden="true">&uarr;</span><strong>Choose your original file</strong><span>JPG, PNG or WebP · up to 25 MB</span><input id="original-file" type="file" accept="image/jpeg,image/png,image/webp" required></label><button type="submit">Upload original &uarr;</button></form>
           <p id="original-state"></p>
@@ -30,7 +37,7 @@
           <form id="access-form"><label>Customer<select id="access-customer" required></select></label><label>Design<select id="access-design" required></select></label><button type="submit">Grant download access</button></form>
         </section>
       </div>
-      <section class="approval-card"><span class="approval-eyebrow">ACCESS REGISTER</span><h2>Approved access</h2><p>Revoking access blocks future downloads. It cannot remove files already downloaded.</p><div id="approval-access"></div></section>
+      <section class="approval-card"><span class="approval-eyebrow">ACCESS REGISTER</span><h2>Approved access</h2><p>Revoking access blocks future downloads. It cannot remove files already downloaded.</p><div id="approval-access"></div></section></details>
     </div>
   </main>
   <script type="module" src="./src/js/admin-downloads.js"></script>
