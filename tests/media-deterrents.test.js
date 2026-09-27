@@ -44,6 +44,9 @@ test("media deterrents conceal and restore previews without blocking form editin
     assert.equal(blocked, false, `${type} stays available in editable controls`);
   }
   assert.equal(handlers.click, undefined, 'artwork navigation remains clickable');
+  blocked = false;
+  handlers.contextmenu({ target: { closest: () => null }, preventDefault() { blocked = true; } });
+  assert.equal(blocked, true, 'right-click is also blocked on the page background');
 });
 
 test('viewer watermarks use a short account reference without marking browsing cards', () => {

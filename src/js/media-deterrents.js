@@ -9,8 +9,15 @@ export function initMediaDeterrents() {
   const root = document.documentElement;
   if (root.dataset.mediaDeterrents === "ready") return;
   root.dataset.mediaDeterrents = "ready";
+  // Cover blank page areas and text as well as artwork. Keep native editing menus.
+  document.addEventListener('contextmenu', event => {
+    const element = event.target?.closest ? event.target : event.target?.parentElement;
+    if (!element?.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) {
+      event.preventDefault();
+    }
+  }, true);
   // Delegation also covers catalogue images inserted after filtering or Load more.
-  for (const type of ['contextmenu', 'dragstart', 'selectstart']) {
+  for (const type of ['dragstart', 'selectstart']) {
     document.addEventListener(type, event => {
       if (isArtworkTarget(event.target)) event.preventDefault();
     });

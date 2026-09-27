@@ -5,7 +5,7 @@ Start the project with `npm run dev` and use http://localhost:5173. Test locally
 ## Right-click and screenshot checks
 
 1. Hard-refresh localhost with **Ctrl+Shift+R**. Open a large wallpaper preview or detail page.
-2. Right-click the artwork itself. The image context menu should not open. Right-clicking a text input or unrelated blank space remains available.
+2. Right-click the artwork itself. The image context menu should not open. Right-clicking the page background and other non-editable content is blocked too. Text-input editing menus remain available.
 3. Drag the artwork toward the desktop. Native image dragging should not start. A normal click on a card must still open the design.
 4. With focus outside an input, try **Ctrl+S**, **Ctrl+U**, **Ctrl+Shift+I** or **F12**. The page cancels those keyboard events when the browser allows it.
 5. Switch away with **Alt+Tab**, then return. The protected preview hides while the page is unfocused and returns after focus is restored.

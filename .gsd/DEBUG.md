@@ -50,3 +50,6 @@ updated: 2026-09-27
 - Verification: 42 tests pass; production build exit 0 in 25.84s. Local project/admin pages and health endpoint return 200; unsigned account/print-request endpoints return 401. Browser inventory has no connected surfaces, so no visual verification claimed. Manual test checklist is docs/SECURITY-CHECKS.md.
 - Attachment follow-up: added Windows/macOS capture-event detection, short viewer-reference overlays on large viewers only, CSP with existing font/animation allowances, HTTPS-only HSTS, and shared Node/Vite security headers. No canvas overrides or fictitious screenshot guarantees; GitHub Pages header limitations documented. Corrected legacy download URL double-prefix while retaining authorization.
 - Final verification: 46 tests pass; production build exit 0 in 27.79s. Local HTTP confirms CSP and X-Frame-Options DENY; generated Pages HTML has its applicable CSP meta. Browser visual checks remain unavailable. No live changes.
+
+- Right-click follow-up: context menus now blocked across non-editable page areas, including blank backgrounds, using capture-phase delegation. Editable form controls retain native menus. Regression assertion added.
+- Right-click verification: all 46 tests pass; build exit 0 in 23.21s. Local only.
