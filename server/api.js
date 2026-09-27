@@ -7,6 +7,7 @@ import { randomBytes, randomUUID, createHash } from "node:crypto";
 import { hashPassword, verifyPassword, needsPasswordUpgrade } from './passwords.js';
 import { verifyTotp } from './totp.js';
 import { createMfaVault } from './mfa-vault.js';
+import { createGoogleAuth } from './google-auth.js';
 import { createDownloadAdmin } from "./download-admin.js";
 import { createPrintRequests } from "./print-requests.js";
 import { createAccountRecords } from "./account-records.js";
@@ -16,7 +17,7 @@ const phone = (value = "") => { const digits = String(value).replace(/\D/g, "");
 const safeUser = ({ id, name, email, phone, role }) => ({ id, name, email, phone, role });
 const types = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".avif": "image/avif" };
 
-export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".private"), origin = process.env.APP_ORIGIN, secureCookies = process.env.NODE_ENV === "production" } = {}) {
+export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".private"), origin = process.env.APP_ORIGIN, secureCookies = process.env.NODE_ENV === "production", googleVerifier } = {}) {
   mkdirSync(resolve(dataDir, "files"), { recursive: true });
   const filesRoot = realpathSync(resolve(dataDir, "files"));
   const mfaVault = createMfaVault(dataDir);
@@ -84,6 +85,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
   const handleDownloadAdmin = createDownloadAdmin({ db, filesRoot, sessionUser, readBody, json, fail, limit });
   const handlePrintRequests = createPrintRequests({ db, filesRoot, sessionUser, readBody, json, fail, limit });
   const accounts = createAccountRecords({ db, sessionUser, json, fail });
+  const googleAuth = createGoogleAuth({ db, fail, limit, verify: googleVerifier });
 
   async function createUser(data, role = "user") {
     const name = String(data.name || "").trim();
@@ -148,6 +150,20 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
       }
 
       if (path === "/api/health" && req.method === "GET") return json(res, 200, { ok: true });
+      if (path === '/api/auth/google/config' && req.method === 'GET') {
+        limit(`google-config:${req.socket.remoteAddress}`, 60);
+        return json(res, 200, googleAuth.config());
+      }
+      if (path === '/api/auth/google' && req.method === 'POST') {
+        if (!reqOrigin || !isOriginAllowed(req, reqOrigin)) throw fail(403, 'Google sign-in must start from the studio website.');
+        limit(`auth:${req.socket.remoteAddress}`, 30);
+        const result = await googleAuth.signIn(await readBody(req));
+        if (!result.user) return json(res, 200, result);
+        if (result.created) accounts.record(result.user.id, 'registered');
+        const token = startSession(req, res, result.user);
+        accounts.record(result.user.id, 'login');
+        return json(res, 200, { user: safeUser(result.user), token });
+      }
       if (path === "/api/auth/session" && req.method === "GET") {
         const user = sessionUser(req);
         return json(res, 200, { user: user ? safeUser(user) : null, adminConfigured: Boolean(db.prepare("SELECT 1 FROM users WHERE role='admin'").get()) });

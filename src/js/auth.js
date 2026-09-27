@@ -1,5 +1,6 @@
 import "./site-mode.js";
 import { fetchApi, setStoredToken } from "./api-config.js";
+import { initGoogleSignIn } from './google-sign-in.js';
 const SESSION_KEY = "studioVianaSession";
 const PUBLIC_PAGES = new Set(["", "index.html", "login.html", "admin-login.html"]);
 const ADMIN_HOLD_DURATION = 950;
@@ -624,6 +625,12 @@ function initClientAuthPage() {
   });
 
   renderAuthState();
+
+  initGoogleSignIn(authRoot, authRequest, user => {
+    serverSession = user;
+    renderAuthState();
+    if (!redirectAfterSuccess('Google sign-in successful.', authStatus)) setStatus(authStatus, 'You are signed in with Google.', 'success');
+  });
 
   window.addEventListener("resize", () => {
     setSliderPosition(clientToggle);

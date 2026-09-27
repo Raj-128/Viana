@@ -33,3 +33,6 @@ Status: FINALIZED
 
 ## Security hardening follow-up (FINALIZED)
 Preserve existing accounts and approvals. Add server-enforced 30-minute idle expiry, five-failure account cooldown, exact origin allowlist, stronger compatible password hashing, and owner TOTP enrollment with replay prevention and terminal recovery. Verify with isolated HTTP tests. Document external WAF/hosting activation and repository-scoped GitHub permissions without deploying or changing accounts.
+
+## Google customer sign-in (FINALIZED)
+Use supplied public client ID with official server token verification, short-lived single-use nonce, phone completion for new customers, password-confirmed linking for existing customer emails, no admin Google login, existing sessions/approval checks preserved. Update CSP, test isolated HTTP flows and build, then publish through main.

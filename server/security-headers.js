@@ -1,11 +1,11 @@
 export function contentSecurityPolicy({ development = false, frameAncestors = true } = {}) {
   return [
     "default-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'",
-    "script-src 'self' https://unpkg.com", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "script-src 'self' https://unpkg.com https://accounts.google.com/gsi/client", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com/gsi/style",
     "font-src 'self' https://fonts.gstatic.com", "img-src 'self' data: blob:",
     // HTTPS supports the existing configurable remote API; WS is development-only.
     `connect-src 'self' https:${development ? ' ws: wss:' : ''}`,
-    "media-src 'self' blob:", "frame-src 'none'",
+    "media-src 'self' blob:", "frame-src https://accounts.google.com/gsi/",
     ...(frameAncestors ? ["frame-ancestors 'none'"] : []),
   ].join('; ');
 }
@@ -14,6 +14,7 @@ export function securityHeaders(development = false) {
   return {
     'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     'Content-Security-Policy': contentSecurityPolicy({ development }),
   };
