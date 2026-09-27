@@ -62,3 +62,5 @@ updated: 2026-09-27
 - Verification: 50 tests passed; after the password-upgrade race guard, 3 focused HTTP/TOTP tests passed again. Build exit 0 in 28.32s. Request repair build previously passed in 27.66s. Browser inventory remains empty, so no visual UI verification claimed.
 
 - Customer request card: clear approved status, prominent print-ready download, separate free watermarked low-resolution preview button using existing protected preview export. Preserves pending/declined/revoked original-file restrictions. All 50 tests pass. No browser surface available for visual verification.
+
+- Live hero root cause confirmed in deployed main-t2VfA3pE.css: unnamed animation shorthand optimized to animation:none, discarding infinite iteration and linear timing. Set timing/iteration/fill explicitly with the runtime animation name, leave play-state in CSS for hover/focus pause.

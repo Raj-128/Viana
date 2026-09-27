@@ -44,6 +44,12 @@ if (hero) {
         slot.style.animationName = `stream-${direction}`;
         slot.style.animationDuration = `${duration}s`;
         slot.style.animationDelay = `${-progress * duration}s`;
+        // Keep dynamic animation settings together. A production CSS optimizer can
+        // discard timing/iteration values when the stylesheet has no static name.
+        // Do not set the shorthand: inline play-state would override hover pause.
+        slot.style.animationTimingFunction = 'linear';
+        slot.style.animationIterationCount = 'infinite';
+        slot.style.animationFillMode = 'both';
         slot.style.transform = mode === '3d' ? galleryTransform(progress)
           : corridorTransform(progress, direction === 'right' ? 1 : -1);
         const card = document.createElement('a');
