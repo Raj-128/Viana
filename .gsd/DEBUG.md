@@ -60,3 +60,5 @@ updated: 2026-09-27
 
 - Security follow-up: exact CORS origins, 30-minute API idle timeout, persisted five-failure account cooldown, compatible stronger scrypt, encrypted per-owner TOTP enrollment/replay prevention and terminal recovery. Password upgrade guards concurrent resets. No real owner enrollment, external WAF, DNS or deployment changes.
 - Verification: 50 tests passed; after the password-upgrade race guard, 3 focused HTTP/TOTP tests passed again. Build exit 0 in 28.32s. Request repair build previously passed in 27.66s. Browser inventory remains empty, so no visual UI verification claimed.
+
+- Customer request card: clear approved status, prominent print-ready download, separate free watermarked low-resolution preview button using existing protected preview export. Preserves pending/declined/revoked original-file restrictions. All 50 tests pass. No browser surface available for visual verification.

@@ -60,3 +60,15 @@ body:has(.commerce-dialog[open]) { overflow: hidden; }
 
 .commerce-dialog [hidden] { display: none !important; }
 .commerce-request small { display: block; overflow-wrap: anywhere; }
+.commerce-print-request { margin: 16px 0; padding: 20px; border: 1px solid #d4cbbc; border-radius: 14px; background: #fff9; }
+.commerce-print-request strong { display: block; font-size: 16px; line-height: 1.5; }
+.commerce-request-size { margin: 8px 0; font-size: 14px; line-height: 1.6; }
+.commerce-request-reference { color: #6b6257; font-size: 11px; line-height: 1.5; }
+.commerce-request-status { margin: 18px 0; padding: 10px 12px; border-radius: 8px; background: #eee7db; color: #564732; font-size: 14px; font-weight: 700; line-height: 1.5; }
+.commerce-request-status[data-status="approved"] { background: #e3eee2; color: #285335; }
+.commerce-request-status[data-status="declined"], .commerce-request-status[data-status="revoked"] { background: #f3e4df; color: #853c2b; }
+.commerce-request-actions button { display: block; width: 100%; min-height: 48px; padding: 13px 16px; border: 1px solid #695642; border-radius: 8px; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.commerce-request-actions .commerce-print-download { background: #493b2d; color: #fff; }
+.commerce-request-actions .commerce-preview-download { background: transparent; color: #493b2d; }
+.commerce-request-actions p { margin: 8px 0 18px; color: #6b6257; font-size: 12px; line-height: 1.6; }
+.commerce-request-actions p:last-child { margin-bottom: 0; }

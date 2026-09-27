@@ -158,10 +158,12 @@ export function renderCommerce() {
   printPanel.hidden = activeTab !== 'downloads';
   printPanel.querySelector('[data-print-list]').innerHTML = printRequests.length ? printRequests.map(request => {
     const project = projects.find(project => project.id === request.design_id);
-    return '<article class="commerce-request"><strong>' + escape(project?.title || request.design_id) + '</strong><p>' +
-      escape(printRequestSummary(request)) + '</p><small>Reference: ' + escape(request.id) + '</small><p>' +
-      escape({pending:'The studio is reviewing your request and preparing your file.', approved:'Approved - your print file is ready.', declined:'The studio declined this request.', revoked:'Download access has been revoked.'}[request.status] || request.status) + '</p>' +
-      (request.status === 'approved' ? '<button type="button" data-print-download="' + escape(request.id) + '" ' + (printDownloads.has(request.id) ? 'disabled' : '') + '>' + (printDownloads.has(request.id) ? 'Downloading...' : 'Download my print file') + '</button>' : '') + '</article>';
+    return '<article class="commerce-request commerce-print-request"><strong>' + escape(project?.title || request.design_id) + '</strong><p class="commerce-request-size">' +
+      escape(printRequestSummary(request)) + '</p><small class="commerce-request-reference">Reference: ' + escape(request.id) + '</small><p class="commerce-request-status" data-status="' + escape(request.status) + '">' +
+      escape({pending:'Awaiting studio approval', approved:'Approved — ready to download', declined:'Request declined', revoked:'Download access revoked'}[request.status] || request.status) + '</p>' +
+      '<div class="commerce-request-actions">' +
+      (request.status === 'approved' ? '<button class="commerce-print-download" type="button" data-print-download="' + escape(request.id) + '" ' + (printDownloads.has(request.id) ? 'disabled' : '') + '>' + (printDownloads.has(request.id) ? 'Downloading…' : 'Download print-ready file') + '</button><p>Your approved file, made to the dimensions above.</p>' : '') +
+      (project ? '<button class="commerce-preview-download" type="button" data-request-preview="' + escape(project.id) + '" ' + (downloading.has(project.id) ? 'disabled' : '') + '>' + (downloading.has(project.id) ? 'Preparing preview…' : 'Download free preview') + '</button><p>Low-resolution image with a Studio Viana watermark. For preview only.</p>' : '') + '</div></article>';
   }).join('') : '<p>Choose a wallpaper and your dimensions on its detail page to send a design request.</p>';
   choices.querySelector('a[href="login.html"]').hidden = Boolean(getSession());
   const requestsPanel = dialog.querySelector(".commerce-requests");
@@ -269,6 +271,9 @@ export function initCommerce(options) {
   dialog.addEventListener("click", async (event) => {
     const button = event.target.closest("button");
     if (!button) return;
+    if (button.dataset.requestPreview) {
+      return downloadDesign(projects.find(project => project.id === button.dataset.requestPreview), 'preview');
+    }
     if (button.dataset.printDownload) {
       const request = printRequests.find(request => request.id === button.dataset.printDownload);
       if (!request || printDownloads.has(request.id)) return;
