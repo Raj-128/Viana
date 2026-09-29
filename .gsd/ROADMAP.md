@@ -7,3 +7,8 @@
 1. Implement compatible authentication migrations and owner enrollment.
 2. Verify expiry, cooldown, MFA, origin rejection and existing approval tests.
 3. Document hosting activation and GitHub access; build and commit locally.
+
+## SEO implementation
+1. Audit metadata and authentication crawl barriers.
+2. Correct static metadata, structured data, sitemap and exclusion of account pages.
+3. Verify generated HTML and run existing security tests/build; commit and push.

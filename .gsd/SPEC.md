@@ -36,3 +36,6 @@ Preserve existing accounts and approvals. Add server-enforced 30-minute idle exp
 
 ## Google customer sign-in (FINALIZED)
 Use supplied public client ID with official server token verification, short-lived single-use nonce, phone completion for new customers, password-confirmed linking for existing customer emails, no admin Google login, existing sessions/approval checks preserved. Update CSP, test isolated HTTP flows and build, then publish through main.
+
+## SEO follow-up (FINALIZED)
+Correct production canonical/social URLs, descriptive static metadata, valid Organization schema, sitemap and private-page noindex. Preserve download authorization and existing page gates pending confirmation. No ranking guarantees.

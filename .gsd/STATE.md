@@ -47,3 +47,9 @@
 - Imported 1,774 designs from 1,960 unique images; 50 duplicate files; no image errors.
 - Hero uses 18 distinct wallpapers across two rails, balanced across collections.
 - Verified live source URL=403, generated catalogue=200, no raw library files in production output; 31 tests pass.
+
+## SEO foundation
+- Correct live GitHub Pages canonical/social URLs and descriptive titles; valid Organization/WebSite schema, real logo asset, homepage sitemap, private/gated page noindex.
+- Existing access gates retained pending user choice about public information pages.
+- Verified 56 tests, production build, emitted metadata/schema/sitemap/logo.
+- Owner still needs Search Console ownership verification and sitemap submission; rankings not guaranteed.
