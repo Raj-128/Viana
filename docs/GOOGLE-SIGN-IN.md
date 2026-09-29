@@ -19,6 +19,8 @@ Customer flow:
 4. Returning Google customers sign in without entering that phone again. Google-only customers continue using Google; no password is silently generated for them to use.
 5. Owner accounts must use the separate owner password/MFA login. Google sign-in cannot become an administrator or approve a download.
 
+After success, customers return to their requested page, or Work when login was opened directly. The page shows progress while the popup is open and while the server verifies the account. If the popup closes without completing, or a request fails, use **Restart Google sign-in** to obtain a fresh challenge. Server requests time out after 65 seconds, allowing time for a sleeping free Render service to wake. Existing-password or phone completion appears in a separate bordered block above the email login form.
+
 The backend uses Google's official auth library to verify the signature, audience, issuer and expiry. It additionally verifies the nonce and verified-email claim. Short-lived one-use challenges prevent completed login replay. Google `sub` identifies linked accounts. Linking requires the existing password and revokes older sessions; email equality alone never grants account access. Tokens are not logged or stored as Google credentials.
 
 Existing authenticated download authorization remains in place. Google sign-in does not grant original-file access. It also does not make SQLite or uploads persistent on Render Free.

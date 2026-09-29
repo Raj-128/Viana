@@ -194,26 +194,20 @@ export function initMagneticButtons() {
 
 // ── TEXT REVEAL (word by word) ──────
 export function initTextReveal() {
-  if (!window.gsap) return;
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      const chars = entry.target.querySelectorAll(".char");
-      if(chars.length) {
-         gsap.fromTo(chars, 
-           { autoAlpha: 0, y: 20 },
-           { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.03, ease: "back.out(1.2)" }
-         );
-      }
+      // Keep authored line breaks and wrapping. Theme changes snapshot innerHTML;
+      // serializing animated letter spans can freeze partially hidden headings.
+      entry.target.animate?.([{ opacity: .65 }, { opacity: 1 }], {
+        duration: 400, easing: 'ease-out', fill: 'none',
+      });
       observer.unobserve(entry.target);
     });
   }, { threshold: 0.4 });
 
   document.querySelectorAll(".section-title, .page-title").forEach(el => {
-    if (!el.querySelector(".char")) {
-      const text = el.textContent;
-      el.innerHTML = text.split("").map(c => c === " " ? "&nbsp;" : `<span class="char" style="display:inline-block">${c}</span>`).join("");
-    }
     observer.observe(el);
   });
 }

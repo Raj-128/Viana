@@ -255,12 +255,13 @@ function initHiddenAdminAccess() {
 
 let serverSession = null;
 let adminConfigured = false;
-async function authRequest(action, data) {
+async function authRequest(action, data, options = {}) {
   const response = await fetchApi('api/auth/' + action, {
     method: data ? 'POST' : 'GET',
     cache: 'no-store',
     headers: data ? { 'Content-Type': 'application/json' } : {},
     body: data ? JSON.stringify(data) : undefined,
+    signal: options.signal,
   });
   let result;
   try {
@@ -629,7 +630,7 @@ function initClientAuthPage() {
   initGoogleSignIn(authRoot, authRequest, user => {
     serverSession = user;
     renderAuthState();
-    if (!redirectAfterSuccess('Google sign-in successful.', authStatus)) setStatus(authStatus, 'You are signed in with Google.', 'success');
+    window.location.assign(redirectTarget || new URL('work.html', window.location.href).href);
   });
 
   window.addEventListener("resize", () => {

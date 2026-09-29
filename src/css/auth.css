@@ -667,6 +667,8 @@
 .google-sign-in [data-google-status] { margin: 10px 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
 .google-sign-in [data-google-status]:empty { display: none; }
 .google-sign-in [hidden] { display: none !important; }
+.google-retry { min-height: 44px; margin: 4px 0 12px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 8px; color: var(--text); background: var(--surface); cursor: pointer; }
+.google-sign-in form { padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
 .google-sign-in form { display: grid; gap: 16px; margin: 16px 0; }
 .google-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0 0; text-align: center; font-size: 12px; line-height: 1.5; color: var(--muted); }
 .google-divider::before, .google-divider::after { content: ''; height: 1px; flex: 1; background: rgba(118, 94, 72, .2); }
