@@ -4,7 +4,12 @@ import { resolve } from 'node:path';
 
 export function createMfaVault(dataDir) {
   const keyFile = resolve(dataDir, 'mfa.key');
+  // Hosts with an ephemeral filesystem lose the key file on every restart,
+  // which would strand every sealed secret. MFA_KEY keeps it with the service.
+  const configured = process.env.MFA_KEY ? Buffer.from(process.env.MFA_KEY, 'base64') : null;
+  if (configured && configured.length !== 32) throw new Error('MFA_KEY must be 32 random bytes encoded as base64.');
   function key(create = false) {
+    if (configured) return configured;
     try { return readFileSync(keyFile); }
     catch (error) {
       if (!create || error.code !== 'ENOENT') throw error;

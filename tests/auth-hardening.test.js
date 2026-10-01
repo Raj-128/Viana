@@ -4,10 +4,14 @@ import { createServer } from 'node:http';
 import { mkdtemp, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { scryptSync } from 'node:crypto';
+import { scryptSync, randomBytes } from 'node:crypto';
 import { createApi } from '../server/api.js';
 import { totpCode, verifyTotp } from '../server/totp.js';
 import { createMfaVault } from '../server/mfa-vault.js';
+
+// The vault reads its key from the environment, so a deployment key present in
+// the shell must not decide which storage these tests exercise.
+delete process.env.MFA_KEY;
 
 // RFC 6238 SHA-1 vectors, truncated to the six digits used by authenticator apps.
 const secret = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
@@ -20,6 +24,26 @@ test('TOTP matches RFC vectors and rejects replay, invalid and expired codes', (
   }
   assert.equal(verifyTotp(secret, '287082', -1, 150000), null);
   assert.equal(verifyTotp(secret, '12345', -1, 59000), null);
+});
+
+test('a configured MFA key replaces the key file so sealed secrets survive a new filesystem', async () => {
+  const directory = await mkdtemp(resolve(tmpdir(), 'viana-mfa-key-'));
+  process.env.MFA_KEY = randomBytes(32).toString('base64');
+  try {
+    const sealed = createMfaVault(directory).seal(secret, 'owner-id');
+    await assert.rejects(readFile(resolve(directory, 'mfa.key')), /ENOENT/);
+    // A replacement container starts with an empty directory and the same key.
+    const replacement = await mkdtemp(resolve(tmpdir(), 'viana-mfa-key-'));
+    assert.equal(createMfaVault(replacement).open(sealed, 'owner-id'), secret);
+    await rm(replacement, { recursive: true, force: true });
+    process.env.MFA_KEY = randomBytes(32).toString('base64');
+    assert.throws(() => createMfaVault(directory).open(sealed, 'owner-id'));
+    process.env.MFA_KEY = 'too-short';
+    assert.throws(() => createMfaVault(directory), /32 random bytes/);
+  } finally {
+    delete process.env.MFA_KEY;
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test('HTTP authentication enforces MFA, cooldown, idle expiry, cookie flags and exact origins', async () => {

@@ -22,6 +22,66 @@ Render requires a paid service for a persistent disk. A free service has an ephe
 
 To check the current setup: open Render Dashboard, select the existing **viana-fpph** service, and inspect **Disks** for a mounted disk and its mount path. Then check **Environment** for `STUDIO_DATA_DIR`. If no disk is listed, do not assume the database is persistent. The disk status was not available in this session.
 
+## Free persistence with Litestream and Cloudflare R2
+
+A persistent disk is the simplest answer, but where a paid plan is not available
+Litestream keeps the database durable at no cost. It watches the SQLite WAL,
+streams every change to an R2 bucket, and rebuilds the database from that bucket
+whenever a container starts without one. The application keeps using
+`node:sqlite` exactly as before: no server code changes for the database itself.
+
+This covers `studio.sqlite` only. The private `files/` directory still lives on
+the container filesystem and is still lost on every restart, so approved print
+files need object storage of their own before customer orders depend on them.
+
+### Cloudflare
+
+Create a Standard R2 bucket and an API token limited to it with **Object Read &
+Write**. Note the account ID shown in the R2 dashboard. The free allowance is
+10 GB of storage with no egress charge, far beyond this database.
+
+### Render environment
+
+```text
+STUDIO_DATA_DIR=/opt/render/project/src/.private
+R2_BUCKET=viana-backup
+R2_ACCOUNT_ID=<cloudflare account id>
+R2_ACCESS_KEY_ID=<r2 token access key>
+R2_SECRET_ACCESS_KEY=<r2 token secret>
+MFA_KEY=<32 random bytes, base64>
+```
+
+`STUDIO_DATA_DIR` must be absolute: Litestream resolves no relative paths.
+Generate the MFA key once with `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
+and keep it unchanged. Admin MFA secrets are sealed with it, so a replaced key
+strands every existing secret and locks the owner out of a restored database.
+
+### Render commands
+
+```text
+Build:  npm ci && npm run build && curl -fsSL https://github.com/benbjohnson/litestream/releases/download/v0.5.17/litestream-0.5.17-linux-x86_64.tar.gz | tar -xz litestream
+Start:  ./litestream replicate -config litestream.yml -exec "node server/start.js"
+```
+
+Litestream runs the server as its child process and exits when the server does,
+so Render still sees a single process to supervise.
+
+### Verify replication before trusting it
+
+A misconfigured replica fails silently: the site works, and nothing reaches R2.
+Confirm all three of these after the first deploy, and again after any change to
+the storage configuration.
+
+1. The deploy log shows Litestream opening the database and writing to the
+   replica rather than an authentication or endpoint error.
+2. The R2 bucket contains objects under `studio/`, growing after a registration.
+3. A manual restart followed by a sign-in with an account created before that
+   restart returns the existing account rather than an empty database.
+
+Replication is asynchronous, so an abrupt container kill can still lose the last
+few seconds of writes. Litestream also requires a single writer: this service
+cannot be scaled beyond one instance while it is in use.
+
 ## Existing live data comes first
 
 Before changing the disk path or redeploying an existing service, back up the current SQLite database consistently and copy its private files. Arrange a maintenance window with writes paused for that backup and migration. Do not copy only an active `studio.sqlite` file while ignoring its WAL journal. Restore the database and all files into the persistent data directory before starting the new release. An empty directory would create a new empty database; it does not automatically import existing accounts.

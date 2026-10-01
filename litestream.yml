@@ -1,0 +1,27 @@
+# Continuously replicates the studio database to Cloudflare R2.
+#
+# The hosting container has an ephemeral filesystem: it is rebuilt on every
+# deploy, restart and spin-down. Without replication each of those loses every
+# customer account, session and download entitlement. Litestream streams each
+# change to R2 and rebuilds the database from it when a new container starts.
+dbs:
+  - path: ${STUDIO_DATA_DIR}/studio.sqlite
+    # A fresh container has no database file, so restore the replica before the
+    # application opens it.
+    restore-if-db-not-exists: true
+    snapshot:
+      # Full snapshots are cheap for a database this size, and a week of them
+      # leaves room to recover from damage that goes unnoticed for a few days.
+      interval: 6h
+      retention: 168h
+    replica:
+      type: s3
+      bucket: ${R2_BUCKET}
+      path: studio
+      endpoint: https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com
+      region: auto
+      access-key-id: ${R2_ACCESS_KEY_ID}
+      secret-access-key: ${R2_SECRET_ACCESS_KEY}
+      # Writes are rare here, so a slower interval stays well inside R2's free
+      # request allowance while keeping the worst-case loss to a few seconds.
+      sync-interval: 10s
