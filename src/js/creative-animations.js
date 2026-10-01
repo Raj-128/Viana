@@ -26,17 +26,27 @@ export function initEnhancedCursor() {
   let lastFrameTime = 0;
 
   const lerp = (current, target, amount) => current + (target - current) * amount;
+  const FRAME = 1000 / 60;
+  // The catch-up factors below are authored per 60fps frame. Rescale them by the
+  // time a frame actually took, so a page that drops frames does not leave the
+  // cursor dragging behind the pointer it replaced.
+  const catchUp = (amount, frames) => 1 - Math.pow(1 - amount, frames);
 
   const setInteractiveState = (element) => {
     const interactive = element?.closest?.("a, button, input, select, textarea, [role='button'], .work-card, .showcase-item, .showcase-scroll-wrapper");
     cursor.classList.toggle("is-interactive", Boolean(interactive));
   };
 
-  const render = () => {
-    dotX = lerp(dotX, targetX, 0.18);
-    dotY = lerp(dotY, targetY, 0.18);
-    ringX = lerp(ringX, targetX, 0.12);
-    ringY = lerp(ringY, targetY, 0.12);
+  const render = (now = 0) => {
+    // A long stall resolves to a near-instant catch-up rather than a slow drift.
+    const elapsed = lastFrameTime ? Math.min(now - lastFrameTime, 100) : FRAME;
+    const frames = elapsed / FRAME;
+    lastFrameTime = now;
+
+    dotX = lerp(dotX, targetX, catchUp(0.18, frames));
+    dotY = lerp(dotY, targetY, catchUp(0.18, frames));
+    ringX = lerp(ringX, targetX, catchUp(0.12, frames));
+    ringY = lerp(ringY, targetY, catchUp(0.12, frames));
 
     dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
     outline.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
