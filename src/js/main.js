@@ -653,6 +653,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const quoteWhatsappLink = document.getElementById("quote-whatsapp-link");
   const projectOrderSection = document.getElementById("project-order-section");
 
+  document.querySelector("[data-project-requests]")?.addEventListener("click", () => openCommerce("downloads"));
+
   document.querySelector("[data-clear-saved]")?.addEventListener("click", () => {
     writeStoredList(STORAGE_KEYS.saved, []);
     renderSavedCollections();
@@ -1248,8 +1250,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           updateEstimator();
           const quoteMessage = currentWhatsAppMessage;
           const request = await createPrintRequest(activeProject.id, dimensions);
-          output.textContent = 'Request ' + request.id + ' - ' + printRequestSummary(request) + '. ' +
-            (request.status === 'approved' ? 'Your print file is ready in Downloads.' : 'Sent to the studio. Your print file will appear in Downloads after approval.');
+          // The reference belongs in the WhatsApp message and the requests list, not
+          // in a confirmation the customer only needs to read once.
+          output.textContent = printRequestSummary(request) + '. ' +
+            (request.status === 'approved' ? 'Your print file is ready in Downloads.' : 'Sent to the studio, and your print file appears in Downloads once approved.');
           followup.href = buildWhatsAppLink(quoteMessage + '\nRequest reference: ' + request.id);
           followup.hidden = false;
         } catch (error) { output.textContent = error.message; }
