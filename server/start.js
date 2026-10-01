@@ -5,7 +5,7 @@ import { stat } from "node:fs/promises";
 import { resolve, relative, isAbsolute, extname } from "node:path";
 import { createApi } from "./api.js";
 
-const defaultOrigin = process.env.APP_ORIGIN || "https://raj-128.github.io";
+const defaultOrigin = process.env.APP_ORIGIN || "https://studioviana.work.gd,https://raj-128.github.io";
 let root = null;
 try {
   root = realpathSync(resolve("dist"));

@@ -1,3 +1,4 @@
+import { gsap } from 'gsap';
 import { createPrintRequest, printRequestSummary } from './print-requests.js';
 import { MODE_KEY, readStudioMode, applyStudioTheme } from "./site-mode.js";
 import { estimateDimensions } from "./estimate-dimensions.js";
@@ -15,6 +16,7 @@ import {
 } from "./creative-animations.js";
 import {
   authReady,
+  isPublicPage,
   getSession,
   applyAuthStateToDocument,
   enforceProtectedAccess,
@@ -256,7 +258,7 @@ function createObserverManager() {
 
         entry.target.classList.add("active");
 
-        if (window.gsap) {
+        if (gsap) {
           gsap.fromTo(
             entry.target,
             { y: 24, autoAlpha: 0 },
@@ -278,7 +280,7 @@ function createObserverManager() {
         }
 
         const img = entry.target.querySelector("img");
-        if (window.gsap && img) {
+        if (gsap && img) {
           gsap.fromTo(
             img,
             { scale: 1.08, y: 24, autoAlpha: 0 },
@@ -557,7 +559,7 @@ function populateSelect(select, options, placeholder) {
 }
 
 function animateCards(cards) {
-  if (!cards.length || !window.gsap) {
+  if (!cards.length || !gsap) {
     return;
   }
 
@@ -586,14 +588,22 @@ applyModeClass(initialMode);
 requestAnimationFrame(revealMode);
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await authReady;
-  if (enforceProtectedAccess()) {
-    return;
+  const publicPage = isPublicPage();
+  if (!publicPage) {
+    await authReady;
+    if (enforceProtectedAccess()) return;
+  } else {
+    // Rendering and local controls must never wait for the authentication API.
+    authReady.then(() => {
+      applyAuthStateToDocument();
+      syncAuthLinks();
+      gateProtectedNavigation();
+    });
   }
 
   applyAuthStateToDocument();
   syncAuthLinks();
-  gateProtectedNavigation();
+  if (!publicPage) gateProtectedNavigation();
 
   const observerManager = createObserverManager();
   observerManager.observeReveals();

@@ -1,8 +1,9 @@
 import "./site-mode.js";
-import { fetchApi, setStoredToken } from "./api-config.js";
+import { fetchApi, setStoredToken, getStoredToken, getApiBaseUrl } from "./api-config.js";
+import { createSessionLoader } from './session-loader.js';
 import { initGoogleSignIn } from './google-sign-in.js';
 const SESSION_KEY = "studioVianaSession";
-const PUBLIC_PAGES = new Set(["", "index.html", "login.html", "admin-login.html"]);
+const PUBLIC_PAGES = new Set(["", "index.html", "about.html", "services.html", "contact.html", "login.html", "admin-login.html"]);
 const ADMIN_HOLD_DURATION = 950;
 
 function removeStorage(key) {
@@ -23,7 +24,7 @@ function getCurrentPageName(targetHref = window.location.href) {
   return name || "index.html";
 }
 
-function isPublicPage(targetHref = window.location.href) {
+export function isPublicPage(targetHref = window.location.href) {
   return PUBLIC_PAGES.has(getCurrentPageName(targetHref));
 }
 
@@ -255,6 +256,7 @@ function initHiddenAdminAccess() {
 
 let serverSession = null;
 let adminConfigured = false;
+const sessionCacheKey = () => 'vianaSession:' + getApiBaseUrl() + ':' + getStoredToken();
 async function authRequest(action, data, options = {}) {
   const response = await fetchApi('api/auth/' + action, {
     method: data ? 'POST' : 'GET',
@@ -272,15 +274,29 @@ async function authRequest(action, data, options = {}) {
   if (!response.ok) throw new Error(result.error || 'Authentication service unavailable.');
   if (result.token) {
     setStoredToken(result.token);
+    if (result.user) {
+      // The login response already verified this account; avoid an immediate duplicate check.
+      try { sessionStorage.setItem(sessionCacheKey(), JSON.stringify({
+        result: { user: result.user, adminConfigured }, expires: Date.now() + 60000,
+      })); } catch { /* Storage is optional. */ }
+    }
   }
   return result;
 }
-export async function refreshAuthSession() {
-  const result = await authRequest('session');
+const loadSession = createSessionLoader({
+  request: () => authRequest('session'),
+  storage: { getItem: key => sessionStorage.getItem(key), setItem: (key, value) => sessionStorage.setItem(key, value) },
+  key: sessionCacheKey,
+});
+export async function refreshAuthSession(options) {
+  const result = await loadSession(options);
   serverSession = result.user;
   adminConfigured = result.adminConfigured;
 }
-export const authReady = refreshAuthSession().catch(() => { serverSession = null; });
+export const authReady = refreshAuthSession({
+  publicPage: !getCurrentPageName().startsWith('admin-'),
+  hasToken: Boolean(getStoredToken()),
+}).catch(() => { serverSession = null; });
 export function getSession() { return serverSession; }
 export function getCurrentUser() { return serverSession; }
 export async function logoutUser() {
@@ -290,6 +306,7 @@ export async function logoutUser() {
     // Ignore network error on logout
   }
   serverSession = null;
+  try { sessionStorage.removeItem(sessionCacheKey()); } catch { /* Storage is optional. */ }
   setStoredToken("");
   removeStorage(SESSION_KEY);
 }
@@ -524,9 +541,7 @@ function initClientAuthPage() {
     }
 
     setStatus(statusTarget, `${message} Redirecting...`, "success");
-    window.setTimeout(() => {
-      window.location.href = redirectTarget;
-    }, 450);
+    window.location.href = redirectTarget;
     return true;
   };
 
@@ -627,12 +642,6 @@ function initClientAuthPage() {
 
   renderAuthState();
 
-  initGoogleSignIn(authRoot, authRequest, user => {
-    serverSession = user;
-    renderAuthState();
-    window.location.assign(redirectTarget || new URL('work.html', window.location.href).href);
-  });
-
   window.addEventListener("resize", () => {
     setSliderPosition(clientToggle);
     updateStageHeights(authRoot);
@@ -679,9 +688,7 @@ function initAdminAuthPage() {
     }
 
     setStatus(statusTarget, `${message} Redirecting...`, "success");
-    window.setTimeout(() => {
-      window.location.href = redirectTarget;
-    }, 450);
+    window.location.href = redirectTarget;
     return true;
   };
 
@@ -838,6 +845,14 @@ function initPasswordVisibility() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   initPasswordVisibility();
+  const clientRoot = document.querySelector('[data-auth-page]');
+  if (clientRoot) {
+    // Start Google's SDK and challenge together, without waiting for a session request.
+    initGoogleSignIn(clientRoot, authRequest, user => {
+      serverSession = user;
+      window.location.assign(getRedirectTarget() || new URL('work.html', window.location.href).href);
+    });
+  }
   await authReady;
   initHiddenAdminAccess();
   initClientAuthPage();

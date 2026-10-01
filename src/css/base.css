@@ -42,15 +42,6 @@ body {
   line-height: 1.6;
 }
 
-html:not(.mode-ready) body {
-  opacity: 0;
-}
-
-html.mode-ready body {
-  opacity: 1;
-  transition: opacity 0.12s ease;
-}
-
 body.mode-wallpaper {
   --bg: #f6f3ee;
   --header-bg: #efe7dd;

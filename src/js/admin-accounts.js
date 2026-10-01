@@ -28,7 +28,7 @@ export function initAccountRecords() {
       if (!response.ok) throw new Error(data.error || 'Could not load account records.');
       if (!moreEvents) {
         host.replaceChildren(...data.accounts.map(account => row(account.name + ' · ' + account.role, [
-          account.email + ' · ' + account.phone,
+          account.email + (account.phone ? ' · ' + account.phone : ''),
           'Registered: ' + date(account.registered_at), 'Last sign-in: ' + date(account.last_login),
           'Recorded sign-ins: ' + account.login_count,
         ])));

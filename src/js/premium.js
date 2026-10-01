@@ -116,19 +116,8 @@ function initDragScroll() {
       wrapper.scrollLeft = scrollLeft - walk;
     });
 
-    // Touch support
-    let touchStartX = 0;
-    let touchScrollLeft = 0;
-    wrapper.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].pageX;
-      touchScrollLeft = wrapper.scrollLeft;
-    }, { passive: true });
-
-    wrapper.addEventListener('touchmove', (e) => {
-      const x = e.touches[0].pageX;
-      const walk = (touchStartX - x) * 1.2;
-      wrapper.scrollLeft = touchScrollLeft + walk;
-    }, { passive: true });
+    // Touch devices use native scrolling and momentum; a second touch handler
+    // would move the strip again while the browser is already scrolling it.
   });
 }
 
@@ -139,29 +128,8 @@ function initDragScroll() {
 function initPageTransitions() {
   const overlay = document.getElementById('page-overlay');
   if (!overlay) return;
-
-  // Animate out on load
-  overlay.classList.add('leaving');
-  setTimeout(() => {
-    overlay.style.display = 'none';
-  }, 500);
-
-  // Animate in on link click
-  document.querySelectorAll('a[href]').forEach(link => {
-    const href = link.getAttribute('href');
-    if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('tel')) return;
-    if (link.target === '_blank') return;
-
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      overlay.style.display = 'block';
-      overlay.classList.remove('leaving');
-      overlay.classList.add('entering');
-      setTimeout(() => {
-        window.location.href = href;
-      }, 430);
-    });
-  });
+  // Native navigation starts immediately and respects modified clicks and auth guards.
+  overlay.style.display = 'none';
 }
 
 

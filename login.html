@@ -2,9 +2,11 @@
 <html lang="en" class="mode-ready">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Login and Register - Studio Viana</title>
-  <link rel="icon" href="./src/assets/images/flower.png" sizes="70x70" type="image/png">
+  <link rel="preconnect" href="https://accounts.google.com">
+  <link rel="preload" href="https://accounts.google.com/gsi/client" as="script">
+  <link rel="icon" href="./src/generated/site-media/favicon.png" sizes="70x70" type="image/png">
   <meta name="description" content="Studio Viana client access.">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./src/css/base.css">
@@ -12,11 +14,14 @@
   <link rel="stylesheet" href="./src/css/cursor.css">
   <link rel="stylesheet" href="./src/css/premium.css">
   <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="./src/css/mobile.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body class="auth-page mode-wallpaper lights-on" data-auth-page>
   <header class="auth-topbar">
     <a href="index.html" class="auth-brand">
-      <img src="./src/assets/images/flower.png" alt="Studio Viana Logo" class="auth-brand-mark">
+      <img src="./src/generated/site-media/flower.webp" alt="Studio Viana Logo" class="auth-brand-mark">
       <span>Studio Viana</span>
     </a>
     <a href="index.html" class="auth-home-link">Back to home</a>
@@ -39,7 +44,7 @@
         <p class="auth-kicker">Client Access</p>
         <h1>Login with a custom-lit studio feel.</h1>
         <p class="auth-lead">
-          The homepage stays public. After that, the protected studio pages open only for signed-in clients.
+          Learn about the studio, services, and contact details without an account. Sign in to explore the design collection and manage your requests.
         </p>
       </div>
     </section>
@@ -57,7 +62,6 @@
           <p data-google-status role="status" aria-live="polite"></p>
           <button type="button" class="google-retry" data-google-retry hidden>Restart Google sign-in</button>
           <form data-google-complete hidden>
-            <label class="auth-field" hidden><span>Phone number</span><input type="tel" name="phone" autocomplete="tel" placeholder="Your phone number"></label>
             <label class="auth-field" hidden><span>Existing account password</span><input type="password" name="password" autocomplete="current-password"></label>
             <button class="auth-submit" type="submit">Complete Google sign-in</button>
           </form>

@@ -142,31 +142,8 @@ export function initSmoothScroll() {
 
 // ── PAGE LOAD ANIMATION (lightweight, no infinite loops) ────
 export function initPageLoadAnimation() {
-  if (!window.gsap) return;
-  
-  // Set inline-block for line spans to allow y transforms
+  // Keep the header and initial text visible instead of hiding them after first paint.
   document.querySelectorAll(".hero-title .line").forEach(line => line.style.display = 'inline-block');
-
-  gsap.timeline()
-    .fromTo(".site-header", 
-      { y: -60, autoAlpha: 0 }, 
-      { y: 0, autoAlpha: 1, duration: 0.7, ease: "power3.out" }
-    )
-    .fromTo(".hero-eyebrow",  
-      { y: 16, autoAlpha: 0 }, 
-      { y: 0, autoAlpha: 1, duration: 0.5 }, 
-      "-=0.4"
-    )
-    .fromTo(".hero-title .line", 
-      { y: 60, autoAlpha: 0 }, 
-      { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }, 
-      "-=0.3"
-    )
-    .fromTo(".hero-sub",  
-      { autoAlpha: 0 }, 
-      { autoAlpha: 1, duration: 0.5 }, 
-      "-=0.3"
-    );
 }
 
 // ── STAGGERED SECTION REVEAL ──

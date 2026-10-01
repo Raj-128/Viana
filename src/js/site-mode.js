@@ -1,4 +1,5 @@
 import "../css/site-mode.css";
+import './responsive-layout.js';
 
 export const MODE_KEY = "studioMode";
 export function readStudioMode(storage) {

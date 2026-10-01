@@ -9,6 +9,15 @@
 .project-guide { padding: 120px 0; }
 .project-guide-head { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-bottom: 38px; }
 .project-guide-head .section-title { max-width: 590px; margin: 0; }
+.studio-answers { border-top: 1px solid var(--line); }
+.studio-answers-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; margin-top: 28px; }
+.studio-answers article { min-width: 0; }
+.studio-answers h2 { font-family: var(--font-heading); font-size: clamp(24px, 2.5vw, 32px); line-height: 1.25; margin-bottom: 16px; }
+.studio-answers p, .studio-answers li { color: var(--muted); line-height: 1.7; }
+.studio-answers ul { list-style: disc; padding-left: 20px; margin-top: 16px; }
+.studio-answers li + li { margin-top: 8px; }
+.studio-answers a { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 760px) { .studio-answers-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; } }
 .project-guide-head .section-sub { margin: 0; }
 .project-guide-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
 .project-guide-tab { padding: 11px 18px; border: 1px solid var(--line); border-radius: 999px; color: var(--text); font: inherit; font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
@@ -122,13 +131,19 @@ body.mode-3d div.show-3d.showcase-track {
   padding-bottom: clamp(72px, 8vw, 120px);
 }
 
-/* Slider geometry is set from the active button's actual rendered bounds. */
+/* Give the initial selection its final shape before JavaScript runs. */
 .work-pill-toggle .pill-slider {
   left: 0;
-  top: 0;
-  height: 0;
+  top: 7px;
+  width: calc(50% - 7px);
+  height: calc(100% - 14px);
+  transform: translate3d(7px, 0, 0);
   will-change: transform, width, height;
-  transition: transform .42s cubic-bezier(.22, 1, .36, 1), width .42s cubic-bezier(.22, 1, .36, 1), height .42s cubic-bezier(.22, 1, .36, 1), top .42s cubic-bezier(.22, 1, .36, 1);
+  transition: none;
+}
+
+html[data-studio-mode="3d"] .work-pill-toggle .pill-slider {
+  transform: translate3d(calc(100% + 7px), 0, 0);
 }
 
 .work-pill-toggle .pill-btn:focus-visible {

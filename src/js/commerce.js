@@ -223,12 +223,13 @@ export function initCommerce(options) {
   onChange = options.onChange;
   // Access storage lazily so browsers with disabled storage can still render the catalogue.
   store = createCommerceStore({ getItem: (key) => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) }, projects);
-  const nav = document.createElement("div");
+  const existingNav = document.querySelector('.header-inner .commerce-nav');
+  const nav = existingNav || document.createElement("div");
   nav.className = "commerce-nav";
   nav.innerHTML = `<button type="button" data-open-commerce="downloads" aria-label="Open downloads" title="Downloads">${downloadIcon}<span data-commerce-count="downloads">0</span></button><button type="button" data-open-commerce="cart" aria-label="Open cart" title="Cart">${basketIcon}<span data-commerce-count="cart">0</span></button>`;
   const header = document.querySelector(".header-inner");
   const anchor = header?.querySelector(".header-actions, .menu-toggle");
-  if (header) header.insertBefore(nav, anchor || null);
+  if (header && !existingNav) header.insertBefore(nav, anchor || null);
   dialog = document.createElement("dialog");
   dialog.className = "commerce-dialog";
   dialog.setAttribute("aria-labelledby", "commerce-title");

@@ -23,11 +23,28 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
   const mfaVault = createMfaVault(dataDir);
   const db = new DatabaseSync(resolve(dataDir, "studio.sqlite"), { timeout: 5000 });
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
-    CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, phone TEXT UNIQUE NOT NULL, role TEXT NOT NULL, salt TEXT NOT NULL, password TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, phone TEXT UNIQUE, role TEXT NOT NULL, salt TEXT NOT NULL, password TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), expires INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS designs (id TEXT PRIMARY KEY, file TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS entitlements (user_id TEXT NOT NULL REFERENCES users(id), design_id TEXT NOT NULL REFERENCES designs(id), PRIMARY KEY(user_id,design_id));
     CREATE TABLE IF NOT EXISTS limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);`);
+  // Google sign-in supplies no phone. NULL allows multiple accounts without one.
+  if (db.prepare('PRAGMA table_info(users)').all().find(column => column.name === 'phone')?.notnull) {
+    db.exec('PRAGMA foreign_keys=OFF; BEGIN IMMEDIATE');
+    try {
+      db.exec(`CREATE TABLE users_with_optional_phone (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, phone TEXT UNIQUE, role TEXT NOT NULL, salt TEXT NOT NULL, password TEXT NOT NULL);
+        INSERT INTO users_with_optional_phone SELECT id,name,email,phone,role,salt,password FROM users;
+        DROP TABLE users;
+        ALTER TABLE users_with_optional_phone RENAME TO users;`);
+      if (db.prepare('PRAGMA foreign_key_check').all().length) throw new Error('Account migration failed integrity check.');
+      db.exec('COMMIT');
+    } catch (error) {
+      db.exec('ROLLBACK');
+      throw error;
+    } finally {
+      db.exec('PRAGMA foreign_keys=ON');
+    }
+  }
   if (!db.prepare('PRAGMA table_info(sessions)').all().some(column => column.name === 'last_seen')) {
     db.exec('ALTER TABLE sessions ADD COLUMN last_seen INTEGER NOT NULL DEFAULT 0');
     db.prepare('UPDATE sessions SET last_seen=?').run(Date.now());
@@ -112,7 +129,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
       const explicit = origin.split(",").map(s => s.trim().toLowerCase());
       return explicit.includes(reqOrigin.toLowerCase());
     }
-    const allowed = (process.env.ALLOWED_ORIGINS || process.env.APP_ORIGIN || "https://raj-128.github.io,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000")
+    const allowed = (process.env.ALLOWED_ORIGINS || process.env.APP_ORIGIN || "https://studioviana.work.gd,https://raj-128.github.io,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000")
       .split(",")
       .map(s => s.trim().toLowerCase());
     return allowed.includes(reqOrigin.toLowerCase());

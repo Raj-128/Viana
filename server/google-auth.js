@@ -45,20 +45,12 @@ export function createGoogleAuth({ db, fail, limit, verify = verifyGoogleToken, 
         const fresh = db.prepare('SELECT * FROM users WHERE id=?').get(user.id);
         if (!fresh || fresh.password !== user.password || fresh.role !== 'user') throw fail(401, 'Account changed. Please sign in again.');
       }
-      let phone;
-      if (!user) {
-        if (!data.phone) return { requiresPhone: true };
-        phone = String(data.phone).replace(/\D/g, '');
-        if (phone.length === 10) phone = '91' + phone;
-        if (!/^\d{10,15}$/.test(phone) || phone === '919737711570') throw fail(400, 'Enter your own valid phone number.');
-        if (db.prepare('SELECT 1 FROM users WHERE phone=?').get(phone)) throw fail(409, 'This phone is already registered. Sign in with that account instead.');
-      }
       const created = !user;
       db.exec('BEGIN IMMEDIATE');
       try {
         if (!db.prepare('DELETE FROM google_challenges WHERE nonce=? AND expires>?').run(nonceHash, Date.now()).changes) throw fail(401, 'Google sign-in expired or was already used. Please try again.');
         if (!user) {
-          user = { id: randomUUID(), name: String(identity.name || identity.email.split('@')[0]).slice(0, 100), email: identity.email.toLowerCase(), phone, role: 'user' };
+          user = { id: randomUUID(), name: String(identity.name || identity.email.split('@')[0]).slice(0, 100), email: identity.email.toLowerCase(), phone: null, role: 'user' };
           db.prepare('INSERT INTO users VALUES (?,?,?,?,?,?,?)').run(user.id, user.name, user.email, user.phone, 'user', randomBytes(16).toString('hex'), '!google-only');
         }
         if (!linked) {

@@ -23,6 +23,9 @@ src/assets/images/wallpapers/*
 .gsd/catalogue-tests.txt
 .gsd/protected-preview-build.txt
 .gsd/protected-preview-tests.txt
+.gsd/*-build.txt
+.gsd/*-tests.txt
+.gsd/release-audit/
 
 # Editor directories and files
 .vscode/*

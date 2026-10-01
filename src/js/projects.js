@@ -11,10 +11,10 @@ import wallpaperForest from "../assets/images/wallpapers/previews/3.jpg";
 import wallpaperArchTree from "../assets/images/wallpapers/previews/4.jpg";
 import wallpaperJungle from "../assets/images/wallpapers/previews/5.jpg";
 import wallpaperClassicGarden from "../assets/images/wallpapers/previews/6.jpg";
-import lunarConsole from "../assets/images/three-d-lunar-console.png";
-import petalLamp from "../assets/images/three-d-petal-lamp.png";
-import pixelPlayroom from "../assets/images/three-d-playroom.png";
-import canyonVoid from "../assets/images/three-d-canyon-void.png";
+import lunarConsole from "../generated/site-media/three-d-lunar-console.webp";
+import petalLamp from "../generated/site-media/three-d-petal-lamp.webp";
+import pixelPlayroom from "../generated/site-media/three-d-playroom.webp";
+import canyonVoid from "../generated/site-media/three-d-canyon-void.webp";
 
 export const wallpaperShowcaseImages = [
   wallpaperBranch,

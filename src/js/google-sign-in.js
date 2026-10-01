@@ -16,7 +16,6 @@ export async function initGoogleSignIn(root, request, onSuccess) {
   if (!host) return;
   const status = root.querySelector('[data-google-status]');
   const form = root.querySelector('[data-google-complete]');
-  const phone = form.querySelector('[name="phone"]');
   const password = form.querySelector('[name="password"]');
   const retry = root.querySelector('[data-google-retry]');
   let observer, popupTimer;
@@ -37,13 +36,12 @@ export async function initGoogleSignIn(root, request, onSuccess) {
     status.textContent = 'Verifying your Google account…';
     try {
       const result = await timedRequest('google', { credential, nonce, ...extra });
-      if (result.requiresPhone || result.requiresPassword) {
+      if (result.requiresPassword) {
         form.hidden = false;
-        phone.closest('label').hidden = !result.requiresPhone; phone.required = Boolean(result.requiresPhone);
         password.closest('label').hidden = !result.requiresPassword; password.required = Boolean(result.requiresPassword);
-        status.textContent = result.requiresPhone ? 'One last step: add your phone number so the studio can contact you about your designs.' : 'An account already uses this email. Enter its password once to link Google securely.';
-        form.querySelector('button').textContent = result.requiresPassword ? 'Link Google and sign in' : 'Complete Google sign-in';
-        (result.requiresPhone ? phone : password).focus();
+        status.textContent = 'An account already uses this email. Enter its password once to link Google securely.';
+        form.querySelector('button').textContent = 'Link Google and sign in';
+        password.focus();
         form.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
       } else if (result.user) {
         credential = null; form.reset(); form.hidden = true; status.textContent = '';
@@ -54,7 +52,7 @@ export async function initGoogleSignIn(root, request, onSuccess) {
   }
   form.addEventListener('submit', event => {
     event.preventDefault();
-    if (form.reportValidity()) submit({ phone: phone.required ? phone.value : undefined, password: password.required ? password.value : undefined });
+    if (form.reportValidity()) submit({ password: password.required ? password.value : undefined });
   });
   async function start() {
     if (busy) return;

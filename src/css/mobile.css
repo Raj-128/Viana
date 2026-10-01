@@ -1,0 +1,139 @@
+/* Shared phone/tablet layout. Desktop composition stays in the page stylesheets. */
+@media (max-width: 1100px) {
+  .site-header .desktop-nav { display: none; }
+  .site-header .header-inner { gap: 12px; }
+  .site-header .header-actions { margin-left: 0; flex-shrink: 0; }
+  .site-header .commerce-nav { margin-left: auto; margin-right: 0; }
+  .catalogue-filters .filters-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .catalogue-filters :is(.catalogue-search, .catalogue-type, .filter-group) { min-width: 0; border-right: 0; }
+  .catalogue-filters .catalogue-search { grid-column: 1 / -1; }
+}
+
+@media (max-width: 900px) {
+  html { scroll-padding-top: calc(var(--site-header-height, 90px) + 16px); }
+  body .container { width: 100%; padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); }
+  body :is(.page-hero, .project-hero, .catalogue-hero, .catalogue-hero-carousel) { padding-top: calc(var(--site-header-height, 90px) + 32px); }
+  body section { scroll-margin-top: calc(var(--site-header-height, 90px) + 16px); }
+  body :is(.section-head, .preview-bar-label, .footer-bottom .container) { flex-wrap: wrap; gap: 16px; }
+  body :is(.section-head, .project-meta, .contact-copy, .footer-grid, .auth-card) { overflow-wrap: anywhere; }
+  body :is(.project-grid, .contact-grid, .about-grid, .services-grid, .studio-estimator-grid) > * { min-width: 0; }
+  body :is(input, select, textarea) { max-width: 100%; font-size: 16px !important; }
+  body :is(button, summary, [role="button"]) { min-height: 44px; }
+  body :is(.cta-link, .header-account-chip, .auth-home-link) { min-height: 44px; }
+
+  /* The menu scrolls inside the visible viewport, including landscape phones. */
+  body .fullscreen-menu { width: min(420px, 100%); height: 100dvh; overflow-y: auto; overscroll-behavior: contain; }
+  body .menu-inner { height: auto; min-height: 100%; justify-content: flex-start; padding: 88px 24px max(24px, env(safe-area-inset-bottom)); gap: 28px; }
+  body .menu-links { gap: 12px; }
+  body .menu-links a { display: flex; align-items: center; min-height: 44px; font-size: clamp(1.5rem, 6vw, 2rem); }
+  body .menu-close { top: max(16px, env(safe-area-inset-top)); right: 16px; min-width: 72px; }
+
+  body .showcase-item { width: min(300px, calc(100vw - 48px)); height: auto; aspect-ratio: 3 / 4; }
+  body .showcase-scroll-wrapper { scroll-snap-type: x proximity; }
+  body .showcase-item { scroll-snap-align: center; }
+  body .catalogue-actions { flex-wrap: wrap; gap: 8px; }
+  body .catalogue-card-copy h3 { line-height: 1.4; overflow-wrap: anywhere; }
+  body .hero-carousel-shell { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  body .hero-carousel-copy h1 { font-size: clamp(36px, 9vw, 56px); line-height: 1.05; letter-spacing: -.04em; overflow-wrap: anywhere; }
+  body .hero-carousel-stage, body .hero-carousel-track { min-height: 0; }
+  body .hero-carousel-track { aspect-ratio: 4 / 3; }
+  body .hero-slide .hero-slide-caption { left: 14px; right: 14px; bottom: 14px; flex-wrap: wrap; }
+  body .hero-slide-caption strong { overflow-wrap: anywhere; }
+  body .project-hero-shell { padding: 12px; border-radius: 16px; }
+  body .shop-sort { white-space: normal; justify-content: space-between; }
+  body .shop-sort select { max-width: 100%; min-width: 0; }
+  body .shop-chips button { max-width: 100%; white-space: normal; }
+  body .shop-facet label { min-height: 44px; }
+
+  body .quote-stepper { grid-template-columns: 44px minmax(0, 1fr) 44px; }
+  body .quote-stepper input { min-width: 0; padding-inline: 4px; }
+  body :is(.quote-card, .estimator-preview) { min-width: 0; }
+  body .contact-info-item { align-items: flex-start; padding: 16px; }
+  body .contact-info-item > div:last-child { min-width: 0; }
+  body .contact-info-value { overflow-wrap: anywhere; }
+  body .contact-info-icon { flex-shrink: 0; }
+  body .whatsapp-btn { max-width: 100%; white-space: normal; text-align: center; padding-inline: 20px; }
+
+  /* Keep the form first, with the optional studio-light controls below it. */
+  body.auth-page .auth-shell { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-top: 16px; min-height: 0; }
+  body.auth-page .auth-panel-stack { order: -1; min-width: 0; }
+  body.auth-page .auth-topbar { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; padding-block: 16px; }
+  body.auth-page .auth-brand { font-size: 14px; letter-spacing: .08em; gap: 8px; }
+  body.auth-page .auth-brand-mark { width: 32px; height: 32px; }
+  body.auth-page .auth-home-link { padding: 10px 12px; font-size: 11px; letter-spacing: .05em; }
+  body.auth-page .auth-card { padding: 24px 16px; border-radius: 20px; }
+  body.auth-page .auth-copy h1 { font-size: clamp(1.8rem, 7vw, 2.5rem); line-height: 1.15; max-width: 100%; }
+  body.auth-page .lamp-scene { min-height: 220px; overflow: hidden; }
+  body.auth-page .lamp-head::after { max-width: calc(100vw - 40px); }
+  body.auth-page .auth-view-stage, body.auth-page .auth-panel-stage { height: auto !important; }
+  body.auth-page .toggle-btn { min-width: 0; padding-inline: 8px; letter-spacing: .08em; }
+  body.auth-page :is(.auth-status, [data-google-status], .account-copy) { overflow-wrap: anywhere; }
+
+  body .commerce-dialog { padding: max(20px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)); }
+  body .commerce-heading { align-items: flex-start; gap: 12px; }
+  body .commerce-heading h2 { font-size: clamp(24px, 6vw, 30px); line-height: 1.2; overflow-wrap: anywhere; }
+  body .commerce-heading > button { flex: 0 0 44px; }
+  body .commerce-tabs { gap: 8px; flex-wrap: wrap; }
+  body .commerce-item { grid-template-columns: 72px minmax(0, 1fr); }
+  body .commerce-item h3, body .commerce-print-request { overflow-wrap: anywhere; }
+  body .commerce-print-request { padding: 16px; }
+  body .commerce-quantity button { width: 44px; height: 44px; }
+  body .wallpaper-viewer { width: calc(100vw - 24px); max-height: calc(100dvh - 24px); padding: 14px; overflow-y: auto; }
+  body .wallpaper-viewer-heading { align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  body .wallpaper-viewer-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  body.approval-page .approval-topbar { flex-wrap: wrap; padding: 16px; gap: 12px; }
+  body.approval-page .approval-stats { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  body.approval-page .approval-stats > div { padding: 18px; }
+  body.approval-page .approval-stats strong { font-size: 30px; margin-block: 8px; }
+  body.approval-page .approval-card { padding: 18px; }
+  body.approval-page .approval-row-info { min-width: 0; flex-basis: 160px; }
+  body.approval-page .approval-row-actions { width: 100%; }
+  body.approval-page .approval-row-actions button { flex: 1 1 120px; }
+  body.approval-page .approval-search { max-width: none; flex-basis: 100%; }
+}
+
+@media (max-width: 600px) {
+  /* Two deliberate rows replace unpredictable header wrapping at narrow widths. */
+  .site-header { padding: max(8px, env(safe-area-inset-top)) 0 4px; }
+  .site-header .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; }
+  .site-header .logo { grid-column: 1; grid-row: 1; min-width: 0; }
+  .site-header .logo a { font-size: 12px; letter-spacing: .06em; gap: 6px; line-height: 1.3; }
+  .site-header .logo-img { width: 28px; height: 28px; flex-shrink: 0; }
+  .site-header .header-actions { grid-column: 2; grid-row: 1; gap: 6px; }
+  .site-header .menu-toggle { width: 44px; height: 44px; flex-shrink: 0; }
+  .site-header .header-account-chip { max-width: 82px; min-width: 54px; padding-inline: 10px; letter-spacing: .06em; }
+  .site-header .commerce-nav { grid-column: 1 / -1; grid-row: 2; width: 100%; margin: 0; gap: 16px; border-top: 1px solid var(--line); }
+  .site-header .commerce-nav button { flex: 1; justify-content: center; padding: 4px 8px; gap: 8px; }
+  .site-header .commerce-nav button::after { font-size: 12px; }
+  .site-header [data-open-commerce="downloads"]::after { content: "Downloads"; }
+  .site-header [data-open-commerce="cart"]::after { content: "Cart"; }
+
+  body .home-hero.image-stream-hero[data-image-stream-hero], body.mode-3d .home-hero.image-stream-hero[data-image-stream-hero] {
+    margin-top: var(--site-header-height, 106px);
+    height: clamp(620px, calc(100svh - var(--site-header-height, 106px)), 740px);
+    min-height: 620px;
+  }
+  body .hero-mode-toggle { padding: 20px 16px 0; }
+  body .image-stream-copy { padding: 20px 16px 0; }
+  body .image-stream-copy .hero-eyebrow { font-size: 10px; letter-spacing: .17em; margin-bottom: 12px; }
+  body .hero.image-stream-hero h1 { font-size: clamp(32px, 8.5vw, 48px); line-height: 1.12; }
+  body .image-stream-footer { bottom: 24px; left: 16px; right: 16px; gap: 12px; }
+  body .image-stream-footer p { font-size: 13px; }
+  body .work-pill-toggle .pill-btn { min-width: 0; padding-inline: 14px; }
+  body .section-title, body .page-title { font-size: clamp(28px, 8vw, 40px); line-height: 1.15; }
+  body .footer-grid { gap: 28px; }
+  body .footer-grid a { display: inline-block; padding-block: 8px; overflow-wrap: anywhere; }
+  body .catalogue-filters .filters-bar { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 420px) {
+  body .catalogue-shop .work-grid, body .catalogue-list .work-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  body .catalogue-card-copy h3 { font-size: 18px; }
+  body .quote-card { padding: 20px 16px; }
+  body .preview-overlay { position: relative; inset: auto; margin: 16px; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  body .catalogue-plus { opacity: 1; transform: none; }
+}
