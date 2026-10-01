@@ -663,7 +663,7 @@
 .auth-page[data-auth-page] .card-head p:last-child { line-height: 1.65; font-size: 15px; }
 .auth-page[data-auth-page] .auth-tabs { display: grid; }
 .google-sign-in { margin-top: 24px; margin-bottom: 20px; }
-.google-sign-in [data-google-button] { min-height: 40px; width: 100%; display: flex; justify-content: center; }
+.google-sign-in [data-google-button] { min-height: 40px; width: 90%; max-width: 320px; margin-inline: auto; display: flex; justify-content: center; }
 .google-sign-in [data-google-status] { margin: 10px 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
 .google-sign-in [data-google-status]:empty { display: none; }
 .google-sign-in [hidden] { display: none !important; }
