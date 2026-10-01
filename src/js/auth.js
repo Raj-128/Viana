@@ -850,7 +850,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Start Google's SDK and challenge together, without waiting for a session request.
     initGoogleSignIn(clientRoot, authRequest, user => {
       serverSession = user;
-      window.location.assign(getRedirectTarget() || new URL('work.html', window.location.href).href);
+      // Follow the page the customer was sent here from. Without one, re-render as
+      // the signed-in account panel like the email form, rather than moving them
+      // to a page they never asked for.
+      const target = getRedirectTarget();
+      if (target) window.location.assign(target);
+      else window.location.reload();
     });
   }
   await authReady;
