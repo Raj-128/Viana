@@ -76,6 +76,12 @@ Studio Viana operates online only, so Google Business Profile / Google Maps regi
 
 Reference: [Google's AI search guidance](https://developers.google.com/search/docs/appearance/ai-features) and [GitHub Pages HTTPS settings](https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https).
 
+### Brand search follow-up (2026-10-09)
+
+The owner confirmed Search Console ownership with the homepage HTML tag and showed a successful live URL test. Actual Google indexing, sitemap processing success, and search impressions still need confirmation in Search Console. The four public pages, robots.txt, and sitemap returned HTTP 200 in the live audit; the public pages have self-referencing canonical URLs and allow indexing.
+
+Local brand improvements put Studio Viana first in the homepage title, add `og:site_name`, and distinguish the studio's Instagram identity from the founder's portfolio profiles in JSON-LD. After publishing, inspect the homepage's **Google Index** status (not only Live Test) and Google's selected canonical. Check sitemap status, then inspect About, Services, and Contact. In Performance, track queries containing `studio viana` and `viana` and compare impressions/clicks over time. Keep existing public profile names and website links consistent. Ranking for the broad term `Viana` and an automatically generated knowledge panel cannot be guaranteed by code or schema. Keep the Search Console verification tag permanently.
+
 ## Tech Stack
 - Vite (MPA)
 - HTML / CSS / JavaScript

@@ -22,33 +22,41 @@ function initTrustMarquee() {
   
   tracks.forEach(track => {
     let offset = 0;
-    let lastTime = performance.now();
+    let lastTime = 0;
+    let frame = 0;
+    let visible = false;
+    let halfWidth = track.scrollWidth / 2;
 
     const loop = (now) => {
-      const delta = now - lastTime;
+      frame = 0;
+      if (!visible || !shouldRunMotion() || !halfWidth) return;
+      const delta = lastTime ? Math.min(64, now - lastTime) : 0;
       lastTime = now;
       
-      if (!shouldRunMotion()) {
-        requestAnimationFrame(loop);
-        return;
-      }
-
       offset -= speed * delta;
       
-      // Calculate 50% width since content is exactly duplicated
-      // We need it to be exactly 50% of the flex width. Flex child sizing handles it.
-      // Easiest seamless scroll: calculate bounding rect of half the track.
-      const halfWidth = track.scrollWidth / 2;
+      // Width is cached by ResizeObserver; avoid layout reads during animation.
       
       if (Math.abs(offset) >= halfWidth) {
         offset += halfWidth; // seamless loop
       }
       
       track.style.transform = `translate3d(${offset}px, 0, 0)`;
-      requestAnimationFrame(loop);
+      frame = requestAnimationFrame(loop);
     };
     
-    requestAnimationFrame(loop);
+    const sync = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      lastTime = 0;
+      if (visible && shouldRunMotion() && halfWidth) frame = requestAnimationFrame(loop);
+    };
+    new ResizeObserver(() => { halfWidth = track.scrollWidth / 2; sync(); }).observe(track);
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }).observe(track);
+    document.addEventListener('visibilitychange', sync);
+    prefersReducedMotion.addEventListener('change', sync);
+    window.addEventListener('pagehide', () => { cancelAnimationFrame(frame); frame = 0; });
+    window.addEventListener('pageshow', sync);
   });
 }
 

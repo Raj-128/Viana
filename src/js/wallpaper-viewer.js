@@ -35,7 +35,7 @@ export function initWallpaperViewer() {
       </div>
     </footer>`;
   document.body.append(dialog);
-  let designs = [], index = 0, pointer = null, cursorHome;
+  let designs = [], index = 0, pointer = null;
   const show = (nextIndex) => {
     index = (nextIndex + designs.length) % designs.length;
     const project = designs[index];
@@ -66,13 +66,8 @@ export function initWallpaperViewer() {
     if (index < 0) return;
     show(index);
     dialog.showModal();
-    const cursor = document.querySelector(".cursor");
-    if (cursor) { cursorHome = document.createComment("Preview cursor home"); cursor.before(cursorHome); dialog.append(cursor); }
   });
   dialog.addEventListener("close", () => {
-    const cursor = dialog.querySelector(".cursor");
-    if (cursor && cursorHome) cursorHome.replaceWith(cursor);
-    cursorHome = null;
     pointer = null;
   });
   dialog.querySelector("[data-add-design]").addEventListener("click", () => addToCart(designs[index]));

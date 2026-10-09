@@ -6,89 +6,6 @@ function queryAll(scope, selector) {
   return [...scope.querySelectorAll(selector)];
 }
 
-// ── CURSOR (RAF-based, smooth) ──────────────────────────────
-export function initEnhancedCursor() {
-  const cursor = document.querySelector(".cursor");
-  const dot = document.querySelector(".cursor-dot");
-  const outline = document.querySelector(".cursor-outline");
-  const canUseCustomCursor = window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
-
-  if (!cursor || !dot || !outline || !canUseCustomCursor.matches) return;
-
-  let targetX = 0;
-  let targetY = 0;
-  let dotX = 0;
-  let dotY = 0;
-  let ringX = 0;
-  let ringY = 0;
-  let isReady = false;
-  let frameId = 0;
-  let lastFrameTime = 0;
-
-  const lerp = (current, target, amount) => current + (target - current) * amount;
-  const FRAME = 1000 / 60;
-  // The catch-up factors below are authored per 60fps frame. Rescale them by the
-  // time a frame actually took, so a page that drops frames does not leave the
-  // cursor dragging behind the pointer it replaced.
-  const catchUp = (amount, frames) => 1 - Math.pow(1 - amount, frames);
-
-  const setInteractiveState = (element) => {
-    const interactive = element?.closest?.("a, button, input, select, textarea, [role='button'], .work-card, .showcase-item, .showcase-scroll-wrapper");
-    cursor.classList.toggle("is-interactive", Boolean(interactive));
-  };
-
-  const render = (now = 0) => {
-    // A long stall resolves to a near-instant catch-up rather than a slow drift.
-    const elapsed = lastFrameTime ? Math.min(now - lastFrameTime, 100) : FRAME;
-    const frames = elapsed / FRAME;
-    lastFrameTime = now;
-
-    dotX = lerp(dotX, targetX, catchUp(0.18, frames));
-    dotY = lerp(dotY, targetY, catchUp(0.18, frames));
-    ringX = lerp(ringX, targetX, catchUp(0.12, frames));
-    ringY = lerp(ringY, targetY, catchUp(0.12, frames));
-
-    dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
-    outline.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
-    frameId = window.requestAnimationFrame(render);
-  };
-
-  document.documentElement.classList.add("has-custom-cursor");
-
-  document.addEventListener("pointermove", (event) => {
-    if (event.pointerType && event.pointerType !== "mouse") return;
-
-    targetX = event.clientX;
-    targetY = event.clientY;
-    cursor.classList.add("is-visible");
-    if (!isReady) {
-      dotX = ringX = targetX;
-      dotY = ringY = targetY;
-      isReady = true;
-      cursor.classList.add("is-visible");
-    }
-  }, { passive: true });
-
-  document.addEventListener("pointerover", (event) => setInteractiveState(event.target), { passive: true });
-  document.addEventListener("pointerout", (event) => {
-    if (!event.relatedTarget || !event.relatedTarget.closest?.("a, button, input, select, textarea, [role='button'], .work-card, .showcase-item, .showcase-scroll-wrapper")) {
-      cursor.classList.remove("is-interactive");
-    }
-  }, { passive: true });
-  document.addEventListener("pointerdown", () => cursor.classList.add("is-pressed"), { passive: true });
-  document.addEventListener("pointerup", () => cursor.classList.remove("is-pressed"), { passive: true });
-  document.addEventListener("pointercancel", () => cursor.classList.remove("is-pressed"), { passive: true });
-  document.addEventListener("pointerleave", () => cursor.classList.remove("is-visible"));
-  document.addEventListener("pointerenter", () => isReady && cursor.classList.add("is-visible"));
-  document.addEventListener("mouseleave", () => cursor.classList.remove("is-visible"));
-  document.addEventListener("mouseenter", () => isReady && cursor.classList.add("is-visible"));
-  window.addEventListener("blur", () => cursor.classList.remove("is-visible"));
-  window.addEventListener("focus", () => isReady && cursor.classList.add("is-visible"));
-
-  frameId = window.requestAnimationFrame(render);
-  window.addEventListener("pagehide", () => window.cancelAnimationFrame(frameId), { once: true });
-}
-
 // ── TILT: only on desktop, only on visible cards ────────────
 export function initTiltEffects(scope = document) {
   if (window.innerWidth < 768) return;
@@ -202,7 +119,6 @@ export function initTextReveal() {
 // ── MAIN EXPORT ─────────────────────────────────────────────
 export function initCreativeAnimations() {
   document.addEventListener("DOMContentLoaded", () => {
-    initEnhancedCursor();
     initMagneticButtons();
     initSmoothScroll();
     initScrollProgress();

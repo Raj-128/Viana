@@ -56,7 +56,6 @@ async function requestOriginalAccess() {
   finally { requestBusy = false; renderCommerce(); announce(notice); }
 }
 const downloading = new Set();
-let cursorHome;
 
 function save(action) {
   try { action(); return true; }
@@ -91,13 +90,6 @@ export function openCommerce(tab = "cart") {
   renderCommerce();
   if (!dialog.open) {
     dialog.showModal();
-    // A modal lives in the browser's top layer; ordinary page z-index cannot cover it.
-    const cursor = document.querySelector(".cursor");
-    if (cursor) {
-      cursorHome = document.createComment("Site cursor home");
-      cursor.before(cursorHome);
-      dialog.append(cursor);
-    }
   }
 }
 
@@ -253,11 +245,6 @@ export function initCommerce(options) {
   status.className = "commerce-toast";
   status.setAttribute("role", "status");
   document.body.append(dialog, status);
-  dialog.addEventListener("close", () => {
-    const cursor = dialog.querySelector(".cursor");
-    if (cursor && cursorHome) cursorHome.replaceWith(cursor);
-    cursorHome = null;
-  });
   window.addEventListener("focus", () => {
     if (dialog.open && activeTab === "downloads") refreshDownloadRequests();
   });

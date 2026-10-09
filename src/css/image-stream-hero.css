@@ -48,6 +48,7 @@ body.mode-3d .home-hero.image-stream-hero {
 }
 .image-stream-rail { position: absolute; inset: 0; pointer-events: none; }
 .image-stream-slot {
+  will-change: transform;
   position: absolute;
   pointer-events: none;
   left: 50%;
