@@ -1,4 +1,4 @@
-import { getPrintRequests, downloadPrintFile, printRequestSummary } from './print-requests.js';
+import { getPrintRequests, downloadPrintFile, confirmPrintFileReceipt, printRequestSummary } from './print-requests.js';
 import { getSession } from "./auth.js";
 import { projects } from "./projects.js";
 import { CART_KEY, DOWNLOADS_KEY, createCommerceStore } from "./commerce-store.js";
@@ -156,9 +156,11 @@ export function renderCommerce() {
     const project = projects.find(project => project.id === request.design_id);
     return '<article class="commerce-request commerce-print-request"><strong>' + escape(project?.title || request.design_id) + '</strong><p class="commerce-request-size">' +
       escape(printRequestSummary(request)) + '</p><small class="commerce-request-reference">Reference: ' + escape(request.id) + '</small><p class="commerce-request-status" data-status="' + escape(request.status) + '">' +
-      escape({pending:'Awaiting studio approval', approved:'Approved — ready to download', declined:'Request declined', revoked:'Download access revoked'}[request.status] || request.status) + '</p>' +
+      escape({pending:'Awaiting studio approval', approved:'Approved — ready to download', received:'Receipt confirmed', declined:'Request declined', revoked:'Download access revoked'}[request.status] || request.status) + '</p>' +
       '<div class="commerce-request-actions">' +
       (request.status === 'approved' ? '<button class="commerce-print-download" type="button" data-print-download="' + escape(request.id) + '" ' + (printDownloads.has(request.id) ? 'disabled' : '') + '>' + (printDownloads.has(request.id) ? 'Downloading…' : 'Download print-ready file') + '</button><p>Your approved file, made to the dimensions above.</p>' : '') +
+      ((request.status === 'approved' || (request.status === 'received' && request.file_ready)) ? '<button type="button" data-print-receipt="' + escape(request.id) + '" ' + (printDownloads.has(request.id) ? 'disabled' : '') + '>' + (request.status === 'received' ? 'Retry file removal' : 'I received the file') + '</button><p>Confirm only after saving and checking your file. This permanently deletes the uploaded copy and ends downloads for this order.</p>' : '') +
+      (request.status === 'received' && !request.file_ready ? '<p>Receipt confirmed. The uploaded print file was deleted. Your order record is retained.</p>' : '') +
       (project ? '<button class="commerce-preview-download" type="button" data-request-preview="' + escape(project.id) + '" ' + (downloading.has(project.id) ? 'disabled' : '') + '>' + (downloading.has(project.id) ? 'Preparing preview…' : 'Download free preview') + '</button><p>Low-resolution image with a Studio Viana watermark. For preview only.</p>' : '') + '</div></article>';
   }).join('') : '<p>Choose a wallpaper and your dimensions on its detail page to send a design request.</p>';
   choices.querySelector('a[href="login.html"]').hidden = Boolean(getSession());
@@ -266,6 +268,21 @@ export function initCommerce(options) {
     if (button.hasAttribute('data-retry-requests')) return refreshDownloadRequests();
     if (button.dataset.requestPreview) {
       return downloadDesign(projects.find(project => project.id === button.dataset.requestPreview), 'preview');
+    }
+    if (button.dataset.printReceipt) {
+      const request = printRequests.find(request => request.id === button.dataset.printReceipt);
+      if (!request || printDownloads.has(request.id)) return;
+      if (!window.confirm('Have you saved and checked your print file? Confirming permanently deletes the studio uploaded copy. You will not be able to download it again for this order.')) return;
+      printDownloads.add(request.id); renderCommerce();
+      try {
+        const updated = await confirmPrintFileReceipt(request);
+        printRequests = printRequests.map(item => item.id === updated.id ? updated : item);
+        notice = 'Receipt confirmed. The uploaded file has been deleted.';
+      } catch (error) {
+        notice = error.message;
+        try { printRequests = await getPrintRequests(); } catch { /* Keep the receipt error visible for retry. */ }
+      } finally { printDownloads.delete(request.id); renderCommerce(); announce(notice); }
+      return;
     }
     if (button.dataset.printDownload) {
       const request = printRequests.find(request => request.id === button.dataset.printDownload);

@@ -62,6 +62,8 @@ The 3D side is visually darker and more cinematic, so it feels like a separate s
 
 ## Search visibility and image delivery
 
+Customer print-file receipt: approved size-specific orders show **I received the file** in Downloads. Customers must save and check their download, then explicitly confirm permanent removal. The backend verifies ownership, approval and the file version, records receipt, removes only that order's uploaded file, and disables further downloads. Order dimensions, file size/type and receipt time remain in the database. A failed deletion keeps its reference and offers a retry; downloads never delete files automatically. Shared legacy originals and previews are unaffected. This removes the active uploaded copy, not external backups. The current print-file limit remains 250 MB; persistent storage is still needed until receipt, and 10 GB/resumable uploads are not implemented.
+
 The canonical site is `https://studioviana.work.gd/`. Metadata, JSON-LD, `public/robots.txt`, and the sitemap use this address. The homepage includes visible questions and answers, founder details, and links to existing professional profiles. Structured data describes existing information; it does not promise search rankings or AI citations.
 
 Home, About, Services, and Contact are public and indexable and appear in the sitemap. The design catalogue, project pages, and account/admin pages stay excluded from indexing; design access and downloads retain authentication. Do not add protected or `noindex` pages to the sitemap.

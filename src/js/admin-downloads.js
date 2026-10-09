@@ -75,7 +75,12 @@ function renderPrintRequests() {
     const decide = action => run(() => api('/api/admin/print-requests/' + request.id + '/decision', {
       action, confirmed: action === 'approve', fileVersion: request.file_version
     }), action === 'approve' ? 'Approved. This customer can download the print file for this request.' : action === 'decline' ? 'Request declined.' : 'Download access revoked.');
-    if (request.file_ready) {
+    if (request.status === 'received') {
+      const receipt = document.createElement('p');
+      receipt.textContent = request.file_ready ? 'Customer confirmed receipt. File removal needs a retry from their Downloads page.' : 'Customer confirmed receipt. Uploaded file deleted; order record retained.';
+      actions.append(receipt);
+    }
+    if (request.file_ready && request.status !== 'received') {
       const fileInfo = document.createElement('p');
       fileInfo.textContent = 'Uploaded ' + request.mime + ' - ' + (request.file_bytes / 1024 / 1024).toFixed(1) + ' MB';
       actions.append(fileInfo, button('Download file to check', async () => {

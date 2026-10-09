@@ -1,6 +1,6 @@
 import { randomUUID, createHash } from 'node:crypto';
 import { open, unlink, realpath, stat } from 'node:fs/promises';
-import { createReadStream } from 'node:fs';
+import { createReadStream, unlinkSync } from 'node:fs';
 import { resolve, relative, isAbsolute } from 'node:path';
 
 const papers = new Set(['standard', 'canvas', 'feather', 'linen', 'earthy']);
@@ -24,6 +24,9 @@ export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json
     fingerprint TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending',
     file TEXT, mime TEXT, file_bytes INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
     CREATE INDEX IF NOT EXISTS print_requests_customer ON print_requests(user_id, created_at);`);
+  if (!db.prepare('PRAGMA table_info(print_requests)').all().some(column => column.name === 'received_at')) {
+    db.exec('ALTER TABLE print_requests ADD COLUMN received_at INTEGER');
+  }
   const get = id => db.prepare('SELECT * FROM print_requests WHERE id=?').get(id);
   return async (req, res, path) => {
     if (!/^\/api\/(?:admin\/)?print-requests(?:\/|$)/.test(path)) return false;
@@ -58,10 +61,30 @@ export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json
       json(res, 200, { requests: db.prepare('SELECT r.*,u.name,u.email FROM print_requests r JOIN users u ON u.id=r.user_id ORDER BY r.created_at DESC').all().map(publicRequest) });
       return true;
     }
-    const match = path.match(/^\/api\/(admin\/)?print-requests\/([a-f0-9-]{36})\/(file|decision|download)$/);
+    const match = path.match(/^\/api\/(admin\/)?print-requests\/([a-f0-9-]{36})\/(file|decision|download|receipt)$/);
     if (!match) throw fail(404, 'Request not found.');
     const request = get(match[2]);
     if (!request || (!admin && user.role !== 'admin' && request.user_id !== user.id)) throw fail(404, 'Request not found.');
+    if (!admin && match[3] === 'receipt' && req.method === 'POST') {
+      if (request.user_id !== user.id) throw fail(403, 'Only the customer who ordered this file can confirm receipt.');
+      const { confirmed, fileVersion } = await readBody(req);
+      if (confirmed !== true) throw fail(400, 'Confirm you saved and checked the file before deleting the uploaded copy.');
+      const current = get(request.id);
+      if (!['approved', 'received'].includes(current.status)) throw fail(409, 'Only an approved file can be confirmed as received.');
+      if (current.file && fileVersion !== version(current.file)) throw fail(409, 'The file changed. Refresh and check your download before confirming.');
+      // Persist consent before deleting. A failed deletion keeps the file reference
+      // so the customer can retry; all downloads are disabled once receipt is recorded.
+      if (current.status === 'approved') db.prepare("UPDATE print_requests SET status='received',received_at=?,updated_at=? WHERE id=?")
+        .run(Date.now(), Date.now(), current.id);
+      if (current.file) {
+        if (!/^[a-f0-9-]{36}\.(pdf|tif|jpg|png)$/.test(current.file)) throw fail(409, 'Invalid stored file. Contact the studio.');
+        try { unlinkSync(resolve(filesRoot, current.file)); }
+        catch (error) { if (error.code !== 'ENOENT') throw fail(503, 'Receipt recorded, but file deletion failed. Please retry the removal.'); }
+        db.prepare('UPDATE print_requests SET file=NULL,updated_at=? WHERE id=?').run(Date.now(), current.id);
+      }
+      json(res, 200, { request: publicRequest(get(current.id)) });
+      return true;
+    }
     if (admin && match[3] === 'file' && req.method === 'POST') {
       if (request.status !== 'pending') throw fail(409, 'Only pending requests can receive a file.');
       limit(`print-upload:${user.id}`, 30);
@@ -107,7 +130,7 @@ export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json
       return true;
     }
     if (match[3] === 'download' && req.method === 'GET') {
-      if (!request.file || (user.role !== 'admin' && request.status !== 'approved')) throw fail(403, 'Your print file is not approved for download yet.');
+      if (!request.file || request.status === 'received' || (user.role !== 'admin' && request.status !== 'approved')) throw fail(403, 'Your print file is not available for download.');
       limit(`print-download:${user.id}`, 60);
       let file;
       try { file = await realpath(resolve(filesRoot, request.file)); } catch { throw fail(404, 'The print file is unavailable. Contact the studio.'); }

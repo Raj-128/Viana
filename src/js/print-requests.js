@@ -35,3 +35,13 @@ export async function downloadPrintFile(request) {
   document.body.append(link); link.click(); link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
+
+export async function confirmPrintFileReceipt(request) {
+  const response = await fetchApi(`api/print-requests/${encodeURIComponent(request.id)}/receipt`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ confirmed: true, fileVersion: request.file_version }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Could not confirm receipt. Please try again.');
+  return data.request;
+}
