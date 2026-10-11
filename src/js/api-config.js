@@ -1,4 +1,11 @@
 // Configuration for backend API connectivity (works with local dev & remote cloud hosting like Render/Vercel)
+import { createApiResponseCache } from './api-response-cache.js';
+const responseCache = createApiResponseCache();
+export const clearApiCache = () => responseCache.clear();
+if (typeof window !== 'undefined') window.addEventListener?.('storage', event => {
+  if (event.key === 'viana:api-cache:revision') { responseCache.clear(false); return; }
+  if (!event.key || ['viana_token', 'viana-plan-orders-updated'].includes(event.key)) clearApiCache();
+});
 
 const DEFAULT_REMOTE_API = "https://viana-fpph.onrender.com"; // Live Render backend URL
 
@@ -10,35 +17,10 @@ export function getApiBaseUrl() {
     return window.location.origin;
   }
   
-  // 1. Check window override if defined in HTML or script
-  if (window.VIANA_API_URL) {
-    return window.VIANA_API_URL.replace(/\/+$/, "");
-  }
-  
-  // 2. Check meta tag
-  if (typeof document !== "undefined") {
-    const metaApi = document.querySelector('meta[name="viana-api-url"]')?.getAttribute("content");
-    if (metaApi) {
-      return metaApi.replace(/\/+$/, "");
-    }
-  }
-  
-  // 3. Check localStorage override
-  try {
-    if (typeof localStorage !== "undefined") {
-      const saved = localStorage.getItem("viana_api_url");
-      if (saved) return saved.replace(/\/+$/, "");
-    }
-  } catch {
-    // Ignore storage restrictions
-  }
+  // Production credentials are sent only to this deployed backend. Browser
+  // storage and injected window/meta overrides must not redirect bearer tokens.
+  return DEFAULT_REMOTE_API;
 
-  // 4. Default remote URL if configured
-  if (DEFAULT_REMOTE_API) {
-    return DEFAULT_REMOTE_API.replace(/\/+$/, "");
-  }
-
-  return "";
 }
 
 export function buildApiUrl(path) {
@@ -59,6 +41,7 @@ export function getStoredToken() {
 }
 
 export function setStoredToken(token) {
+  if ((token || '') !== getStoredToken()) clearApiCache();
   try {
     if (token) {
       localStorage.setItem("viana_token", token);
@@ -89,5 +72,5 @@ export async function fetchApi(path, options = {}) {
     headers,
   };
 
-  return fetch(url, fetchOptions);
+  return responseCache.request(url, options, token, () => fetch(url, fetchOptions));
 }

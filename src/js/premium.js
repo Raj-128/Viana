@@ -1,173 +1,46 @@
-﻿/**
- * Studio Viana - Premium Interactions
- * Handles: stats counter, horizontal drag scroll, page transitions,
- * cursor text, WhatsApp contact form, parallax strip
- */
-
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-const supportsFinePointer = window.matchMedia("(pointer: fine)");
-
-function shouldRunMotion() {
-  return !prefersReducedMotion.matches && !document.hidden;
-}
-
-/* ===========================
-   SMOOTH JS MARQUEE
-=========================== */
-function initTrustMarquee() {
-  const tracks = document.querySelectorAll('.trust-bar-track');
-  if (!tracks.length || prefersReducedMotion.matches) return;
-
-  const speed = 0.025; // pixels per millisecond (smooth slow glide)
-  
-  tracks.forEach(track => {
-    let offset = 0;
-    let lastTime = 0;
-    let frame = 0;
-    let visible = false;
-    let halfWidth = track.scrollWidth / 2;
-
-    const loop = (now) => {
-      frame = 0;
-      if (!visible || !shouldRunMotion() || !halfWidth) return;
-      const delta = lastTime ? Math.min(64, now - lastTime) : 0;
-      lastTime = now;
-      
-      offset -= speed * delta;
-      
-      // Width is cached by ResizeObserver; avoid layout reads during animation.
-      
-      if (Math.abs(offset) >= halfWidth) {
-        offset += halfWidth; // seamless loop
-      }
-      
-      track.style.transform = `translate3d(${offset}px, 0, 0)`;
-      frame = requestAnimationFrame(loop);
-    };
-    
-    const sync = () => {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      lastTime = 0;
-      if (visible && shouldRunMotion() && halfWidth) frame = requestAnimationFrame(loop);
-    };
-    new ResizeObserver(() => { halfWidth = track.scrollWidth / 2; sync(); }).observe(track);
-    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }).observe(track);
-    document.addEventListener('visibilitychange', sync);
-    prefersReducedMotion.addEventListener('change', sync);
-    window.addEventListener('pagehide', () => { cancelAnimationFrame(frame); frame = 0; });
-    window.addEventListener('pageshow', sync);
-  });
-}
-
-/* ===========================
-   STATS COUNTER ANIMATION
-=========================== */
-function initCounters() {
-  const counters = document.querySelectorAll('.count-up');
-  if (!counters.length) return;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      const target = parseInt(el.dataset.target, 10);
-      const duration = 1400;
-      const startTime = performance.now();
-
-      const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-
-      const tick = (now) => {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        el.textContent = Math.round(easeOut(progress) * target);
-        if (progress < 1) requestAnimationFrame(tick);
-        else el.textContent = target;
-      };
-
-      requestAnimationFrame(tick);
-      observer.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-
-  counters.forEach(el => observer.observe(el));
-}
-
-
-/* ===========================
-   HORIZONTAL DRAG SCROLL
-=========================== */
+// Native touch scrolling and functional contact submission; decoration lives in CSS.
 function initDragScroll() {
-  const wrappers = document.querySelectorAll('.showcase-scroll-wrapper');
-  wrappers.forEach(wrapper => {
-    let isDragging = false;
-    let startX = 0;
-    let scrollLeft = 0;
-
-    wrapper.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.pageX - wrapper.offsetLeft;
-      scrollLeft = wrapper.scrollLeft;
+  document.querySelectorAll('.showcase-scroll-wrapper').forEach(wrapper => {
+    let down = false, moved = false, startX = 0, startScroll = 0;
+    wrapper.tabIndex = 0;
+    wrapper.setAttribute('role', 'region');
+    wrapper.setAttribute('aria-label', 'Collection. Swipe, drag, or use left and right arrow keys to explore.');
+    wrapper.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      down = true; moved = false;
+      startX = event.clientX; startScroll = wrapper.scrollLeft;
+    });
+    wrapper.addEventListener('dragstart', event => event.preventDefault());
+    window.addEventListener('mousemove', event => {
+      if (!down) return;
+      const distance = event.clientX - startX;
+      if (Math.abs(distance) > 5) moved = true;
+      if (!moved) return;
+      event.preventDefault();
       wrapper.style.userSelect = 'none';
+      wrapper.scrollLeft = startScroll - distance;
     });
-
-    window.addEventListener('mouseup', () => {
-      isDragging = false;
-      wrapper.style.userSelect = '';
+    const release = () => { down = false; wrapper.style.userSelect = ''; };
+    window.addEventListener('mouseup', release);
+    window.addEventListener('blur', release);
+    wrapper.addEventListener('click', event => {
+      if (!moved || event.detail === 0) return;
+      event.preventDefault(); event.stopPropagation(); moved = false;
+    }, true);
+    wrapper.addEventListener('keydown', event => {
+      if (event.target !== wrapper) return;
+      const step = Math.max(240, wrapper.clientWidth * .75);
+      if (event.key === 'ArrowRight') wrapper.scrollLeft += step;
+      else if (event.key === 'ArrowLeft') wrapper.scrollLeft -= step;
+      else if (event.key === 'Home') wrapper.scrollLeft = 0;
+      else if (event.key === 'End') wrapper.scrollLeft = wrapper.scrollWidth;
+      else return;
+      event.preventDefault();
     });
-
-    wrapper.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const x = e.pageX - wrapper.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      wrapper.scrollLeft = scrollLeft - walk;
-    });
-
-    // Touch devices use native scrolling and momentum; a second touch handler
-    // would move the strip again while the browser is already scrolling it.
+    // Touch and trackpad scrolling stay native, with no per-frame JavaScript.
   });
 }
 
-
-/* ===========================
-   PAGE TRANSITIONS
-=========================== */
-function initPageTransitions() {
-  const overlay = document.getElementById('page-overlay');
-  if (!overlay) return;
-  // Native navigation starts immediately and respects modified clicks and auth guards.
-  overlay.style.display = 'none';
-}
-
-
-/* ===========================
-   HERO IMAGE STRIP PARALLAX
-=========================== */
-function initHeroParallax() {
-  const strip = document.querySelector('.hero-image-strip');
-  if (!strip || prefersReducedMotion.matches) return;
-
-  let frame = 0;
-  const update = () => {
-    frame = 0;
-    if (!shouldRunMotion()) return;
-    const scrolled = window.scrollY;
-    strip.querySelectorAll('.strip-img img').forEach((img, i) => {
-      const speed = 0.025 + i * 0.012;
-      img.style.transform = `scale(1.08) translate3d(0, ${scrolled * speed}px, 0)`;
-    });
-  };
-
-  window.addEventListener('scroll', () => {
-    if (!frame) frame = requestAnimationFrame(update);
-  }, { passive: true });
-}
-
-
-/* ===========================
-   CONTACT FORM - WHATSAPP SUBMIT
-=========================== */
 function initContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
@@ -211,108 +84,9 @@ function initContactForm() {
   });
 }
 
-/* ===========================
-   AWARDS BADGE HOVER FX
-=========================== */
-function initAwardsBadges() {
-  if (!supportsFinePointer.matches || prefersReducedMotion.matches) return;
-  document.querySelectorAll('.award-badge').forEach(badge => {
-    badge.addEventListener('mousemove', (e) => {
-      const rect = badge.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 6;
-      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 6;
-      badge.style.transform = `translateY(-2px) rotateX(${-y}deg) rotateY(${x}deg)`;
-    });
-    badge.addEventListener('mouseleave', () => {
-      badge.style.transform = '';
-    });
-  });
-}
 
-
-/* ===========================
-   STAT BLOCKS MICRO HOVER
-=========================== */
-function initStatHovers() {
-  if (!supportsFinePointer.matches || prefersReducedMotion.matches) return;
-  document.querySelectorAll('.stat-block').forEach(block => {
-    block.addEventListener('mousemove', (e) => {
-      const rect = block.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      block.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(122,107,91,0.07), transparent 60%)`;
-    });
-    block.addEventListener('mouseleave', () => {
-      block.style.background = '';
-    });
-  });
-}
-
-
-/* ===========================
-   PRICING CARD HOVER GLOW
-=========================== */
-function initPricingGlow() {
-  if (!supportsFinePointer.matches || prefersReducedMotion.matches) return;
-  document.querySelectorAll('.pricing-card:not(.featured)').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(122,107,91,0.05), var(--bg) 70%)`;
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.background = '';
-    });
-  });
-}
-
-
-/* ===========================
-   TESTIMONIAL CARDS 3D TILT
-=========================== */
-function initTestimonialTilt() {
-  if (!supportsFinePointer.matches || prefersReducedMotion.matches) return;
-  document.querySelectorAll('.testimonial-card').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8;
-      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 8;
-      card.style.transform = `translateY(-6px) rotateX(${-y}deg) rotateY(${x}deg)`;
-      card.style.transition = 'transform 0.1s linear, box-shadow 0.35s ease, border-color 0.35s ease';
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-      card.style.transition = '';
-    });
-  });
-}
-
-
-/* ===========================
-   MEDIA PROTECTION HINTS
-=========================== */
-function initSecurity() {
-  document.querySelectorAll('img').forEach(img => {
-    img.draggable = false;
-  });
-}
-
-/* ===========================
-   INIT ALL
-=========================== */
 document.addEventListener('DOMContentLoaded', () => {
-  initTrustMarquee();
-  initCounters();
+  document.querySelectorAll('.count-up').forEach(el => { el.textContent = el.dataset.target; });
   initDragScroll();
-  initPageTransitions();
-  initHeroParallax();
   initContactForm();
-  initAwardsBadges();
-  initStatHovers();
-  initPricingGlow();
-  initTestimonialTilt();
-  initSecurity();
 });
-
-

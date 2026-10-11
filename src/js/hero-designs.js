@@ -1,4 +1,9 @@
 // Rotate through collections and skip duplicate artwork across both rails.
+export function selectRecentModels(projects, limit = 9) {
+  return projects.filter(project => project.workType === '3d' && project.sourceFiles?.length && Number.isFinite(Date.parse(project.addedAt)))
+    .sort((a, b) => Date.parse(b.addedAt) - Date.parse(a.addedAt) || a.title.localeCompare(b.title)).slice(0, limit);
+}
+
 export function selectHeroDesigns(projects, limit = 18) {
   const groups = new Map();
   for (const project of projects) {

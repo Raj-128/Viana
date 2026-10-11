@@ -10,6 +10,7 @@ test("approval button routes the owner to reviews and refreshes only the custome
   for (const role of ["admin", "user"]) {
     const requests = [];
     const context = {
+      document: { documentElement: { dataset: { studioMode: 'wallpaper' } } },
       getSession: () => ({ role }),
       getPrintRequests: async () => [],
       window: { location: { href: "work.html" } },

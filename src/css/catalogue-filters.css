@@ -2,7 +2,7 @@
 .catalogue-filter-panel > summary { font-size: 20px; font-weight: 600; padding: 0 0 22px; cursor: pointer; list-style: none; }
 .catalogue-filter-panel > summary span { float: right; font-weight: 400; }
 .catalogue-filter-panel[open] > summary span { transform: rotate(45deg); }
-.shop-facet { border-top: 1px solid var(--line); }
+.shop-facet { border-top: 1px solid var(--line); padding: 0; margin: 0; min-height: 0; }
 .shop-facet summary { display: flex; justify-content: space-between; padding: 17px 0; font-size: 13px; font-weight: 600; cursor: pointer; list-style: none; }
 .shop-facet summary::after { content: "+"; }
 .shop-facet[open] summary::after { content: "−"; }
@@ -11,6 +11,7 @@
 .shop-facet input { width: 16px; height: 16px; accent-color: var(--text); margin: 0; }
 .shop-facet small { margin-left: auto; color: var(--muted); }
 .shop-facet label:has(:disabled) { opacity: .45; cursor: default; }
+.shop-facet label[hidden] { display: none; }
 .shop-clear { background: transparent; color: var(--text); border: 0; border-bottom: 1px solid currentColor; padding: 12px 0 4px; margin-bottom: 16px; font-size: 12px; cursor: pointer; }
 .catalogue-results.catalogue-list { padding: 0; background: transparent; min-width: 0; }
 .shop-toolbar { display: flex; align-items: center; gap: 22px; justify-content: space-between; }
@@ -67,3 +68,17 @@ body.mode-3d .catalogue-filter-panel { border-radius: 4px; background: #101114; 
 .catalogue-load-more { display: block; margin: 32px auto; padding: 14px 24px; border: 1px solid var(--line); border-radius: 999px; color: var(--text); background: var(--surface); font: inherit; cursor: pointer; }
 .catalogue-load-more[hidden] { display: none; }
 .catalogue-load-more:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
+.format-catalogue #catalogue { scroll-margin-top: 110px; }
+.format-catalogue #catalogue-format-title { margin-bottom: 24px; font-size: clamp(24px, 3vw, 36px); }
+.format-catalogue #catalogue-facets { grid-template-columns: repeat(5, minmax(180px, 1fr)); gap: 20px; overflow-x: auto; padding-bottom: 12px; }
+.format-catalogue .shop-facet:first-child { grid-column: auto; }
+.format-catalogue .shop-facet fieldset { align-content: start; }
+.shop-facet .facet-name-search { box-sizing: border-box; width: 100%; height: auto; min-height: 38px; margin: 0 0 14px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 6px; color: var(--text); background: var(--surface); font: inherit; font-size: 12px; }
+.shop-facet .facet-name-search:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.shop-facet .facet-search-empty { margin: 12px 0; color: var(--muted); font-size: 12px; }
+.shop-facet label[hidden], .shop-facet .facet-search-empty[hidden] { display: none; }
+.shop-facet .facet-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 17px 0; margin: 0; border: 0; background: transparent; color: var(--text); font: inherit; font-size: 13px; font-weight: 600; text-align: left; cursor: pointer; }
+.shop-facet .facet-toggle::after { content: '+'; }
+.shop-facet .facet-toggle[aria-expanded="true"]::after { content: '−'; }
+.shop-facet .facet-toggle:focus-visible { outline: 2px solid var(--text); outline-offset: 5px; }
+.shop-facet fieldset[hidden] { display: none; }

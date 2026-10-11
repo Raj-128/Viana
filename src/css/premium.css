@@ -2276,42 +2276,7 @@ body.mode-3d .service-card {
    PAGE TRANSITION OVERLAY
 ========================= */
 
-.page-transition-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--ink-soft);
-  z-index: 99999;
-  transform: translateY(100%);
-  pointer-events: none;
-}
 
-.page-transition-overlay.entering {
-  animation: pageIn 0.45s cubic-bezier(0.76, 0, 0.24, 1) forwards;
-}
-
-.page-transition-overlay.leaving {
-  animation: pageOut 0.45s cubic-bezier(0.76, 0, 0.24, 1) forwards;
-}
-
-@keyframes pageIn {
-  0% {
-    transform: translateY(100%);
-  }
-
-  100% {
-    transform: translateY(0%);
-  }
-}
-
-@keyframes pageOut {
-  0% {
-    transform: translateY(0%);
-  }
-
-  100% {
-    transform: translateY(-100%);
-  }
-}
 
 /* =========================
    ASSET SECURITY (BEST EFFORT)

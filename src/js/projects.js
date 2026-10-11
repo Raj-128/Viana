@@ -1,3 +1,11 @@
+import wallpaperBranchDetail from '../generated/detail-previews/wallpaper-1.webp';
+import wallpaperFairyDetail from '../generated/detail-previews/wallpaper-2.webp';
+import wallpaperForestDetail from '../generated/detail-previews/wallpaper-3.webp';
+import wallpaperArchTreeDetail from '../generated/detail-previews/wallpaper-4.webp';
+import wallpaperJungleDetail from '../generated/detail-previews/wallpaper-5.webp';
+import wallpaperClassicGardenDetail from '../generated/detail-previews/wallpaper-6.webp';
+import bathroomAccessoriesPreviewDetail from '../generated/detail-previews/bathroom-accessories-1.webp';
+import aerialTexturePreviewDetail from '../generated/detail-previews/aerial-texture-12.webp';
 import thumbnailClassicGarden from '../generated/hero-previews/legacy-6.jpg';
 import thumbnailJungle from '../generated/hero-previews/legacy-5.jpg';
 import thumbnailArchTree from '../generated/hero-previews/legacy-4.jpg';
@@ -6,15 +14,14 @@ import thumbnailFairy from '../generated/hero-previews/legacy-2.jpg';
 import thumbnailBranch from '../generated/hero-previews/legacy-1.jpg';
 ﻿import wallpaperBranch from "../assets/images/wallpapers/previews/1.jpg";
 import wallpaperFairy from "../assets/images/wallpapers/previews/2.jpg";
-import localWallpapers from '../generated/wallpaper-catalogue.js';
+import localWallpapers from '../generated/wallpaper-featured.js';
+import localModels from '../generated/model-catalogue.js';
 import wallpaperForest from "../assets/images/wallpapers/previews/3.jpg";
 import wallpaperArchTree from "../assets/images/wallpapers/previews/4.jpg";
 import wallpaperJungle from "../assets/images/wallpapers/previews/5.jpg";
 import wallpaperClassicGarden from "../assets/images/wallpapers/previews/6.jpg";
-import lunarConsole from "../generated/site-media/three-d-lunar-console.webp";
-import petalLamp from "../generated/site-media/three-d-petal-lamp.webp";
-import pixelPlayroom from "../generated/site-media/three-d-playroom.webp";
-import canyonVoid from "../generated/site-media/three-d-canyon-void.webp";
+import bathroomAccessoriesPreview from "../generated/site-media/bathroom-accessories-1.webp";
+import aerialTexturePreview from "../generated/site-media/aerial-texture-12.webp";
 
 export const wallpaperShowcaseImages = [
   wallpaperBranch,
@@ -85,104 +92,108 @@ export const pricingThemes = [
 ];
 
 export const projects = [
+  ...localModels,
+  {
+    id: "aerial-texture-12", title: "Aerial Texture 12",
+    workType: "3d", collection: "interior", category: "materials", theme: "Archmaterials",
+    ownership: "curated", year: "", location: "",
+    mediumLabel: "Archmaterials / MAT / 3DS Max / FBX / OBJ",
+    cover: aerialTexturePreviewDetail, thumbnail: aerialTexturePreview, gallery: [aerialTexturePreviewDetail],
+    shopCategories: ["materials"],
+    sourceFiles: [{ name: "Aerial Texture 12.rar", formats: ["mat", "max", "fbx", "obj"], url: "/api/designs/aerial-texture-12/download" }],
+    summary: "Grey architectural surface texture. Download the complete RAR package with MAT material, JPG texture, 3DS Max 2014 scene, FBX, OBJ and MTL files.",
+  },
+  {
+    id: "bathroom-accessories-1", title: "Bathroom Accessories 1",
+    workType: "3d", collection: "interior", category: "bathroom", theme: "Bathroom Accessories",
+    ownership: "curated", year: "", location: "",
+    mediumLabel: "FBX / OBJ / 3DS Max",
+    cover: bathroomAccessoriesPreviewDetail, thumbnail: bathroomAccessoriesPreview, gallery: [bathroomAccessoriesPreviewDetail],
+    shopCategories: ["bathroom", "decor"],
+    sourceFiles: [{ name: "Bathroom Accessories 1.rar", formats: ["fbx", "obj", "max"], url: "/api/designs/bathroom-accessories-1/download" }],
+    summary: "Bathroom accessory set with towels, toiletries, decorative vessels and flowers. Download the complete RAR package containing FBX, OBJ, MTL, 3DS Max scenes and texture maps.",
+  },
   ...localWallpapers,
   {
     id: "floral-branch-wall", title: "Floral Branch Customized Wallpaper",
     year: "2025", workType: "wallpaper", theme: "floral", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    thumbnail: thumbnailBranch, cover: wallpaperBranch, gallery: [wallpaperBranch],
+    thumbnail: thumbnailBranch, cover: wallpaperBranchDetail, gallery: [wallpaperBranchDetail],
     summary: "Customized floral branch wallpaper installed for a residential entrance wall with soft neutral background and hand illustrated blossoms.",
   },
   {
     id: "fairy-garden-wall", title: "Fairy Garden Kids Room Wallpaper",
     year: "2025", workType: "wallpaper", theme: "child", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    thumbnail: thumbnailFairy, cover: wallpaperFairy, gallery: [wallpaperFairy],
+    thumbnail: thumbnailFairy, cover: wallpaperFairyDetail, gallery: [wallpaperFairyDetail],
     summary: "Custom kids room wallpaper featuring a fairy character and nature landscape designed to create a dreamy playful space.",
   },
   {
     id: "misty-forest-wall", title: "Misty Forest Wallpaper",
     year: "2025", workType: "wallpaper", theme: "nature", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    thumbnail: thumbnailForest, cover: wallpaperForest, gallery: [wallpaperForest],
+    thumbnail: thumbnailForest, cover: wallpaperForestDetail, gallery: [wallpaperForestDetail],
     summary: "Minimal forest themed wallpaper installed in a modern bedroom with soft neutral tones and depth illusion.",
   },
   {
     id: "arch-tree-mural", title: "Arch Frame Tree Wallpaper",
     year: "2025", workType: "wallpaper", theme: "minimal", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    thumbnail: thumbnailArchTree, cover: wallpaperArchTree, gallery: [wallpaperArchTree],
+    thumbnail: thumbnailArchTree, cover: wallpaperArchTreeDetail, gallery: [wallpaperArchTreeDetail],
     summary: "Decorative arch framed wallpaper mural creating a focal wall with a calm tree silhouette composition.",
   },
   {
     id: "jungle-classic-wall", title: "Classic Jungle Landscape Wallpaper",
     year: "2025", workType: "wallpaper", theme: "nature", ownership: "owned",
     mediumLabel: "Customized Wallpaper", location: "Surat",
-    thumbnail: thumbnailJungle, cover: wallpaperJungle, gallery: [wallpaperJungle],
+    thumbnail: thumbnailJungle, cover: wallpaperJungleDetail, gallery: [wallpaperJungleDetail],
     summary: "Large scale jungle landscape mural inspired by classic botanical illustration used for a feature wall.",
   },
   {
     id: "stone-bloom-signature", title: "Stone Bloom Signature",
     year: "2024", workType: "wallpaper", theme: "luxury", ownership: "curated",
     mediumLabel: "Wallpaper Collection", location: "Hyderabad",
-    thumbnail: thumbnailClassicGarden, cover: wallpaperClassicGarden, gallery: [wallpaperClassicGarden],
+    thumbnail: thumbnailClassicGarden, cover: wallpaperClassicGardenDetail, gallery: [wallpaperClassicGardenDetail],
     summary: "A high-end mural language built around stone tones, sculpted blooms, and calm drama.",
   },
   {
     id: "moon-garden-storywall", title: "Moon Garden Storywall",
     year: "2026", workType: "wallpaper", theme: "child", ownership: "owned",
     mediumLabel: "Wallpaper Collection", location: "Mumbai",
-    cover: wallpaperFairy, gallery: [wallpaperFairy],
+    thumbnail: thumbnailFairy, cover: wallpaperFairyDetail, gallery: [wallpaperFairyDetail],
     summary: "A calm illustrated mural for a child bedroom with layered clouds, birds, and pastel foliage.",
   },
   {
     id: "forest-hush-panorama", title: "Forest Hush Panorama",
     year: "2025", workType: "wallpaper", theme: "nature", ownership: "owned",
     mediumLabel: "Wallpaper Collection", location: "Bengaluru",
-    cover: wallpaperForest, gallery: [wallpaperForest],
+    thumbnail: thumbnailForest, cover: wallpaperForestDetail, gallery: [wallpaperForestDetail],
     summary: "A panoramic canopy scene tuned for large walls and soft natural light.",
   },
   {
     id: "rose-atrium-bloom", title: "Rose Atrium Bloom",
     year: "2024", workType: "wallpaper", theme: "floral", ownership: "curated",
     mediumLabel: "Wallpaper Collection", location: "Delhi",
-    cover: wallpaperBranch, gallery: [wallpaperBranch],
+    thumbnail: thumbnailBranch, cover: wallpaperBranchDetail, gallery: [wallpaperBranchDetail],
     summary: "Romantic floral layering with restrained pinks and a painterly heritage feel.",
   },
   {
     id: "prism-echo-composition", title: "Prism Echo Composition",
     year: "2025", workType: "wallpaper", theme: "abstract", ownership: "owned",
     mediumLabel: "Wallpaper Collection", location: "Pune",
-    cover: wallpaperJungle, gallery: [wallpaperJungle],
+    thumbnail: thumbnailJungle, cover: wallpaperJungleDetail, gallery: [wallpaperJungleDetail],
     summary: "Geometric rhythm and soft metallic contrast for brand-led interiors and feature walls.",
   },
-  {
-    id: "lunar-console-study", title: "Lunar Console Study",
-    year: "2026", workType: "3d", theme: "luxury", ownership: "owned",
-    mediumLabel: "3D Concept Object", location: "Chennai",
-    cover: petalLamp, gallery: [petalLamp],
-    summary: "A sculptural 3D furniture study balancing polished surfaces with soft architectural light.",
-  },
-  {
-    id: "petal-lamp-render", title: "Petal Lamp Render",
-    year: "2025", workType: "3d", theme: "floral", ownership: "curated",
-    mediumLabel: "3D Lighting Visual", location: "Jaipur",
-    cover: pixelPlayroom, gallery: [pixelPlayroom],
-    summary: "Floral geometry translated into a product-lighting concept with cinematic framing.",
-  },
-  {
-    id: "pixel-playroom-scene", title: "Pixel Playroom Scene",
-    year: "2024", workType: "3d", theme: "child", ownership: "owned",
-    mediumLabel: "3D Spatial Story", location: "Surat",
-    cover: canyonVoid, gallery: [canyonVoid],
-    summary: "A cheerful 3D room visualization for kid-centered retail and interactive brand campaigns.",
-  },
-  {
-    id: "canyon-void-frame", title: "Canyon Void Frame",
-    year: "2023", workType: "3d", theme: "abstract", ownership: "curated",
-    mediumLabel: "3D Motion Still", location: "Goa",
-    cover: lunarConsole, gallery: [lunarConsole],
-    summary: "Atmospheric abstract rendering with depth-led framing for campaign stills and motion posters.",
-  },
-];
+ ];
 
+
+let cataloguePending;
+export function loadWallpaperCatalogue() {
+  if (!cataloguePending) cataloguePending = import('../generated/wallpaper-catalogue.js').then(({ default: catalogue }) => {
+    const start = projects.findIndex(project => project.id === localWallpapers[0]?.id);
+    if (start >= 0) projects.splice(start, localWallpapers.length, ...catalogue);
+    else projects.push(...catalogue);
+    return projects;
+  }).catch(error => { cataloguePending = null; throw error; });
+  return cataloguePending;
+}

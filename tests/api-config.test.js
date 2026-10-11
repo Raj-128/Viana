@@ -2,11 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { createApiResponseCache } from '../src/js/api-response-cache.js';
 
-const source = readFileSync(new URL('../src/js/api-config.js', import.meta.url), 'utf8').replaceAll('export ', '');
+const source = readFileSync(new URL('../src/js/api-config.js', import.meta.url), 'utf8').replace(/^import .*;\r?\n/gm, '').replaceAll('export ', '');
 function client(href, stored = {}) {
   const requests = [];
-  const context = vm.createContext({ URL, window: { location: new URL(href) },
+  const context = vm.createContext({ URL, createApiResponseCache, window: { location: new URL(href) },
     document: { querySelector: () => null },
     localStorage: { getItem: key => stored[key] || null, setItem: (key, value) => stored[key] = value, removeItem: key => delete stored[key] },
     fetch: async (url, options) => { requests.push({ url, options }); return { ok: true }; },
@@ -46,4 +47,15 @@ test('approved original download resolves the API base exactly once', async () =
   vm.runInContext(downloadSource, context);
   await vm.runInContext("requestProtectedDownload('design-a')", context);
   assert.equal(url, 'https://viana-fpph.onrender.com/api/designs/design-a/download');
+});
+
+test('production ignores browser-controlled destinations before sending credentials', async () => {
+  const { context, requests } = client('https://studioviana.work.gd/login.html', {
+    viana_token: 'private-session', viana_api_url: 'https://untrusted.example',
+  });
+  context.window.VIANA_API_URL = 'https://another-untrusted.example';
+  context.document.querySelector = () => ({ getAttribute: () => 'https://third-untrusted.example' });
+  await vm.runInContext("fetchApi('/api/auth/session')", context);
+  assert.equal(new URL(requests[0].url).origin, 'https://viana-fpph.onrender.com');
+  assert.equal(requests[0].options.headers.Authorization, 'Bearer private-session');
 });

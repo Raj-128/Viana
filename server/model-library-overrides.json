@@ -1,0 +1,639 @@
+{
+  "artwork/DESIGN -1 IMAGE.jpg": {
+    "theme": "minimal",
+    "title": "Art Line Sculptural Wall Artwork",
+    "itemType": "wall art"
+  },
+  "artwork/DESIGN -2 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "artwork/DESIGN -3 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "artwork/DESIGN -4 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "artwork/DESIGN -5 IMAGE.jpg": {
+    "theme": "bohemian"
+  },
+  "artwork/DESIGN -6 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "artwork/DESIGN -7 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "BATHROOM DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "BATHROOM DESIGN/DESIGN -2  IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Art & Max Acrylic Bathtub"
+  },
+  "BED DESIGN/DESIGN-1.jpg": {
+    "theme": "modern",
+    "title": "Ivy Bed and Upholstered Headboard",
+    "itemType": "bed"
+  },
+  "BED DESIGN/DESIGN-2 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "BED DESIGN/DESIGN-3 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "bed",
+    "title": "Meridiani Stone 01 Bed"
+  },
+  "BED DESIGN/DESIGN-4 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "bed",
+    "title": "RH Alessa Shelter No. 2 Bed"
+  },
+  "BED DESIGN/DESIGN-5 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "BED DESIGN/DESIGN-6 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "CAR DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "CAR DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "CAR DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "CHAIR/DESIGN -1 IMAGE.jpg": {
+    "theme": "minimal",
+    "title": "Upholstered Accent Chair",
+    "itemType": "accent chair"
+  },
+  "CHAIR/DESIGN -2 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "CHAIR/DESIGN -3 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "CHAIR/DESIGN -4 IMAGE.jpg": {
+    "theme": "scandinavian"
+  },
+  "CHAIR/DESIGN -5 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "CHAIR/DESIGN -6 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "CHAIR/DESIGN -7 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "office chair",
+    "title": "Vitra ID Air Office Chair"
+  },
+  "CHAIR/DESIGN -8 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "dining chair"
+  },
+  "CHAIR/DESIGN -9 IMAGE.jpg": {
+    "theme": "scandinavian",
+    "itemType": "dining chair"
+  },
+  "CHAIR/DESIGN -10 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "dining chair",
+    "title": "Overgaard & Dyrman Circle Dining Chair"
+  },
+  "CHAIR/DESIGN -11 IMAGE.jpg": {
+    "theme": "minimal",
+    "itemType": "accent chair"
+  },
+  "CHAIR/DESIGN -12 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "CHAIR/DESIGN -13 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "armchair",
+    "title": "Ditre Italia Marabu Armchair"
+  },
+  "CHAIR/DESIGN -14 IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Mobboli PEACH Fabric Armchair With Headrest"
+  },
+  "CHAIR/DESIGN -15 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "dining chair",
+    "title": "Minotti Dining Chair"
+  },
+  "CLOCK DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "concole design/DESIGN -1 IMAGE.jpg": {
+    "theme": "minimal",
+    "title": "Doron Console Table",
+    "itemType": "console table"
+  },
+  "concole design/DESIGN -13 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "concole design/DESIGN -14 IMAGE.jpg": {
+    "theme": "scandinavian"
+  },
+  "concole design/DESIGN -15 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "concole design/DESIGN -16 IMAGE.jpg": {
+    "theme": "art deco",
+    "itemType": "dressing table set"
+  },
+  "concole design/DESIGN -17 IMAGE.jpg": {
+    "theme": "art deco",
+    "itemType": "console table",
+    "title": "Oasis Group Saint Germain Console Table"
+  },
+  "concole design/DESIGN -18 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "concole design/DESIGN -19 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "coffee table"
+  },
+  "concole design/DESIGN 2  IMAGE.jpg": {
+    "theme": "minimal",
+    "title": "Promontory Dining Table No. 1 in Cast Mineral",
+    "itemType": "dining table"
+  },
+  "concole design/DESIGN 3 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "concole design/DESIGN 4 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "concole design/DESIGN 5 IMAGE.jpg": {
+    "theme": "scandinavian"
+  },
+  "concole design/DESIGN 6 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "concole design/DESIGN 7 IMAGE.jpg": {
+    "theme": "scandinavian"
+  },
+  "concole design/DESIGN 8 IMAGE.jpg": {
+    "theme": "art deco",
+    "category": "furniture",
+    "itemType": "dining set",
+    "title": "Visionnaire Morgan and Bonnie Dining Set"
+  },
+  "concole design/DESIGN 9 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "concole design/DESIGN 10 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "concole design/DESIGN 11 IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Nate Berkus and Jeremiah Brent Coffee Table"
+  },
+  "concole design/DESIGN 12 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "CURTAIN DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "minimal",
+    "title": "Roman Curtains 06",
+    "itemType": "roman blind"
+  },
+  "CURTAIN DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "CURTAIN DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "CURTAIN DESIGN/DESIGN -4 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "CURTAIN DESIGN/DESIGN -5 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "CURTAIN DESIGN/DESIGN -6 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "DINNING TABLE/DESIGN -1 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "DINNING TABLE/DESIGN -2 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "dining set"
+  },
+  "DINNING TABLE/DESIGN -3 IMAGE.jpg": {
+    "theme": "scandinavian",
+    "itemType": "dining set"
+  },
+  "DINNING TABLE/DESIGN -4 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "dining set"
+  },
+  "DINNING TABLE/DESIGN -5 IMAGE.jpg": {
+    "theme": "art deco",
+    "itemType": "dining set"
+  },
+  "DOOR DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "DOOR DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "classic"
+  },
+  "DOOR DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "DOOR DESIGN/DESIGN -4 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "FAN DESIGNS/DESIGN -1 IMAGE.jpg": {
+    "theme": "classic"
+  },
+  "FLOORING DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "wood-effect floor tiles"
+  },
+  "FLOORING DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "FLOORING DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "FLOORING DESIGN/DESIGN -4 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "GRASS DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "LAMPS DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "classic"
+  },
+  "LAMPS DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "scandinavian"
+  },
+  "LAMPS DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "classic"
+  },
+  "LAMPS DESIGN/DESIGN -4 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "LIGHT DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Folia Tiered Chandelier",
+    "itemType": "chandelier"
+  },
+  "LIGHT DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Andtradition Montera JH42 Table Lamp",
+    "itemType": "table lamp"
+  },
+  "LIGHT DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "pendant light"
+  },
+  "LIGHT DESIGN/DESIGN -4 IMAGE.jpg": {
+    "theme": "bohemian"
+  },
+  "LIGHT DESIGN/DESIGN -5 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "pendant light",
+    "title": "Nexia Pendant Lights"
+  },
+  "LIGHT DESIGN/DESIGN -6 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "LIGHT DESIGN/DESIGN -7 IMAGE.jpg": {
+    "theme": "classic",
+    "itemType": "ceiling light"
+  },
+  "LIGHT DESIGN/DESIGN -8 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "LIGHT DESIGN/DESIGN -9 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "LIGHT DESIGN/DESIGN -10 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "LIGHT DESIGN/DESIGN -11 IMAGE.jpg": {
+    "theme": "art deco",
+    "title": "Georga Glass Pendant Lights",
+    "itemType": "pendant light"
+  },
+  "LIGHT DESIGN/DESIGN -12 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "LIGHT DESIGN/DESIGN -13 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "LIGHT DESIGN/DESIGN -14 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "LIGHT DESIGN/DESIGN -15 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "pendant light"
+  },
+  "LIGHT DESIGN/DESIGN -16 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "LIGHT DESIGN/DESIGN -17 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "LIGHT DESIGN/DESIGN -18 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "LIGHT DESIGN/DESIGN -19 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "LIGHT DESIGN/DESIGN -20 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "LIGHT DESIGN/DESIGN -21 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "LIGHT DESIGN/DESIGN -22 IMAGE.jpg": {
+    "theme": "urban",
+    "itemType": "wall spotlight"
+  },
+  "LIGHT DESIGN/DESIGN -23 IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Artemide Ipparco Table Lamp",
+    "itemType": "table lamp"
+  },
+  "LIGHT DESIGN/DESIGN -24 IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Flos Overlap Pendant Light",
+    "itemType": "pendant light"
+  },
+  "LIGHT DESIGN/DESIGN -25 IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Diskar Wall Light",
+    "itemType": "wall light"
+  },
+  "LIGHT DESIGN/DESIGN -26  IMAGE.jpg": {
+    "theme": "bohemian"
+  },
+  "LIGHT DESIGN/DESIGN -27 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "LIGHT DESIGN/DESIGN -28 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "LIGHT DESIGN/DESIGN -29 IMAGE.jpg": {
+    "theme": "modern",
+    "title": "Lampatron Cine Pendant Lights",
+    "itemType": "pendant light"
+  },
+  "LIGHT DESIGN/DESIGN -30 IMAGE.jpg": {
+    "theme": "urban",
+    "title": "Lampatron Maisy Track Lights",
+    "itemType": "track light"
+  },
+  "LIGHT DESIGN/DESIGN -31 IMAGE.jpg": {
+    "theme": "scandinavian"
+  },
+  "LIGHT DESIGN/DESIGN -32 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "LIGHT DESIGN/DESIGN -33 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "LIGHT DESIGN/DESIGN -34 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "LIGHT DESIGN/DESIGN -35 IMAGE.jpg": {
+    "theme": "art deco",
+    "itemType": "crystal chandelier"
+  },
+  "LIGHT DESIGN/DESIGN -36  IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "LIGHT DESIGN/DESIGN -37 IMAGE.jpg": {
+    "theme": "bohemian"
+  },
+  "LIGHT DESIGN/DESIGN -38 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "PLANTERS DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "natural",
+    "title": "Laroma Di Roma Indoor Plant Arrangement",
+    "itemType": "indoor plants"
+  },
+  "PLANTERS DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -4 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -5 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -6 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -7 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -8 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -9 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "PLANTERS DESIGN/DESIGN -10 IMAGE.jpg": {
+    "theme": "natural",
+    "itemType": "outdoor planter"
+  },
+  "PLANTERS DESIGN/DESIGN -11 IMAGE.jpg": {
+    "theme": "natural",
+    "itemType": "green wall"
+  },
+  "PLANTERS DESIGN/DESIGN -12 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -13 IMAGE.jpg": {
+    "theme": "natural",
+    "title": "Robertirattan Palm Planters",
+    "itemType": "palm planters"
+  },
+  "PLANTERS DESIGN/DESIGN -14 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -15 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -16 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "PLANTERS DESIGN/DESIGN -17 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "SCULPTURES DESIGNS/DESIGN -1 IMAGE.jpg": {
+    "theme": "modern",
+    "category": "lighting",
+    "itemType": "sculptural floor lamp"
+  },
+  "SOFA DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -4 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "SOFA DESIGN/DESIGN -5 IMAGE.jpg": {
+    "theme": "scandinavian"
+  },
+  "SOFA DESIGN/DESIGN -6 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "SOFA DESIGN/DESIGN -7 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -8 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -9 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -10 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -11 IMAGE.jpg": {
+    "theme": "modern",
+    "category": "furniture",
+    "itemType": "sofa",
+    "title": "Living Divani Ile Club Sofa"
+  },
+  "SOFA DESIGN/DESIGN -12 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "sectional sofa"
+  },
+  "SOFA DESIGN/DESIGN -13 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -14 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "SOFA DESIGN/DESIGN -15 IMAGE.jpg": {
+    "theme": "modern",
+    "collection": "exterior",
+    "category": "outdoor furniture",
+    "itemType": "outdoor sofa",
+    "title": "RODA Dandy Outdoor Sofa"
+  },
+  "SOFA DESIGN/DESIGN -16 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "SOFA DESIGN/DESIGN -17 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -18 IMAGE.jpg": {
+    "theme": "modern",
+    "category": "furniture",
+    "itemType": "sectional sofa",
+    "title": "B&B Italia Michel Effe Sofa"
+  },
+  "SOFA DESIGN/DESIGN -19 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "daybed"
+  },
+  "SOFA DESIGN/DESIGN -20 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "chaise longue"
+  },
+  "SOFA DESIGN/DESIGN -21 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "SOFA DESIGN/DESIGN -22 IMAGE.jpg": {
+    "theme": "modern",
+    "itemType": "chaise longue"
+  },
+  "TEXTURE DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "TEXTURE DESIGN/DESIGN -2 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "TEXTURE DESIGN/DESIGN -3 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "TEXTURE DESIGN/DESIGN -4 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "TEXTURE DESIGN/DESIGN -5 IMAGE.jpg": {
+    "theme": "natural",
+    "title": "Spiraea Betulifolia Autumn Plants",
+    "collection": "exterior",
+    "category": "garden",
+    "itemType": "outdoor plants"
+  },
+  "TEXTURE DESIGN/DESIGN -6 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "TEXTURE DESIGN/DESIGN -7 IMAGE.jpg": {
+    "theme": "modern",
+    "category": "interior materials",
+    "itemType": "tiles",
+    "title": "Caesar Tiles Set 26"
+  },
+  "TEXTURE DESIGN/DESIGN -8 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "TEXTURE DESIGN/DESIGN -9 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "TEXTURE DESIGN/DESIGN -10 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "TEXTURE DESIGN/DESIGN -11 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "TEXTURE DESIGN/DESIGN -12 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "TEXTURE DESIGN/DESIGN -13 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "TEXTURE DESIGN/DESIGN -14 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "TEXTURE DESIGN/DESIGN -15 IMAGE.jpg": {
+    "theme": "urban"
+  },
+  "TEXTURE DESIGN/DESIGN -16 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "TEXTURE DESIGN/DESIGN -17 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "TEXTURE DESIGN/DESIGN -18 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "TEXTURE DESIGN/DESIGN -19 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "TEXTURE DESIGN/DESIGN -20 IMAGE.jpg": {
+    "theme": "modern"
+  },
+  "TEXTURE DESIGN/DESIGN -21 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "TV CONSOLES DESIGN/DESIGN -1 IMAGE.jpg": {
+    "theme": "minimal"
+  },
+  "WALL PANNEL/DESIGN -1 IMAGE.jpg": {
+    "theme": "art deco"
+  },
+  "WALL PANNEL/DESIGN -2 IMAGE.jpg": {
+    "theme": "natural"
+  },
+  "WALL PANNEL/DESIGN -3 IMAGE.jpg": {
+    "theme": "natural"
+  }
+}

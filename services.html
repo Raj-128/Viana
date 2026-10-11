@@ -33,8 +33,6 @@
   <link rel="stylesheet" href="./src/css/base.css">
   <link rel="stylesheet" href="./src/css/components.css">
   <link rel="stylesheet" href="./src/css/layout.css">
-  <link rel="stylesheet" href="./src/css/creative-effects.css">
-  <link rel="stylesheet" href="./src/css/micro-interactions.css">
   <link rel="stylesheet" href="./src/css/premium.css">
   <link rel="stylesheet" href="./src/css/mobile.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,10 +127,10 @@
   ]
 }
   </script>
+  <link rel="stylesheet" href="./src/css/studio-system.css">
+  <script type="module" src="./src/js/motion-policy.js"></script>
 </head>
 <body>
-
-  <div class="page-transition-overlay" id="page-overlay"></div>
 
   <!-- Header -->
   <header class="site-header">
@@ -142,12 +140,17 @@
           <img src="./src/generated/site-media/flower.webp" alt="Studio Viana Logo" class="logo-img">
           STUDIO VIANA</a>
       </div>
-      <nav class="desktop-nav">
-        <a href="work.html">Work</a>
-        <a href="services.html">Services</a>
-        <a href="about.html">About</a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="work.html">Explore</a>
+        <a href="services.html" aria-current="page">Services</a>
+        <a href="about.html">Studio</a>
         <a href="contact.html">Contact</a>
       </nav>
+      <div class="commerce-nav">
+        <a class="unlimited-download-link" href="plans.html">Plans</a>
+        <button type="button" data-open-commerce="downloads" aria-label="Open downloads" title="Downloads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg><span data-commerce-count="downloads">0</span></button>
+        <button type="button" data-open-commerce="cart" aria-label="Open cart" title="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3-4 6m12-6 4 6M3 9h18l-2 11H5L3 9Z"/><path d="M9 13v3m6-3v3"/></svg><span data-commerce-count="cart">0</span></button>
+      </div>
       <div class="header-actions">
         <button class="menu-toggle" aria-label="Open Menu">
           <span></span><span></span><span></span>
@@ -162,12 +165,14 @@
     <div class="menu-inner">
       <div class="menu-left">
         <nav class="menu-links">
+          <a href="plans.html">Download plans</a>
           <a href="work.html">Projects</a>
           <a href="services.html">Services</a>
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
           <a href="login.html" data-auth-link>Login</a>
         </nav>
+
       </div>
       <div class="menu-right">
         <p><strong>Studio Viana</strong></p>
@@ -392,7 +397,13 @@
     <div class="footer-bottom">
       <div class="container">
         <p>&copy; 2026 Studio Viana. All rights reserved.</p>
-        <p>Crafted with clarity &amp; intent.</p>
+        <div class="creator-credit" aria-label="Website creator">
+          <span>Designed &amp; developed by <a href="https://raj-128.github.io/RajPatil/" target="_blank" rel="noopener noreferrer">Raj Patil</a></span>
+          <nav aria-label="Contact the website developer">
+            <a href="https://wa.me/917621014593?text=Hi%20Raj%2C%20I%20saw%20your%20work%20on%20Studio%20Viana.%20I%27d%20like%20to%20discuss%20a%20website%20project." target="_blank" rel="noopener noreferrer">Work with me &nearr;</a>
+            <a href="mailto:rajpatil052003@gmail.com?subject=Website%20project%20enquiry">Email</a>
+          </nav>
+        </div>
       </div>
     </div>
   </footer>

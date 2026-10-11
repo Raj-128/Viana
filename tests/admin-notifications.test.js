@@ -1,0 +1,20 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { DatabaseSync } from 'node:sqlite';
+import { createAccountRecords } from '../server/account-records.js';
+test('unread counts persist per owner and category; later requests survive acknowledgement', t => {
+  const db = new DatabaseSync(':memory:'); t.after(() => db.close());
+  db.exec(`CREATE TABLE users (id TEXT PRIMARY KEY); INSERT INTO users VALUES ('owner'),('other');
+    CREATE TABLE plan_orders (created_at INTEGER); CREATE TABLE print_requests (created_at INTEGER);
+    CREATE TABLE model_tiers (design_id TEXT); CREATE TABLE download_requests (design_id TEXT,status TEXT,updated_at INTEGER);`);
+  const api = createAccountRecords({db,sessionUser:r=>r.user,json:(r,s,b)=>{r.status=s;r.body=b;},fail:(status,message)=>Object.assign(new Error(message),{status})});
+  db.exec("INSERT INTO account_events(user_id,event,occurred_at) VALUES ('owner','registered',9),('owner','login',10),('owner','logout',11); INSERT INTO plan_orders VALUES (10),(20); INSERT INTO print_requests VALUES (12); INSERT INTO model_tiers VALUES ('model'); INSERT INTO download_requests VALUES ('wall','pending',13),('model','pending',14);");
+  const call=(method='GET',query='',id='owner',role='admin')=> {const res={};api.handler({method,url:'/api/admin/notifications'+query,user:{id,role}},res,'/api/admin/notifications');return res.body;};
+  assert.deepEqual(call().counts,{login:1,wallpaper:2,models:2});
+  call('POST','?category=models&through=10');
+  assert.deepEqual(call().counts,{login:1,wallpaper:2,models:1});
+  assert.equal(call('GET','','other').counts.models,2);
+  call('POST','?category=models&through=5'); assert.equal(call().counts.models,1);
+  assert.throws(()=>call('GET','','owner','user'),{status:403});
+  assert.throws(()=>call('POST','?category=invalid&through=10'),{status:400});
+});

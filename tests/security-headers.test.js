@@ -7,12 +7,12 @@ test('CSP blocks inline script while allowing existing fonts, animations, API an
   assert.equal(headers['X-Content-Type-Options'], 'nosniff');
   assert.equal(headers['X-Frame-Options'], 'DENY');
   const policy = headers['Content-Security-Policy'];
-  assert.match(policy, /script-src 'self' https:\/\/unpkg.com/);
+  assert.doesNotMatch(policy, /unpkg\.com/);
   assert.doesNotMatch(policy.match(/script-src[^;]+/)[0], /unsafe-inline|unsafe-eval/);
   assert.match(policy, /fonts.googleapis.com/); assert.match(policy, /fonts.gstatic.com/);
   assert.match(policy, /https:\/\/accounts.google.com\/gsi\/client/);
   assert.match(policy, /frame-src https:\/\/accounts.google.com\/gsi\//);
-  assert.match(policy, /connect-src 'self' https:/);
+  assert.match(policy, /connect-src 'self' https:\/\/viana-fpph.onrender.com https:\/\/accounts.google.com;/);
   assert.doesNotMatch(policy, / ws:/);
   assert.match(securityHeaders(true)['Content-Security-Policy'], / ws: wss:/);
   assert.match(policy, /frame-ancestors 'none'/);

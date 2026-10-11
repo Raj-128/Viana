@@ -1,0 +1,139 @@
+/* Editorial studio story and a task-focused owner workspace. */
+body.about-page .page-hero { padding: 148px 0 64px; }
+body.about-page .page-hero .work-pill-toggle { margin: 0 0 40px; }
+body.about-page .page-hero .section-kicker { margin-bottom: 22px; }
+body.about-page .page-title { max-width: 900px; font-size: clamp(48px, 7vw, 104px); line-height: 1.02; }
+body.about-page .page-lead { max-width: 620px; margin-top: 28px; line-height: 1.8; }
+body.about-page .about-content { padding-top: 28px; }
+body.about-page .about-grid { gap: clamp(32px, 6vw, 88px); grid-template-columns: .85fr 1.15fr; }
+body.about-page .about-portrait-frame { border-radius: 160px 160px 12px 12px; overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
+body.about-page .about-portrait-frame img { aspect-ratio: 4 / 5; object-fit: cover; width: 100%; }
+body.about-page .about-portrait-badge { background: var(--bg); color: var(--text); border: 1px solid var(--line); box-shadow: none; border-radius: 12px; }
+body.about-page .credentials-grid { gap: 0; border-top: 1px solid var(--line); }
+body.about-page .credential-item { padding: 22px 12px; background: transparent; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
+body.about-page .about-text > p { font-size: 16px; line-height: 1.9; color: var(--muted); }
+body.about-page .about-text > p:first-child { color: var(--text); font-size: clamp(21px, 2.3vw, 30px); line-height: 1.55; }
+body.about-page .principles { padding: 24px 0; border-block: 1px solid var(--line); }
+body.about-page .principles li { background: transparent; border-color: var(--line); color: var(--text); }
+body.about-page .about-timeline { border-color: var(--line); }
+body.about-page .timeline-item { padding-bottom: 28px; }
+body.about-page .about-invitation { background: var(--surface); border-block: 1px solid var(--line); padding: 72px 0; }
+body.about-page .about-invitation h2 { font: 400 clamp(32px, 4vw, 58px)/1.15 var(--font-heading); margin: 20px 0; max-width: 760px; }
+body.about-page .about-invitation p { color: var(--muted); }
+body.about-page .about-invitation .cta-link { margin: 24px 28px 0 0; min-height: 44px; display: inline-flex; align-items: center; }
+body.about-page.mode-3d .page-hero .work-pill-toggle { grid-column: 1 / -1; grid-row: 1; }
+body.about-page.mode-3d .page-hero .section-kicker { grid-row: 2; }
+body.about-page.mode-3d .page-hero .page-title { grid-row: 3; }
+body.about-page.mode-3d .page-hero .page-lead { grid-row: 4; }
+body.about-page.mode-3d .mode-scene { grid-row: 2 / 5; border-radius: 12px; overflow: hidden; }
+
+body.approval-page .approval-shell { max-width: 1280px; padding-top: 48px; }
+body.approval-page .approval-topbar { padding: 18px max(24px, calc((100vw - 1232px) / 2)); }
+body.approval-page .approval-brand > span { font: 16px Georgia, serif; letter-spacing: .13em; color: var(--text); }
+body.approval-page .approval-brand small { font: 10px Arial, sans-serif; letter-spacing: .08em; margin-top: 6px; color: var(--muted); }
+body.approval-page .approval-heading h1 { font: 400 clamp(34px, 4.5vw, 56px)/1.1 Georgia, serif; margin-block: 14px; }
+body.approval-page .approval-heading .approval-intro { font-size: 14px; line-height: 1.7; letter-spacing: 0; max-width: 540px; color: var(--muted); }
+body.approval-page .approval-site-link { padding: 14px 20px; border: 1px solid var(--line); border-radius: 24px; white-space: nowrap; text-decoration: none; }
+body.approval-page #approval-status { margin-top: 24px; font-size: 13px; line-height: 1.6; background: transparent; border-radius: 10px; }
+body.approval-page .approval-tabs { padding: 6px; gap: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+body.approval-page .approval-tabs button { text-align: left; padding: 18px 22px; box-shadow: none; }
+body.approval-page .approval-tabs button[aria-selected="true"] { background: var(--text); color: var(--bg); }
+.admin-tab-description { display: block; margin-top: 6px; font-size: 11px; font-weight: 400; opacity: .8; }
+body.approval-page .approval-stats { gap: 16px; }
+body.approval-page .approval-stats > div { padding: 24px; border: 1px solid var(--line); background: transparent; }
+body.approval-page .approval-stats strong { font: 400 44px/1.2 Georgia, serif; margin-block: 12px; color: var(--text); }
+body.approval-page .admin-metric { --metric-color: #866022; display: grid; gap: 8px; text-align: left; padding: 24px; border: 1px solid var(--line); border-top: 3px solid var(--metric-color); border-radius: 14px; background: var(--surface); color: var(--text); cursor: pointer; font: inherit; min-width: 0; }
+body.approval-page .admin-metric[data-tone="approved"] { --metric-color: #446954; }
+body.approval-page .admin-metric[data-tone="files"] { --metric-color: #6f627b; }
+body.approval-page .admin-metric > span { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; }
+body.approval-page .admin-metric > span > span { color: var(--metric-color); font-size: 18px; }
+body.approval-page .admin-metric strong { color: var(--metric-color); font-variant-numeric: tabular-nums; }
+body.approval-page .admin-metric small { font-size: 12px; color: var(--muted); }
+body.approval-page .admin-metric[aria-pressed="true"] { border-color: var(--metric-color); box-shadow: inset 0 0 0 1px var(--metric-color); }
+body.approval-page .admin-metric:hover { background: var(--surface-2); }
+body.approval-page.mode-3d .admin-metric { --metric-color: #d8b774; }
+body.approval-page.mode-3d .admin-metric[data-tone="approved"] { --metric-color: #9cc1aa; }
+body.approval-page.mode-3d .admin-metric[data-tone="files"] { --metric-color: #c5b1d8; }
+.admin-filter-count { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding-inline: 5px; border-radius: 50%; background: var(--surface-2); font-size: 11px; font-variant-numeric: tabular-nums; }
+body.approval-page .approval-filters button { display: flex; align-items: center; gap: 8px; border-radius: 24px; }
+body.approval-page .approval-filters button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+body.approval-page .approval-filters button[aria-pressed="true"] .admin-filter-count { background: var(--bg); color: var(--text); }
+body.approval-page .admin-list-note { font-size: 12px; }
+html[data-motion="full"] body.approval-page :is(.admin-metric, .approval-tabs button, .approval-filters button) { transition: background-color .18s ease, border-color .18s ease; }
+body.approval-page .approval-card { padding: clamp(20px, 3vw, 36px); background: var(--bg); }
+body.approval-page .approval-card h2 { font: 400 clamp(23px, 2.5vw, 30px)/1.25 Georgia, serif; }
+body.approval-page .approval-card h3 { margin: 30px 0 16px; font-size: 14px; }
+body.approval-page .approval-row { gap: 20px; padding: 24px 0; }
+body.approval-page .approval-row > img { width: 72px; height: 88px; border-radius: 8px; }
+body.approval-page .approval-row small { line-height: 1.65; }
+body.approval-page .approval-card button { min-height: 44px; border-radius: 8px; }
+body.approval-page .approval-request-tools { padding: 20px 0; margin-top: 12px; border-block: 1px solid var(--line); }
+body.approval-page .approval-search { max-width: 360px; }
+.admin-workflow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; gap: 12px; padding: 0; margin: 24px 0; }
+.admin-workflow li { font-size: 12px; line-height: 1.6; padding: 16px; border-radius: 8px; background: var(--surface); }
+.admin-workflow span { display: block; color: var(--muted); font-size: 11px; margin-bottom: 8px; }
+body.approval-page .approval-print-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; background: var(--surface); border-radius: 12px; padding: 20px; min-width: 0; }
+body.approval-page .approval-print-actions > :is(label, p) { flex: 0 0 100%; min-width: 0; }
+body.approval-page .approval-print-actions > button { flex: 0 1 auto; width: auto; min-height: 44px; padding: 11px 20px; line-height: 1.4; }
+body.approval-page .approval-print-actions input[type="file"] { width: 100%; max-width: 640px; }
+body.approval-page .approval-card button.approval-danger { background: transparent; color: #97483c; border-color: #97483c66; }
+body.approval-page.mode-3d .approval-card button.approval-danger { color: #edafa3; border-color: #edafa366; }
+body.approval-page .admin-grant-plan { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 6px 20px; margin-bottom: 32px; }
+body.approval-page .admin-grant-plan summary { min-height: 44px; font-size: 14px; font-weight: 600; }
+body.approval-page .admin-grant-plan form { padding-bottom: 16px; }
+body.approval-page #account-search-form { grid-template-columns: minmax(0, 1fr) auto; align-items: end; padding: 20px; background: var(--surface); border-radius: 12px; }
+body.approval-page .admin-activity { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 12px; }
+body.approval-page .admin-account-scroll { max-height: 380px; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; margin-block: 20px; padding-right: 12px; }
+body.approval-page .admin-account-scroll .approval-row { min-height: 105px; }
+body.approval-page .admin-plan-order { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-top: 24px; background: var(--bg); }
+.admin-plan-order-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 24px; background: var(--surface); }
+.admin-plan-customer { min-width: 0; }
+body.approval-page .admin-plan-customer h3 { margin: 0 0 8px; font-size: 17px; }
+body.approval-page .admin-plan-customer p { margin: 0 0 8px; font-size: 13px; overflow-wrap: anywhere; }
+.admin-plan-customer small { display: block; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+.admin-plan-order-header .approval-badge { margin-top: 0; flex-shrink: 0; }
+.admin-plan-fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; }
+.admin-plan-fields > div { padding: 20px 24px; border-top: 1px solid var(--line); min-width: 0; }
+.admin-plan-fields dt { font-size: 11px; color: var(--muted); margin-bottom: 9px; }
+.admin-plan-fields dd { margin: 0; font-size: 13px; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.admin-plan-formats { padding: 4px 24px; border-top: 1px solid var(--line); }
+body.approval-page .admin-plan-formats summary { font-size: 12px; min-height: 44px; }
+.admin-format-limits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 8px 0 20px; }
+.admin-format-limits > div { display: flex; justify-content: space-between; gap: 10px; background: var(--surface); padding: 12px; border-radius: 6px; font-size: 12px; }
+.admin-format-limits dd { margin: 0; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+.admin-plan-actions:not(:empty) { padding: 18px 24px; border-top: 1px solid var(--line); }
+@media (max-width: 1000px) {
+  .admin-plan-fields, .admin-format-limits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .admin-plan-order-header { flex-wrap: wrap; padding: 18px; }
+  .admin-plan-fields > div { padding: 16px; }
+  .admin-format-limits { grid-template-columns: minmax(0, 1fr); }
+  .admin-plan-formats { padding-inline: 16px; }
+  .admin-plan-actions:not(:empty) { padding: 16px; }
+}
+@media (max-width: 900px) {
+  body.about-page .about-grid { grid-template-columns: minmax(0, 1fr); }
+  body.about-page .about-portrait-wrap { max-width: 560px; width: 100%; margin-inline: auto; }
+}
+@media (max-width: 720px) {
+  body.about-page.mode-3d .mode-scene { grid-column: 1; grid-row: 5; }
+}
+@media (max-width: 640px) {
+  body.about-page .page-hero { padding: 120px 0 40px; }
+  body.about-page.mode-3d .mode-scene { grid-column: 1; grid-row: 5; }
+  body.about-page .about-invitation { padding: 48px 0; }
+  body.approval-page .approval-shell { padding: 28px 16px 56px; }
+  body.approval-page .approval-topbar { padding: 16px; }
+  body.approval-page .approval-tabs button { padding: 14px 8px; text-align: center; font-size: 12px; }
+  .admin-tab-description { font-size: 10px; line-height: 1.5; }
+  body.approval-page .approval-stats { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  body.approval-page .approval-stats > div { display: grid; grid-template-columns: 1fr auto; padding: 16px 20px; align-items: center; }
+  body.approval-page .admin-metric { grid-template-columns: 1fr auto; padding: 16px 20px; }
+  body.approval-page .admin-metric > span { grid-column: 1; }
+  body.approval-page .admin-metric > small { grid-column: 1; grid-row: 2; }
+  body.approval-page .approval-stats strong { grid-column: 2; grid-row: 1 / 3; margin: 0; font-size: 32px; }
+  body.approval-page #account-search-form, .admin-workflow { grid-template-columns: minmax(0, 1fr); }
+  .admin-workflow li { padding: 10px 14px; }
+  .admin-workflow span { display: inline; margin-right: 10px; }
+}

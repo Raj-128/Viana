@@ -1,130 +1,15 @@
-import VanillaTilt from "vanilla-tilt";
+import { allowsMotion } from './motion-policy.js';
 
-function queryAll(scope, selector) {
-  if (!scope) return [];
-  if (scope.matches && scope.matches(selector)) return [scope, ...scope.querySelectorAll(selector)];
-  return [...scope.querySelectorAll(selector)];
-}
-
-// ── TILT: only on desktop, only on visible cards ────────────
-export function initTiltEffects(scope = document) {
-  if (window.innerWidth < 768) return;
-  const cards = [ ...queryAll(scope, ".work-card"), ...queryAll(scope, ".service-card") ];
-  cards.forEach(card => {
-    if (card.vanillaTilt) return;
-    VanillaTilt.init(card, { max: 4, speed: 600, glare: true, "max-glare": 0.12, scale: 1.01 });
-  });
-}
-
-// ── RIPPLE ──────────────────────────────────────────────────
-export function initRippleEffect(scope = document) {
-  queryAll(scope, "button,.cta-link,.work-card").forEach(target => {
-    if (target.dataset.rippleReady) return;
-    target.dataset.rippleReady = "true";
-    target.addEventListener("click", e => {
-      const r = document.createElement("span");
-      r.className = "ripple-effect";
-      const rect = target.getBoundingClientRect();
-      const sz = Math.max(rect.width, rect.height);
-      r.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px`;
-      target.appendChild(r);
-      setTimeout(() => r.remove(), 600);
-    });
-  });
-}
-
-// ── IMAGE HOVER ─────────────────────────────────────────────
-export function initImageHoverEffects(scope = document) {
-  queryAll(scope, ".work-card img,.showcase-item img").forEach(img => {
-    const p = img.parentElement;
-    if (!p || p.dataset.imgHover) return;
-    p.dataset.imgHover = "1";
-    p.addEventListener("mouseenter", () => { img.style.transform = "scale(1.06)"; });
-    p.addEventListener("mouseleave", () => { img.style.transform = ""; });
-  });
-}
-
-// ── SCROLL PROGRESS BAR ─────────────────────────────────────
-export function initScrollProgress() {
-  const bar = document.createElement("div");
-  bar.className = "scroll-progress";
-  document.body.appendChild(bar);
-  window.addEventListener("scroll", () => {
-    const h = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.width = `${h > 0 ? (window.scrollY / h) * 100 : 0}%`;
-  }, { passive: true });
-}
-
-// ── SMOOTH SCROLL (anchor links) ────────────────────────────
-export function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener("click", e => {
-      const t = document.querySelector(a.getAttribute("href"));
-      if (!t) return;
-      e.preventDefault();
-      t.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
-}
-
-// ── PAGE LOAD ANIMATION (lightweight, no infinite loops) ────
-export function initPageLoadAnimation() {
-  // Keep the header and initial text visible instead of hiding them after first paint.
-  document.querySelectorAll(".hero-title .line").forEach(line => line.style.display = 'inline-block');
-}
-
-// ── STAGGERED SECTION REVEAL ──
-export function initStaggeredAnimations() {
-  // We rely on main.js revealObserver to handle the section reveals without conflicting inner staggers
-}
-
-// ── FLOATING / MAGNETIC ──────
-export function initFloatingElements() {
-  // Logo is fixed - no floating animation
-}
-
-// ── MAGNETIC BUTTONS (lightweight, CSS-only approach) ───────
-export function initMagneticButtons() {
-  document.querySelectorAll(".cta-link,.menu-toggle").forEach(btn => {
-    btn.addEventListener("mousemove", e => {
-      const r = btn.getBoundingClientRect();
-      const x = (e.clientX - r.left - r.width  / 2) * 0.25;
-      const y = (e.clientY - r.top  - r.height / 2) * 0.25;
-      btn.style.transform = `translate(${x}px,${y}px)`;
-    });
-    btn.addEventListener("mouseleave", () => { btn.style.transform = ""; });
-  });
-}
-
-// ── TEXT REVEAL (word by word) ──────
-export function initTextReveal() {
-  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      // Keep authored line breaks and wrapping. Theme changes snapshot innerHTML;
-      // serializing animated letter spans can freeze partially hidden headings.
-      entry.target.animate?.([{ opacity: .65 }, { opacity: 1 }], {
-        duration: 400, easing: 'ease-out', fill: 'none',
-      });
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.4 });
-
-  document.querySelectorAll(".section-title, .page-title").forEach(el => {
-    observer.observe(el);
-  });
-}
-
-// ── MAIN EXPORT ─────────────────────────────────────────────
 export function initCreativeAnimations() {
-  document.addEventListener("DOMContentLoaded", () => {
-    initMagneticButtons();
-    initSmoothScroll();
-    initScrollProgress();
-    initPageLoadAnimation();
-    initStaggeredAnimations();
-    initFloatingElements();
-    initTextReveal();
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', event => {
+        const id = link.getAttribute('href').slice(1);
+        const target = id && document.getElementById(id);
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: allowsMotion() ? 'smooth' : 'auto', block: 'start' });
+      });
+    });
   });
 }

@@ -4,52 +4,44 @@ export function initAccountRecords() {
   const host = document.getElementById('account-records');
   const status = document.getElementById('account-records-status');
   const search = document.getElementById('account-search');
-  const events = document.getElementById('account-events');
-  const older = document.getElementById('account-events-older');
-  const prev = document.getElementById('account-page-prev');
-  const next = document.getElementById('account-page-next');
-  let page = 0, nextBefore = null, busy = false, query = '';
-  const date = value => value ? new Date(value).toLocaleString() : 'Not recorded before activity tracking';
-  function row(title, lines) {
+  let page = 0, busy = false, query = '', hasNext = false;
+  const date = value => value ? new Date(value).toLocaleString() : 'Registration date unavailable';
+  function row(account) {
     const article = document.createElement('article'); article.className = 'approval-row';
     const info = document.createElement('div'), heading = document.createElement('strong');
-    heading.textContent = title; info.append(heading);
-    for (const text of lines) { const line = document.createElement('small'); line.textContent = text; info.append(line); }
+    heading.textContent = account.name + ' - ' + account.role; info.append(heading);
+    for (const text of [account.email + (account.phone ? ' - ' + account.phone : ''), 'Registered: ' + date(account.registered_at)]) {
+      const line = document.createElement('small'); line.textContent = text; info.append(line);
+    }
     article.append(info); return article;
   }
-  async function load({ moreEvents = false } = {}) {
-    if (busy) return;
-    busy = true; status.textContent = 'Loading account records…';
-    const params = new URLSearchParams({ page: String(page), search: query });
-    if (moreEvents && nextBefore) params.set('before', nextBefore);
+  async function load(target = page, { searchQuery = query } = {}) {
+    if (busy) return false;
+    busy = true;
+    host.setAttribute('aria-busy', 'true'); status.textContent = 'Loading registrations...';
     try {
+      const params = new URLSearchParams({ page: String(target), search: searchQuery });
       const response = await fetchApi('api/admin/accounts?' + params, { cache: 'no-store' });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Could not load account records.');
-      if (!moreEvents) {
-        host.replaceChildren(...data.accounts.map(account => row(account.name + ' · ' + account.role, [
-          account.email + (account.phone ? ' · ' + account.phone : ''),
-          'Registered: ' + date(account.registered_at), 'Last sign-in: ' + date(account.last_login),
-          'Recorded sign-ins: ' + account.login_count,
-        ])));
-        if (!data.accounts.length) host.textContent = 'No matching accounts.';
-        events.replaceChildren();
-      }
-      events.append(...data.events.map(event => row(event.name, [event.email,
-        ({ registered: 'Account created', login: 'Signed in', logout: 'Signed out' }[event.event] || event.event) + ' · ' + date(event.occurred_at),
-      ])));
-      if (!events.childElementCount) events.textContent = 'No recorded activity yet.';
-      nextBefore = data.nextBefore; older.hidden = !nextBefore;
-      prev.disabled = page === 0; next.disabled = (page + 1) * 50 >= data.total;
-      status.textContent = data.total + ' registered accounts · page ' + (page + 1) + '. Activity recording starts with this update.';
-    } catch (error) { status.textContent = error.message; }
-    finally { busy = false; }
+      if (!response.ok) throw new Error(data.error || 'Could not load registrations.');
+      page = target; query = searchQuery; hasNext = data.hasNext;
+      if (target === 0) { host.replaceChildren(); host.scrollTop = 0; }
+      host.append(...data.accounts.map(row));
+      if (!host.children.length) host.textContent = 'No matching registered accounts.';
+      status.textContent = 'Showing ' + host.children.length + ' of ' + data.total + ' registered accounts.' + (hasNext ? ' Scroll to load more.' : '');
+      return true;
+    } catch (error) { status.textContent = error.message + ' Scroll again or use Search to retry.'; return false; }
+    finally {
+      busy = false;
+      host.setAttribute('aria-busy', 'false');
+    }
   }
   document.getElementById('account-search-form').addEventListener('submit', event => {
-    event.preventDefault(); if (busy) return; page = 0; query = search.value.trim(); load();
+    event.preventDefault(); void load(0, { searchQuery: search.value.trim() });
   });
-  prev.addEventListener('click', () => { if (!busy && page) { page--; load(); } });
-  next.addEventListener('click', () => { if (!busy) { page++; load(); } });
-  older.addEventListener('click', () => load({ moreEvents: true }));
-  load();
+  host.addEventListener('scroll', () => {
+    if (!busy && hasNext && host.scrollTop > 0 && host.scrollTop + host.clientHeight >= host.scrollHeight - 8) void load(page + 1);
+  }, { passive: true });
+  void load();
+  return { refresh: () => load(0) };
 }

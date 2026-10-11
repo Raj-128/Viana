@@ -1,6 +1,6 @@
 body { cursor: auto; }
-.approval-page { --admin-accent: #385b49; --admin-tint: #eaf0eb; font-family: Arial, sans-serif; background: #f5f4f0; color: #242d27; }
-.approval-page.mode-3d { --admin-accent: #acd0bb; --admin-tint: #20362b; background: #0d1210; }
+.approval-page { --admin-accent: #57483c; --admin-tint: #eee7df; font-family: Arial, sans-serif; background: #f5f4f0; color: #302922; }
+.approval-page.mode-3d { --admin-accent: #a58b72; --admin-tint: #30271f; background: #151210; }
 .approval-topbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px max(24px, calc((100vw - 1100px) / 2)); border-bottom: 1px solid var(--line); background: var(--surface); }
 .approval-topbar a { color: var(--text); text-decoration: none; font-size: 12px; }
 .approval-topbar .approval-brand { font-family: Georgia, serif; font-size: 19px; letter-spacing: .14em; }
@@ -81,3 +81,12 @@ body { cursor: auto; }
 .approval-print-actions .approval-print-confirm { display: flex; align-items: flex-start; gap: 10px; }
 .approval-print-confirm input { flex: 0 0 auto; }
 .approval-card summary { cursor: pointer; padding: 12px 0; }
+.approval-tabs { display: flex; gap: 8px; padding: 6px; margin: 24px 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.approval-tabs button { flex: 1; padding: 15px 12px; border: 0; border-radius: 8px; background: transparent; color: var(--text); font: 600 14px Arial, sans-serif; cursor: pointer; }
+.approval-tabs button[aria-selected="true"] { background: var(--admin-accent); color: #fff; box-shadow: 0 3px 12px #0002; }
+.approval-tabs button:focus-visible { outline: 2px solid var(--admin-accent); outline-offset: 3px; }
+.approval-page.mode-3d { --text: #f1ebe5; --muted: #bfb2a6; --bg: #151210; --surface: #1e1915; --line: #44382e; color: var(--text); }
+.approval-page.mode-3d .approval-tabs button[aria-selected="true"] { background: #57483c; color: #fff; }
+@media (max-width: 480px) { .approval-tabs button { padding: 13px 6px; font-size: 12px; } }
+.admin-new-count { display: inline-block; margin-left: 8px; padding: 3px 7px; border-radius: 20px; background: #b83c38; color: #fff; font-size: 11px; line-height: 1.25; white-space: nowrap; }
+@media (max-width: 480px) { .admin-new-count { display: block; width: fit-content; margin: 5px auto 0; } }

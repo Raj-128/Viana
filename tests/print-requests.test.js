@@ -33,14 +33,17 @@ test('print requests bind size, owner, uploaded file and approval independently'
     let response = await call('/api/print-requests', alice, spec);
     assert.equal(response.status, 201);
     const a = (await response.json()).request;
+    assert.match(a.reference, /^alice-\d{6}$/);
     assert.equal(a.width, 80.5); assert.equal(a.height, 40); assert.equal(a.paper, 'linen'); assert.equal(a.quantity, 2);
     assert.equal(a.status, 'pending'); assert.equal(a.file, undefined);
     assert.equal((await (await call('/api/print-requests', alice, spec)).json()).request.id, a.id, 'retry returns the same request');
     const a2 = (await (await call('/api/print-requests', alice, { ...spec, width: 100 })).json()).request;
     const b = (await (await call('/api/print-requests', bob, spec)).json()).request;
     assert.notEqual(a2.id, a.id); assert.notEqual(b.id, a.id);
+    assert.notEqual(a2.reference, a.reference); assert.match(b.reference, /^bob-\d{6}$/);
     const aliceRequests = (await (await call('/api/print-requests', alice)).json()).requests;
     assert.deepEqual(new Set(aliceRequests.map(r => r.id)), new Set([a.id, a2.id]));
+    assert.equal(aliceRequests.find(r => r.id === a.id).reference, a.reference);
     assert.equal((await (await call('/api/admin/print-requests', admin)).json()).requests.length, 3);
     const download = id => `/api/print-requests/${id}/download`;
     const file = id => `/api/admin/print-requests/${id}/file`;

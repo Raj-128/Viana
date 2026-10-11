@@ -7,8 +7,6 @@ await mkdir(output, { recursive: true });
 const images = [
   ['flower.png', 128], ['vt-logo-black.png', 512],
   ['vicky-profile.jpeg', 800], ['vicky-profile-2.png', 960],
-  ['three-d-lunar-console.png', 1440], ['three-d-petal-lamp.png', 1440],
-  ['three-d-playroom.png', 1440], ['three-d-canyon-void.png', 1440],
 ];
 let before = 0, after = 0;
 for (const [name, size] of images) {

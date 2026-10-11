@@ -94,32 +94,6 @@
 }
 
 @media (max-width: 600px) {
-  /* Two deliberate rows replace unpredictable header wrapping at narrow widths. */
-  .site-header { padding: max(8px, env(safe-area-inset-top)) 0 4px; }
-  .site-header .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; }
-  .site-header .logo { grid-column: 1; grid-row: 1; min-width: 0; }
-  .site-header .logo a { font-size: 12px; letter-spacing: .06em; gap: 6px; line-height: 1.3; }
-  .site-header .logo-img { width: 28px; height: 28px; flex-shrink: 0; }
-  .site-header .header-actions { grid-column: 2; grid-row: 1; gap: 6px; }
-  .site-header .menu-toggle { width: 44px; height: 44px; flex-shrink: 0; }
-  .site-header .header-account-chip { max-width: 82px; min-width: 54px; padding-inline: 10px; letter-spacing: .06em; }
-  .site-header .commerce-nav { grid-column: 1 / -1; grid-row: 2; width: 100%; margin: 0; gap: 16px; border-top: 1px solid var(--line); }
-  .site-header .commerce-nav button { flex: 1; justify-content: center; padding: 4px 8px; gap: 8px; }
-  .site-header .commerce-nav button::after { font-size: 12px; }
-  .site-header [data-open-commerce="downloads"]::after { content: "Downloads"; }
-  .site-header [data-open-commerce="cart"]::after { content: "Cart"; }
-
-  body .home-hero.image-stream-hero[data-image-stream-hero], body.mode-3d .home-hero.image-stream-hero[data-image-stream-hero] {
-    margin-top: var(--site-header-height, 106px);
-    height: clamp(620px, calc(100svh - var(--site-header-height, 106px)), 740px);
-    min-height: 620px;
-  }
-  body .hero-mode-toggle { padding: 20px 16px 0; }
-  body .image-stream-copy { padding: 20px 16px 0; }
-  body .image-stream-copy .hero-eyebrow { font-size: 10px; letter-spacing: .17em; margin-bottom: 12px; }
-  body .hero.image-stream-hero h1 { font-size: clamp(32px, 8.5vw, 48px); line-height: 1.12; }
-  body .image-stream-footer { bottom: 24px; left: 16px; right: 16px; gap: 12px; }
-  body .image-stream-footer p { font-size: 13px; }
   body .work-pill-toggle .pill-btn { min-width: 0; padding-inline: 14px; }
   body .section-title, body .page-title { font-size: clamp(28px, 8vw, 40px); line-height: 1.15; }
   body .footer-grid { gap: 28px; }

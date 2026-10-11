@@ -68,7 +68,9 @@ test("work carousel switches clean thumbnails and matching detail IDs together",
     .replace(/^import .*;\r?\n/gm, "").replaceAll("export ", "");
   const parts = { img: {}, strong: {}, ".hero-slide-caption span": {} };
   const slide = { dataset: {}, querySelector: selector => parts[selector] };
+  const branded = [];
   const context = {
+    brandDesignImage: (container, project) => branded.push([container, project.id]),
     projects: [
       { id: "wall", title: "Wallpaper", workType: "wallpaper", heroCover: "clean.jpg", thumbnail: "clean.jpg", cover: "watermarked.jpg" },
       { id: "scene", title: "3D", workType: "3d", cover: "render.jpg" }
@@ -81,5 +83,6 @@ test("work carousel switches clean thumbnails and matching detail IDs together",
     vm.runInNewContext("updateModeContent('" + mode + "')", context);
     assert.equal(parts.img.src, mode === "3d" ? "render.jpg" : "clean.jpg");
     assert.equal(slide.dataset.projectId, mode === "3d" ? "scene" : "wall");
+    assert.equal(branded.length, 0, 'browsing cards remain unbranded');
   }
 });
