@@ -148,19 +148,13 @@ body .unlimited-download-link:is([data-plan-state="expiring"],[data-plan-state="
 .studio-help-contact { border-top: 1px solid var(--line); margin-top: 12px; }
 .studio-help-dialog :focus-visible, .studio-help-launcher:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 @media (max-width: 800px) {
- body .site-header .header-inner { flex-wrap: wrap; }
+ body .site-header .header-inner { flex-wrap: nowrap; }
  body .site-header .commerce-nav { flex-basis: auto; margin: 0; }
  body .unlimited-download-link { max-width: 100%; }
  .studio-help-launcher { bottom: max(24px, env(safe-area-inset-bottom)); right: 14px; }
  .studio-help-dialog { inset: auto 0 0; width: 100%; max-width: none; max-height: 85dvh; border-radius: 18px 18px 0 0; padding: 22px 20px max(24px, env(safe-area-inset-bottom)); }
 }
 
-.plan-status-rail { border-top: 1px solid var(--line); background: var(--bg); }
-html:not([data-studio-mode="3d"]) .plan-status-rail { display: none; }
-.plan-status-rail > .container { display: flex; align-items: center; justify-content: flex-end; gap: 12px; min-height: 48px; padding-block: 4px; }
-.plan-status-rail > .container > span { font: 400 11px/1.4 var(--font-body); color: var(--muted); }
-body .plan-status-rail .unlimited-download-link { min-height: 40px; max-width: 240px; margin: 0; padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--text); box-shadow: none; }
-body .plan-status-rail .unlimited-download-link:hover, body .plan-status-rail .unlimited-download-link:focus-visible { background: var(--surface-2); color: var(--text); border-color: var(--muted); box-shadow: none; transform: none; opacity: 1; }
-body .plan-status-rail .unlimited-download-link:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
-body .plan-status-rail .unlimited-download-link:is([data-plan-state="expiring"],[data-plan-state="expired"]) { border-color: #a97b3e; }
-@media (max-width: 800px) { .plan-status-rail > .container { padding-inline: 16px; } }
+body .unlimited-download-link:hover, body .unlimited-download-link:focus-visible { background: var(--surface-2); color: var(--text); box-shadow: none; transform: none; opacity: 1; }
+body .unlimited-download-link:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+@media (max-width: 800px) { body .unlimited-download-link { min-width: 0; max-width: 132px; white-space: normal; padding: 7px 10px; } }

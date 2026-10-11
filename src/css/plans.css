@@ -51,8 +51,6 @@ main { max-width: 1600px; margin: auto; padding: 48px 4vw; }
 .plans-compare-tools :is(select, button) { min-height: 44px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); color: var(--text); font: inherit; font-size: 12px; }
 .plans-compare-tools select { min-width: 150px; color-scheme: dark; }
 .plans-compare-tools button { min-width: 185px; }
-.plan-format-summary { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin: 0 16px 18px; padding: 12px; border-radius: 8px; background: #ffffff09; border: 1px solid var(--line); font-size: 11px; }
-.plan-format-summary span { color: var(--muted); }
 .plan-card:has([data-purchased="true"]) { border-color: #ddd; }
 .plan-card:has([data-purchased="true"]) .plan-tier::after { content: ' / ACTIVE'; color: var(--text); }
 .plans-journey { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; padding-block: 30px; margin-bottom: 40px; border-block: 1px solid var(--line); }
