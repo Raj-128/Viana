@@ -1,4 +1,5 @@
 import "./site-mode.js";
+import './help-launcher.js';
 import { fetchApi, setStoredToken, getStoredToken, getApiBaseUrl } from "./api-config.js";
 import { createSessionLoader } from './session-loader.js';
 import { initGoogleSignIn } from './google-sign-in.js';

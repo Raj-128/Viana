@@ -8,3 +8,9 @@
 - Limits: no rendered browser screenshots available (headless attempt produced no file); mobile appearance, real Google login, live backend/storage and real-device performance still require manual verification. Build retains a deferred catalogue chunk-size warning. No commit or push performed.
 
 Test evidence: .gsd/release-audit/deep-final-tests.txt; build evidence: .gsd/release-audit/deep-build.txt.
+
+
+## 2026-10-11: Guided help and visible plan expiry
+- Lazy-load the guided help dialog on click; five navigation/support topics and studio WhatsApp link. No chatbot API, transcript persistence or private account data retrieval. Native modal keyboard/focus behaviour.
+- Plan badge retains visible plan name, shows final-seven-day countdown and expired renewal link. Pending/revoked plans excluded; logout clears the badge. Mobile badge sits on a separate header row using existing header-size observation.
+- Evidence: 124 tests passed, including countdown/expiry/logout and guide route/dialog checks. Full browser visual verification remains unavailable.
