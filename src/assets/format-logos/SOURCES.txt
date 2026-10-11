@@ -1,0 +1,5 @@
+Format logo asset notes
+Blender and Unreal Engine: Simple Icons SVG marks, https://cdn.simpleicons.org/blender/E87D0D and https://cdn.simpleicons.org/unrealengine/FFFFFF (Blender center colored for the reference appearance).
+Cinema 4D: transparent software mark, https://image.pngaaa.com/622/5850622.png (https://www.pngaaa.com/detail/5850622).
+3DS MAX and FBX: local SVG renderings following the supplied reference marks. Materials: local vector brick-sphere illustration.
+Marks identify compatible file formats; their respective owners retain their trademarks.

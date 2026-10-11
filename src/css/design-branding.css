@@ -1,0 +1,28 @@
+.design-image:not(.hero-slide):not(.image-stream-surface) { position: relative; }
+.hero-slide.design-image, .image-stream-surface.design-image { position: absolute; }
+.design-image > .design-image-brand {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 4;
+  box-sizing: border-box; height: 44px; padding: 5px 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  color: #292723; pointer-events: none;
+}
+.design-image-brand .design-image-code { font: 600 10px/1.2 Arial, sans-serif; letter-spacing: .08em; padding: 6px 8px; border-radius: 4px; background: rgba(255,255,255,.88); }
+body .design-image > .design-image-brand > img {
+  position: static; display: block; width: 33.6px; height: 33.6px; min-height: 0; max-height: 33.6px;
+  padding: 0; margin: 0; border: 0; object-fit: contain; filter: none; transform: none;
+  aspect-ratio: 1; background: transparent;
+}
+/* Keep the existing frames and captions; fit artwork inside them. */
+.design-image > img { box-sizing: border-box; padding-top: 44px; }
+body .design-image.design-image-model > img,
+body.mode-3d .catalogue-card-image.design-image-model > img,
+body.mode-3d .work-card.design-image-model > img,
+body.mode-3d .hero-slide.design-image-model > img,
+[data-stream-mode="3d"] .design-image.design-image-model > img {
+  object-fit: contain; object-position: center; padding: 54px 12px 12px;
+  background: #fff; filter: none; transform: none;
+}
+body .hero-slide.design-image-model { background: #fff; }
+body.mode-3d .hero-slide.design-image-model > img { padding-bottom: 108px; }
+body .catalogue-card-image.design-image-model { background: #fff; }
+body.mode-3d .catalogue-list .work-card:hover .catalogue-card-image.design-image-model > img { transform: none; }

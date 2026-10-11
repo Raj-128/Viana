@@ -2,12 +2,12 @@ import { randomUUID, createHash } from 'node:crypto';
 import { open, unlink, realpath, stat } from 'node:fs/promises';
 import { createReadStream, unlinkSync } from 'node:fs';
 import { resolve, relative, isAbsolute } from 'node:path';
+import { createRequestReferences } from './request-reference.js';
 
 const papers = new Set(['standard', 'canvas', 'feather', 'linen', 'earthy']);
 const formats = { 'application/pdf': '.pdf', 'image/tiff': '.tif', 'image/jpeg': '.jpg', 'image/png': '.png' };
 const maxBytes = 250 * 1024 * 1024;
 const version = file => file ? createHash('sha256').update(file).digest('hex') : null;
-const publicRequest = ({ file, fingerprint, ...request }) => ({ ...request, file_ready: Boolean(file), file_version: version(file) });
 function fileType(bytes) {
   if (bytes.subarray(0, 5).toString() === '%PDF-') return 'application/pdf';
   if (['49492a00', '4d4d002a', '49492b00', '4d4d002b'].includes(bytes.subarray(0, 4).toString('hex'))) return 'image/tiff';
@@ -17,6 +17,9 @@ function fileType(bytes) {
 }
 
 export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json, fail, limit }) {
+  const reference = createRequestReferences(db);
+  const publicRequest = ({ file, fingerprint, ...request }) => ({ ...request,
+    reference: reference('print', request), file_ready: Boolean(file), file_version: version(file) });
   // Additive migration: existing design downloads and accounts remain intact.
   db.exec(`CREATE TABLE IF NOT EXISTS print_requests (
     id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), design_id TEXT NOT NULL,
@@ -139,7 +142,7 @@ export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json
       const info = await stat(file);
       if (!info.isFile()) throw fail(404, 'The print file is unavailable.');
       res.writeHead(200, { 'Content-Type': request.mime, 'Content-Length': info.size,
-        'Content-Disposition': `attachment; filename="viana-${request.id}-${request.width}x${request.height}in${formats[request.mime]}"` });
+        'Content-Disposition': `attachment; filename="viana-${reference('print', request)}-${request.width}x${request.height}in${formats[request.mime]}"` });
       const stream = createReadStream(file);
       stream.on('error', () => res.destroy()); res.on('close', () => stream.destroy()); stream.pipe(res);
       return true;

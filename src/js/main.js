@@ -1,19 +1,21 @@
-import { gsap } from 'gsap';
+import { allowsMotion } from './motion-policy.js';
+import { brandDesignImage } from './design-branding.js';
+import './trust-marquee.js';
 import { createPrintRequest, printRequestSummary } from './print-requests.js';
 import { MODE_KEY, readStudioMode, applyStudioTheme } from "./site-mode.js";
 import { estimateDimensions } from "./estimate-dimensions.js";
 import { updateModeContent } from "./mode-content.js";
 import { initCatalogueFilters } from "./catalogue-filters.js";
+import { shopFormats, filterShopProjects } from "./shop-catalogue.js";
+import { hasDirectModelDownload } from './direct-model-downloads.js';
 import { initCommerce, renderCommerce, addToCart, openCommerce, downloadDesign } from "./commerce.js";
+import { filterCommerceEntries } from './commerce-mode.js';
+
 import { initWallpaperViewer } from "./wallpaper-viewer.js";
 import { initMediaDeterrents, isArtworkTarget, addViewerWatermarks } from "./media-deterrents.js";
-import { paperTypes, pricingThemes, projects, wallpaperShowcaseImages } from "./projects.js";
-import {
-  initCreativeAnimations,
-  initImageHoverEffects,
-  initRippleEffect,
-  initTiltEffects,
-} from "./creative-animations.js";
+import { paperTypes, pricingThemes, projects, loadWallpaperCatalogue } from "./projects.js";
+import { refreshModelCatalogue, watchModelCatalogue } from './live-model-catalogue.js';
+import { initCreativeAnimations } from './creative-animations.js';
 import {
   authReady,
   isPublicPage,
@@ -178,9 +180,10 @@ function renderSavedCollections() {
     return;
   }
 
-  const saved = readStoredList(STORAGE_KEYS.saved);
-  const downloads = readStoredList(STORAGE_KEYS.downloads);
-  const quote = readStoredList(STORAGE_KEYS.quote);
+  const mode = document.documentElement.dataset.studioMode === '3d' ? '3d' : 'wallpaper';
+  const saved = filterCommerceEntries(readStoredList(STORAGE_KEYS.saved), projects, mode);
+  const downloads = filterCommerceEntries(readStoredList(STORAGE_KEYS.downloads), projects, mode);
+  const quote = filterCommerceEntries(readStoredList(STORAGE_KEYS.quote), projects, mode);
 
   const renderList = (items, emptyLabel) => {
     if (!items.length) {
@@ -249,69 +252,17 @@ function applyModeClass(mode) {
 }
 
 function createObserverManager() {
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          return;
-        }
-
-        entry.target.classList.add("active");
-
-        if (gsap) {
-          gsap.fromTo(
-            entry.target,
-            { y: 24, autoAlpha: 0 },
-            { y: 0, autoAlpha: 1, duration: 0.9, ease: "power2.out" }
-          );
-        }
-
-        revealObserver.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.15 }
-  );
-
-  const mediaObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          return;
-        }
-
-        const img = entry.target.querySelector("img");
-        if (gsap && img) {
-          gsap.fromTo(
-            img,
-            { scale: 1.08, y: 24, autoAlpha: 0 },
-            { scale: 1, y: 0, autoAlpha: 1, duration: 1.1, ease: "power3.out" }
-          );
-        } else if (img) {
-          img.style.opacity = "1";
-          img.style.transform = "translateY(0) scale(1)";
-        }
-
-        mediaObserver.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.2 }
-  );
-
-  function observeReveals(scope = document) {
-    scope.querySelectorAll(".reveal:not(.active)").forEach((element) => {
-      revealObserver.observe(element);
-    });
-  }
-
-  function observeMedia(scope = document) {
-    scope.querySelectorAll(".reveal-media").forEach((element) => {
-      mediaObserver.observe(element);
-    });
-  }
-
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('active');
+      if (allowsMotion()) entry.target.animate?.([{ transform: 'translateY(12px)' }, { transform: 'none' }], { duration: 350, easing: 'ease-out' });
+      observer.unobserve(entry.target);
+    }
+  }, { threshold: 0.1 });
   return {
-    observeMedia,
-    observeReveals,
+    observeReveals(scope = document) { scope.querySelectorAll('.reveal:not(.active)').forEach(element => observer.observe(element)); },
+    observeMedia(scope = document) { scope.querySelectorAll('.reveal-media').forEach(element => observer.observe(element)); },
   };
 }
 
@@ -357,181 +308,13 @@ function getProjectImageLine(project) {
   return imageUrl ? `Preview image: ${imageUrl}` : "";
 }
 
-function initWallpaperMarquee() {
-  const rows = [...document.querySelectorAll(".marquee-row")];
-  if (!rows.length || !wallpaperShowcaseImages.length) {
-    return;
-  }
-
-  const seedImages = wallpaperShowcaseImages.filter(Boolean);
-  const rotationPoint = Math.max(1, Math.ceil(seedImages.length / 2));
-  const rowImages = [
-    seedImages,
-    [...seedImages.slice(rotationPoint), ...seedImages.slice(0, rotationPoint)],
-  ];
-
-  const createGroupMarkup = (images, { hidden = false, offset = 0 } = {}) => `
-    <div class="marquee-group"${hidden ? ' aria-hidden="true"' : ""}>
-      ${images
-        .map(
-          (image, index) => `
-            <img
-              src="${image}"
-              alt="${hidden ? "" : `Studio Viana wallpaper ${offset + index + 1}`}"
-              draggable="false"
-              loading="eager"
-              decoding="async"
-            >
-          `
-        )
-        .join("")}
-    </div>
-  `;
-
-  const hydrateTrack = (track, images, rowIndex) => {
-    track.innerHTML = createGroupMarkup(images, { offset: rowIndex * images.length });
-
-    const firstGroup = track.querySelector(".marquee-group");
-    const baseWidth = Math.round(firstGroup?.getBoundingClientRect().width || 0);
-    if (!baseWidth) {
-      return 0;
-    }
-
-    const rowWidth = Math.ceil(track.closest(".marquee-row")?.clientWidth || window.innerWidth || baseWidth);
-    const copiesNeeded = Math.max(3, Math.ceil(rowWidth / baseWidth) + 2);
-
-    track.innerHTML = Array.from({ length: copiesNeeded }, (_, copyIndex) =>
-      createGroupMarkup(images, {
-        hidden: copyIndex > 0,
-        offset: rowIndex * images.length + copyIndex * images.length,
-      })
-    ).join("");
-
-    return baseWidth;
-  };
-
-  rows.forEach((row, index) => {
-    const track = row.querySelector(".marquee-track");
-    if (!track) {
-      return;
-    }
-
-    const images = rowImages[index % rowImages.length];
-    hydrateTrack(track, images, index);
-  });
-
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-  let frameId = 0;
-  let lastTime = 0;
-  let marqueeItems = [];
-
-  const createItems = () => {
-    marqueeItems = rows
-      .map((row, index) => {
-        const track = row.querySelector(".marquee-track");
-        if (!track) {
-          return null;
-        }
-
-        const images = rowImages[index % rowImages.length];
-        const groupWidth = hydrateTrack(track, images, index);
-        if (!groupWidth) {
-          return null;
-        }
-
-        const reverse = row.classList.contains("reverse");
-        const speed = index === 0 ? 0.18 : 0.15;
-        const offset = reverse ? -groupWidth : 0;
-
-        track.style.removeProperty("animation");
-        track.style.transform = `translate3d(${offset}px, 0, 0)`;
-
-        return {
-          track,
-          groupWidth,
-          reverse,
-          offset,
-          speed,
-        };
-      })
-      .filter(Boolean);
-  };
-
-  const tick = (timestamp) => {
-    if (!lastTime) {
-      lastTime = timestamp;
-    }
-
-    const delta = Math.min(32, timestamp - lastTime);
-    lastTime = timestamp;
-
-    marqueeItems.forEach((item) => {
-      if (item.reverse) {
-        item.offset = ((item.offset + delta * item.speed + item.groupWidth) % item.groupWidth) - item.groupWidth;
-      } else {
-        item.offset = -((Math.abs(item.offset) + delta * item.speed) % item.groupWidth);
-      }
-
-      item.track.style.transform = `translate3d(${item.offset}px, 0, 0)`;
-    });
-
-    frameId = window.requestAnimationFrame(tick);
-  };
-
-  const setup = () => {
-    if (frameId) {
-      window.cancelAnimationFrame(frameId);
-      frameId = 0;
-    }
-
-    lastTime = 0;
-    createItems();
-
-    if (prefersReducedMotion.matches) {
-      return;
-    }
-
-    if (marqueeItems.length) {
-      frameId = window.requestAnimationFrame(tick);
-    }
-  };
-
-  const waitForImages = () =>
-    Promise.allSettled(
-      [...document.querySelectorAll(".marquee-track img")].map((img) => {
-        if (img.complete) {
-          return Promise.resolve();
-        }
-        return new Promise((resolve) => {
-          img.addEventListener("load", resolve, { once: true });
-          img.addEventListener("error", resolve, { once: true });
-        });
-      })
-    );
-
-  const scheduleSetup = () => {
-    waitForImages().then(() => {
-      window.requestAnimationFrame(setup);
-    });
-  };
-
-  scheduleSetup();
-  if (document.readyState === "complete") {
-    window.setTimeout(scheduleSetup, 0);
-  } else {
-    window.addEventListener("load", scheduleSetup, { once: true });
-  }
-  window.addEventListener("resize", scheduleSetup);
-  prefersReducedMotion.addEventListener?.("change", scheduleSetup);
-}
-
 function getThemeDetails(themeId) {
   return pricingThemes.find((theme) => theme.id === themeId);
 }
 
 function getProjectsByMode(mode) {
-  return projects.filter((project) => project.workType === mode);
+  const list = projects.filter((project) => project.workType === mode);
+  return mode === '3d' ? list.sort((a, b) => (Date.parse(b.addedAt) || 0) - (Date.parse(a.addedAt) || 0)) : list;
 }
 
 
@@ -559,24 +342,15 @@ function populateSelect(select, options, placeholder) {
 }
 
 function animateCards(cards) {
-  if (!cards.length || !gsap) {
-    return;
-  }
-
-  gsap.fromTo(
-    cards,
-    { y: 22, autoAlpha: 0 },
-    { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.08, ease: "power2.out" }
-  );
-}
-
-function enhanceCards(scope) {
-  initTiltEffects(scope);
-  initImageHoverEffects(scope);
-  initRippleEffect(scope);
+  if (!allowsMotion()) return;
+  [...cards].slice(0, 24).forEach(card => card.animate?.([{ transform: 'translateY(8px)' }, { transform: 'none' }], { duration: 250, easing: 'ease-out' }));
 }
 
 function getPageMode() {
+  if (new URLSearchParams(window.location.search).get('mode') === '3d' || shopFormats.some((item) => item.id === new URLSearchParams(window.location.search).get("format"))) {
+    try { localStorage.setItem(MODE_KEY, "3d"); } catch { /* Theme still works without storage. */ }
+    return "3d";
+  }
   return readStudioMode();
 }
 
@@ -588,6 +362,9 @@ applyModeClass(initialMode);
 requestAnimationFrame(revealMode);
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // A live-only model link must load its metadata before detail rendering.
+  const requestedModel = new URLSearchParams(location.search).get('id');
+  if (requestedModel?.startsWith('model-') && !projects.some(project => project.id === requestedModel)) await refreshModelCatalogue();
   const publicPage = isPublicPage();
   if (!publicPage) {
     await authReady;
@@ -601,6 +378,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  if (document.getElementById('work-grid') || new URLSearchParams(location.search).get('id')?.startsWith('local-') || Object.values(STORAGE_KEYS).some(key => readStoredList(key).length)) await loadWallpaperCatalogue();
   applyAuthStateToDocument();
   syncAuthLinks();
   if (!publicPage) gateProtectedNavigation();
@@ -608,7 +386,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const observerManager = createObserverManager();
   observerManager.observeReveals();
   observerManager.observeMedia();
-  initWallpaperMarquee();
 
   const toggle = document.querySelector(".menu-toggle");
   const menu = document.querySelector(".fullscreen-menu");
@@ -617,6 +394,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   const menuActionButtons = document.querySelectorAll("[data-menu-action]");
 
   const grid = document.getElementById("work-grid");
+  const selectedFormat = grid ? shopFormats.find((item) => item.id === new URLSearchParams(window.location.search).get("format")) : null;
+  document.body.classList.toggle("format-catalogue", Boolean(selectedFormat));
+  const formatHeading = document.getElementById("catalogue-format-title");
+  if (formatHeading && selectedFormat) {
+    formatHeading.hidden = false;
+    formatHeading.textContent = `${selectedFormat.label} files`;
+    document.title = `${selectedFormat.label} Files | Studio Viana`;
+
+  }
+  function catalogueProjects(mode) {
+    const list = getProjectsByMode(mode);
+    return selectedFormat && mode === "3d" ? filterShopProjects(list, { format: selectedFormat.id }) : list;
+  }
   const homeCollections = document.getElementById("home-collections");
   const searchInput = document.getElementById("filter-search");
   const clearBtn = document.getElementById("clear-filters");
@@ -781,6 +571,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (header) {
     const showHeader = () => header.classList.remove("is-hidden");
+    header.addEventListener("focusin", showHeader);
     const hideHeader = () => header.classList.add("is-hidden");
     let lastScrollY = window.scrollY;
     const threshold = 8;
@@ -788,7 +579,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.addEventListener(
       "scroll",
       () => {
-        if (document.body.classList.contains("menu-open")) {
+        if (document.body.classList.contains("menu-open") || header.contains(document.activeElement)) {
           return;
         }
 
@@ -848,6 +639,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       `;
 
+
     if (isCatalogue) {
       element.querySelector("[data-add-design]")?.addEventListener("click", () => {
         addProjectToQuote(project);
@@ -890,6 +682,19 @@ document.addEventListener("DOMContentLoaded", async () => {
           <p>The collection updates live, so clearing one filter usually brings the full board back.</p>
         </article>
       `;
+      if (selectedFormat && currentWorkType === '3d' && !catalogueProjects('3d').length) {
+        const empty = grid.querySelector('.work-empty-state');
+        empty.querySelector('.section-kicker').textContent = selectedFormat.label;
+        empty.querySelector('h3').textContent = 'No assets available yet.';
+        empty.querySelector('p:last-of-type').textContent = 'Looking for something in this category? Tell us what you need and we can help.';
+        const request = document.createElement('a');
+        request.className = 'text-link';
+        request.textContent = 'Request ' + selectedFormat.label + ' assets on WhatsApp';
+        request.href = 'https://api.whatsapp.com/send?phone=919737711570&text=' + encodeURIComponent('Hello Studio Viana, I am looking for ' + selectedFormat.label + ' assets. Can you help me with this category?');
+        request.target = '_blank';
+        request.rel = 'noopener noreferrer';
+        empty.append(request);
+      }
       workCount.textContent = "0 pieces";
       return;
     }
@@ -899,7 +704,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     workCount.textContent = `${list.length} ${list.length === 1 ? "piece" : "pieces"}`;
     animateCards(cards);
-    enhanceCards(grid);
     renderSavedCollections();
   }
 
@@ -921,7 +725,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     cards.forEach((card) => homeCollections.appendChild(card));
     animateCards(cards);
-    enhanceCards(homeCollections);
   }
 
   function renderShowcaseTrack(track, list) {
@@ -929,32 +732,40 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    track.innerHTML = list
-      .map(
-        (project) => `
-          <a href="project.html?id=${project.id}" class="showcase-item">
-            <img src="${project.thumbnail || project.cover}" alt="${project.title}" draggable="false" loading="lazy">
-            <div class="showcase-item-cap">
-              <span>${project.theme ? getThemeDetails(project.theme)?.label ?? project.theme : project.mediumLabel} &middot; ${project.year}</span>
-              <strong>${project.title}</strong>
-            </div>
-          </a>
-        `
-      )
-      .join("");
+    const cards = list.map(project => {
+      const card = document.createElement('a');
+      card.href = 'project.html?id=' + encodeURIComponent(project.id);
+      card.className = 'showcase-item';
+      const image = document.createElement('img');
+      image.src = project.thumbnail || project.cover;
+      image.alt = project.title;
+      image.draggable = false;
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      const caption = document.createElement('div');
+      caption.className = 'showcase-item-cap';
+      const label = document.createElement('span');
+      label.textContent = (project.theme ? getThemeDetails(project.theme)?.label ?? project.theme : project.mediumLabel) + ' \u00b7 ' + (project.year || '');
+      const title = document.createElement('strong');
+      title.textContent = project.title;
+      caption.append(label, title);
+      card.append(image, caption);
+      return card;
+    });
+    track.replaceChildren(...cards);
   }
 
   function updateShowcaseSections() {
     const wallpaperTrack = document.querySelector(".showcase-track.show-wallpaper");
     const threeDTrack = document.querySelector(".showcase-track.show-3d");
 
-    renderShowcaseTrack(wallpaperTrack, getProjectsByMode("wallpaper").slice(0, 6));
-    renderShowcaseTrack(threeDTrack, getProjectsByMode("3d").slice(0, 4));
+    renderShowcaseTrack(wallpaperTrack, currentWorkType === "wallpaper" ? getProjectsByMode("wallpaper").slice(0, 6) : []);
+    renderShowcaseTrack(threeDTrack, currentWorkType === "3d" ? getProjectsByMode("3d").slice(0, 12) : []);
   }
 
   function applyFilters() {
     if (!grid) return;
-    const collection = getProjectsByMode(currentWorkType);
+    const collection = catalogueProjects(currentWorkType);
     renderProjects(catalogueFilters ? catalogueFilters.filter(collection) : collection);
   }
 
@@ -1019,7 +830,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     renderSavedCollections();
 
-    catalogueFilters?.setCollection(getProjectsByMode(permittedMode), permittedMode);
+    catalogueFilters?.setCollection(catalogueProjects(permittedMode), permittedMode);
     updateToggleUI();
 
 
@@ -1254,7 +1065,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           // in a confirmation the customer only needs to read once.
           output.textContent = printRequestSummary(request) + '. ' +
             (request.status === 'approved' ? 'Your print file is ready in Downloads.' : 'Sent to the studio, and your print file appears in Downloads once approved.');
-          followup.href = buildWhatsAppLink(quoteMessage + '\nRequest reference: ' + request.id);
+          followup.href = buildWhatsAppLink(quoteMessage + '\nRequest reference: ' + (request.reference || request.id));
           followup.hidden = false;
         } catch (error) { output.textContent = error.message; }
         finally { sendingDesignRequest = false; quoteWhatsappLink.removeAttribute("aria-disabled"); }
@@ -1289,10 +1100,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
     const restartAutoplay = () => {
       clearInterval(timer);
+      if (!allowsMotion() || document.hidden) return;
       timer = setInterval(() => {
         if (!pointer && !document.hidden) showSlide(activeIndex + 1);
       }, 3000);
     };
+    document.addEventListener('visibilitychange', restartAutoplay);
+    window.addEventListener('studio:motion-change', restartAutoplay);
     stage.querySelectorAll("img").forEach((image) => { image.draggable = false; });
     stage.addEventListener("dragstart", (event) => event.preventDefault());
     stage.addEventListener("pointerdown", (event) => {
@@ -1377,9 +1191,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const downloadNote = document.querySelector('[data-project-download-note]');
     if (downloadNote) downloadNote.textContent = isWallpaperProject
       ? 'Choose your size below and send a design request. Once approved, download your print-ready file from Your requests and downloads.'
+      : hasDirectModelDownload(project) ? 'Download the model package after your plan is approved. Plan validity and daily limits apply.'
       : 'Download a free watermarked preview, or request access to the original image. Original downloads require studio approval.';
     document.querySelectorAll("[data-project-download]").forEach(button => {
-      button.textContent = isWallpaperProject ? "Choose size and request design" : "Download options";
+      button.textContent = isWallpaperProject ? "Choose size and request design" : hasDirectModelDownload(project) ? "Download file" : "Download options";
       button.onclick = () => isWallpaperProject ? projectOrderSection.scrollIntoView({ behavior: "smooth", block: "start" }) : downloadProjectImage(project);
     });
 
@@ -1394,6 +1209,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (cover) {
       cover.src = project.cover;
       cover.alt = project.title;
+      brandDesignImage(cover.parentElement, project);
     }
     if (title) {
       title.textContent = project.title;
@@ -1423,6 +1239,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         )
         .join("");
       observerManager.observeMedia(gallery);
+      gallery.querySelectorAll('.project-gallery-item').forEach(item => brandDesignImage(item, project));
     }
   }
 
@@ -1492,6 +1309,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   revealMode();
   initHeroCarousel();
   renderProjectDetail();
+  window.addEventListener('studio:model-catalogue-updated', () => {
+    catalogueFilters?.setCollection(catalogueProjects(currentWorkType), currentWorkType, true);
+    setMode(currentWorkType, { persist: false });
+  });
+  watchModelCatalogue();
   addViewerWatermarks(getSession());
   populateEstimatorOptions();
   renderEstimatorThemePills();

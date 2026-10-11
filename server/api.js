@@ -11,11 +11,14 @@ import { createGoogleAuth } from './google-auth.js';
 import { createDownloadAdmin } from "./download-admin.js";
 import { createPrintRequests } from "./print-requests.js";
 import { createAccountRecords } from "./account-records.js";
+import { createPlanOrders } from './plan-orders.js';
+import { createModelLibraryApi } from './model-library-api.js';
 
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 const phone = (value = "") => { const digits = String(value).replace(/\D/g, ""); return digits.length === 10 ? `91${digits}` : digits; };
 const safeUser = ({ id, name, email, phone, role }) => ({ id, name, email, phone, role });
-const types = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".avif": "image/avif" };
+const types = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".avif": "image/avif", ".rar": "application/vnd.rar", '.zip': 'application/zip',
+  ...Object.fromEntries(['max', 'c4d', 'blend', 'uproject', 'uasset', 'fbx', 'obj', 'mat', 'matlib', 'sbsar', 'stl'].map(extension => [`.${extension}`, 'application/octet-stream'])) };
 
 export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".private"), origin = process.env.APP_ORIGIN, secureCookies = process.env.NODE_ENV === "production", googleVerifier } = {}) {
   mkdirSync(resolve(dataDir, "files"), { recursive: true });
@@ -100,6 +103,8 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
   };
 
   const handleDownloadAdmin = createDownloadAdmin({ db, filesRoot, sessionUser, readBody, json, fail, limit });
+  const planOrders = createPlanOrders({ db, sessionUser, readBody, json, fail, limit });
+  const handleModelLibrary = createModelLibraryApi({ dataDir, filesRoot, db, json, fail });
   const handlePrintRequests = createPrintRequests({ db, filesRoot, sessionUser, readBody, json, fail, limit });
   const accounts = createAccountRecords({ db, sessionUser, json, fail });
   const googleAuth = createGoogleAuth({ db, fail, limit, verify: googleVerifier });
@@ -241,16 +246,19 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
         accounts.record(user.id, "login");
         return json(res, 200, { user: safeUser(user), token });
       }
+      if (await handleModelLibrary(req, res, path)) return;
       if (accounts.handler(req, res, path)) return;
       if (await handlePrintRequests(req, res, path)) return;
+      if (await planOrders.handler(req, res, path)) return;
       if (await handleDownloadAdmin(req, res, path)) return;
       const match = path.match(/^\/api\/designs\/([a-z0-9-]+)\/download$/);
       if (match && req.method === "GET") {
         const user = sessionUser(req);
         if (!user) throw fail(401, "Please sign in.");
         limit(`download:${user.id}`, 60);
-        if (user.role !== "admin" && !db.prepare("SELECT 1 FROM entitlements WHERE user_id=? AND design_id=?").get(user.id, match[1])) throw fail(403, "Download access has not been granted.");
         const design = db.prepare("SELECT file FROM designs WHERE id=?").get(match[1]);
+        const modelDownload = planOrders.isModelDownload(match[1], design?.file);
+        if (!modelDownload && user.role !== "admin" && !db.prepare("SELECT 1 FROM entitlements WHERE user_id=? AND design_id=?").get(user.id, match[1])) throw fail(403, "Download access has not been granted.");
         if (!design) throw fail(404, "This file has not been uploaded yet.");
         let file;
         try { file = realpathSync(resolve(filesRoot, design.file)); } catch { throw fail(404, "File is unavailable."); }
@@ -258,6 +266,11 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
         if (relativeFile.startsWith("..") || isAbsolute(relativeFile) || !types[extname(file).toLowerCase()]) throw fail(403, "Invalid file.");
         const info = await stat(file);
         if (!info.isFile()) throw fail(404, "File is unavailable.");
+        if (modelDownload) planOrders.consumeDownload(user, match[1], design.file);
+        if (modelDownload) res.once('finish', () => {
+          try { planOrders.recordDownload(user, match[1], design.file); }
+          catch { console.error('Could not save model download history.'); }
+        });
         res.writeHead(200, { "Content-Type": types[extname(file).toLowerCase()], "Content-Length": info.size, "Content-Disposition": `attachment; filename="${match[1]}${extname(file).toLowerCase()}"` });
         const stream = createReadStream(file);
         stream.on("error", () => res.destroy());
@@ -268,7 +281,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
     } catch (error) {
       if (!res.headersSent) {
         if (error.status === 429) res.setHeader("Retry-After", "900");
-        json(res, error.status || 500, { error: error.status ? error.message : "Server error. Please try again." });
+        json(res, error.status || 500, { error: error.status ? error.message : "Server error. Please try again.", ...(error.code === 'PLAN_REQUIRED' ? { code: 'PLAN_REQUIRED' } : {}) });
       } else res.destroy();
     }
   }

@@ -5,14 +5,15 @@ import vm from 'node:vm';
 
 test('customer inbox loads size requests and refreshes approval changes', async () => {
   const source = readFileSync(new URL('../src/js/commerce.js', import.meta.url), 'utf8');
-  const refresh = source.slice(source.indexOf('async function refreshDownloadRequests()'), source.indexOf('function checkApprovalStatus()'));
+  const refresh = source.slice(source.indexOf('async function refreshDownloadRequests('), source.indexOf('function checkApprovalStatus()'));
   let status = 'pending';
   const context = vm.createContext({
+    commerceMode: () => 'wallpaper', getSession: () => ({ role: 'user' }),
     getPrintRequests: async () => [{ id: 'sized-request', status }],
     fetchApi: async () => ({ ok: true, json: async () => ({ requests: [], access: [] }) }),
     renderCommerce() {}, announce() {},
   });
-  vm.runInContext('let printRequests = [], accessRequests = [], approvedDesigns = [], notice = "", printRequestError = "";' + refresh, context);
+  vm.runInContext('let refreshingRequests = false, printRequests = [], accessRequests = [], approvedDesigns = [], notice = "", printRequestError = "";' + refresh, context);
   await vm.runInContext('refreshDownloadRequests()', context);
   assert.equal(vm.runInContext('printRequests[0].status', context), 'pending');
   status = 'approved';

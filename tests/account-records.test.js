@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { resolve, dirname, basename } from 'node:path';
 import { createApi } from '../server/api.js';
 
-test('persistent account records show real registration and sign-ins only to the owner', async () => {
+test('persistent account records show registrations only, five per page, only to the owner', async () => {
   const directory = await mkdtemp(resolve(tmpdir(), 'viana-account-test-'));
   const previous = process.env.STUDIO_DATA_DIR;
   process.env.STUDIO_DATA_DIR = directory;
@@ -32,13 +32,20 @@ test('persistent account records show real registration and sign-ins only to the
     const records = await (await call('/api/admin/accounts?search=customer', admin)).json();
     assert.equal(records.total, 1); assert.equal(records.accounts.length, 1);
     const account = records.accounts[0];
-    assert.equal(account.name, user.name); assert.equal(account.login_count, 2);
-    assert.ok(account.registered_at > 0); assert.ok(account.last_login >= account.registered_at);
-    assert.deepEqual(records.events.map(event => event.event), ['login', 'logout', 'login', 'registered']);
+    assert.equal(account.name, user.name); assert.equal(account.login_count, undefined);
+    assert.ok(account.registered_at > 0); assert.equal(account.last_login, undefined);
+    assert.equal(records.events, undefined);
+    assert.equal(records.pageSize, 5); assert.equal(records.hasNext, false);
+    for (let i = 0; i < 6; i++) await api.createUser({ name: 'Customer ' + i, email: 'customer' + i + '@example.com', phone: '900000004' + i, password: 'Customer-password123' });
+    const first = await (await call('/api/admin/accounts?search=customer', admin)).json();
+    const next = await (await call('/api/admin/accounts?search=customer&page=1', admin)).json();
+    assert.equal(first.accounts.length, 5); assert.equal(first.hasNext, true);
+    assert.equal(next.accounts.length, 2); assert.equal(next.hasNext, false);
+    assert.equal(new Set([...first.accounts, ...next.accounts].map(account => account.id)).size, 7);
     assert.equal(account.password, undefined); assert.equal(account.salt, undefined);
     assert.doesNotMatch(JSON.stringify(records), /Customer-password|Owner-password|viana_session/);
     const second = createApi({ dataDir: directory, secureCookies: false });
-    assert.equal(second.db.prepare("SELECT count(*) AS count FROM account_events WHERE event='login'").get().count, 3);
+    assert.equal(second.db.prepare("SELECT count(*) AS count FROM account_events WHERE event='login'").get().count, 0);
     second.close();
   } finally {
     await new Promise(done => server.close(done)); api.close();

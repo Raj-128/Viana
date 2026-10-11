@@ -10,8 +10,8 @@ export async function createPrintRequest(designId, dimensions) {
   if (!response.ok) throw new Error(data.error || 'Could not send your design request. Please try again.');
   return data.request;
 }
-export async function getPrintRequests() {
-  const response = await fetchApi('api/print-requests', { cache: 'no-store' });
+export async function getPrintRequests({ fresh = false } = {}) {
+  const response = await fetchApi('api/print-requests', { cache: fresh ? 'reload' : 'no-store' });
   if (response.status === 401) return [];
   if (response.status === 404) throw new Error('Design requests are temporarily unavailable. Please try again later or contact the studio.');
   const data = await response.json();
@@ -31,7 +31,7 @@ export async function downloadPrintFile(request) {
   if (!blob.size) throw new Error('The print file is empty. Contact the studio.');
   const url = URL.createObjectURL(blob), link = document.createElement('a');
   link.href = url;
-  link.download = `viana-${request.id}-${request.width}x${request.height}in.${extension}`;
+  link.download = `viana-${request.reference || request.id}-${request.width}x${request.height}in.${extension}`;
   document.body.append(link); link.click(); link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 60000);
 }

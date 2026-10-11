@@ -39,3 +39,24 @@ Use supplied public client ID with official server token verification, short-liv
 
 ## SEO follow-up (FINALIZED)
 Correct production canonical/social URLs, descriptive static metadata, valid Organization schema, sitemap and private-page noindex. Preserve download authorization and existing page gates pending confirmation. No ranking guarantees.
+
+## 3D shop categories (FINALIZED)
+Add a responsive reference-inspired Shop Categories section below the homepage collection in 3D mode. Combine category and actual source-file extension filters, expose matching files only, and show honest empty states for unavailable assets. Preserve wallpaper mode and existing access controls.
+
+## Shop logo interaction and placement (FINALIZED)
+Use recognizable reference-style software logo assets, grey at rest and colored on hover/focus/selection. Logo clicks open the matching file listing and available source links, without stale category filters. Move the entire section directly below the hero Explore Collections CTA.
+
+## Plan format quotas (FINALIZED)
+Basic: 100 files total per 30-day approval. Daily limits: Max 9, C4D 2, Blender 3, Unreal 1, FBX 4 and OBJ 4 separately, Archmaterials 5, STL 4. Add 3 per format at each successive plan; preserve other prices, durations and daily caps. Enforce atomically. Approved snapshots keep their terms; pending orders adopt updated terms at approval. Archives count once overall and once per included format using trusted metadata.
+
+## Plan WhatsApp handoff (FINALIZED)
+Order now saves a pending request then opens WhatsApp Web for existing studio number 919737711570. Include authenticated email, request ID, plan price, validity, access and all format quotas. No automatic sending. Allow pending handoff to reopen and provide popup-block fallback. Only admin approval unlocks selected plan.
+
+## Plan price and active badge (FINALIZED)
+Prices: Basic 399, weekly 599, monthly 1199, Pro 3999, yearly 7199 INR. Display approved unexpired plan name in header, otherwise Choose a plan; refresh on return and expire automatically. Basic ends exactly 30 days after approval.
+
+## Paid purchase state (FINALIZED)
+Admin approval confirms paid purchase. Show Paid / Purchased and Active plan on approved cards; block duplicate active-plan purchases. Preserve paid history on expiry with Renew plan. Refresh approval state on focus and while visible.
+
+## Section-specific commerce and remaining quotas (FINALIZED)
+Filter cart, saved selections, downloads, counts, print requests and WhatsApp quote content by active wallpaper/3D mode without deleting the other mode entries. Active approved plan cards show remaining total/day allowance and separate daily format counters from authenticated server usage; refresh every five seconds.

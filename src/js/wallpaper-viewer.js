@@ -1,5 +1,7 @@
 import { projects } from "./projects.js";
-import { addToCart, renderCommerce } from "./commerce.js";
+import { brandDesignImage } from './design-branding.js';
+import { renderModelFileCard } from './model-file-card.js';
+import { addToCart, renderCommerce, downloadDesign } from "./commerce.js";
 import { createCommerceStore } from "./commerce-store.js";
 
 export function initWallpaperViewer() {
@@ -16,11 +18,14 @@ export function initWallpaperViewer() {
         <button type="button" data-viewer-close aria-label="Close design preview" autofocus>&times;</button>
       </div>
     </header>
+    <div class="model-preview-layout">
     <div class="wallpaper-viewer-frame">
       <div class="wallpaper-viewer-artwork">
         <img alt="" draggable="false">
         <div class="wallpaper-watermark" aria-hidden="true"></div>
       </div>
+    </div>
+    <aside class="model-file-card" aria-label="Model file details" hidden></aside>
     </div>
     <footer class="wallpaper-viewer-footer">
       <p class="wallpaper-viewer-caption">Viana Studio</p>
@@ -42,6 +47,9 @@ export function initWallpaperViewer() {
     const image = dialog.querySelector("img");
     image.src = project.cover;
     image.alt = project.title;
+    brandDesignImage(image.parentElement, project);
+    dialog.querySelector('.model-preview-layout').classList.toggle('has-model-files', project.workType === '3d');
+    renderModelFileCard(dialog.querySelector('.model-file-card'), project);
     dialog.querySelector("h2").textContent = project.title;
     dialog.querySelector("[data-preview-kind]").textContent = project.workType === "3d" ? "3D PREVIEW" : "WALLPAPER PREVIEW";
     const added = store.cart().some((item) => item.id === project.id);
@@ -54,8 +62,8 @@ export function initWallpaperViewer() {
     basket.querySelector(".catalogue-basket-label").textContent = added ? "Added to cart" : "";
     const download = dialog.querySelector("[data-download-image]");
     download.dataset.downloadImage = project.id;
-    download.setAttribute("aria-label", 'View details and request ' + project.title);
-    download.title = "View design and request";
+    download.setAttribute("aria-label", (project.workType === '3d' ? 'Download file: ' : 'View details and request ') + project.title);
+    download.title = project.workType === '3d' ? 'Download file' : 'View design and request';
     renderCommerce();
   };
   document.addEventListener("click", (event) => {
@@ -71,7 +79,11 @@ export function initWallpaperViewer() {
     pointer = null;
   });
   dialog.querySelector("[data-add-design]").addEventListener("click", () => addToCart(designs[index]));
-  dialog.querySelector("[data-download-image]").addEventListener("click", () => { window.location.href = `project.html?id=${encodeURIComponent(designs[index].id)}`; });
+  dialog.querySelector("[data-download-image]").addEventListener("click", () => {
+    const project = designs[index];
+    if (project.workType === '3d') { dialog.close(); return downloadDesign(project); }
+    window.location.href = `project.html?id=${encodeURIComponent(project.id)}`;
+  });
   dialog.querySelector("[data-viewer-close]").addEventListener("click", () => dialog.close());
   dialog.querySelector("[data-viewer-previous]").addEventListener("click", () => show(index - 1));
   dialog.querySelector("[data-viewer-next]").addEventListener("click", () => show(index + 1));

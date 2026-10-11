@@ -1,9 +1,10 @@
 import "./site-mode.js";
+import './help-launcher.js';
 import { fetchApi, setStoredToken, getStoredToken, getApiBaseUrl } from "./api-config.js";
 import { createSessionLoader } from './session-loader.js';
 import { initGoogleSignIn } from './google-sign-in.js';
 const SESSION_KEY = "studioVianaSession";
-const PUBLIC_PAGES = new Set(["", "index.html", "about.html", "services.html", "contact.html", "login.html", "admin-login.html"]);
+const PUBLIC_PAGES = new Set(["", "index.html", "about.html", "services.html", "contact.html", "plans.html", "login.html", "admin-login.html"]);
 const ADMIN_HOLD_DURATION = 950;
 
 function removeStorage(key) {
@@ -362,8 +363,11 @@ export function syncAuthLinks(scope = document) {
   });
 }
 
+let announcedSession;
 export function applyAuthStateToDocument() {
   const session = getSession();
+  const identity = session ? session.id + ':' + session.role : 'guest';
+  if (identity !== announcedSession) { announcedSession = identity; window.dispatchEvent(new Event('studio:auth-change')); }
   const body = document.body;
   if (!body) {
     return;
@@ -490,6 +494,7 @@ function initClientAuthPage() {
     if (loginForm) loginForm.inert = !lightsOn;
     if (registerForm) registerForm.inert = !lightsOn;
     if (clientToggle) clientToggle.inert = !lightsOn;
+    accountPanel.inert = !lightsOn || accountPanel.hidden;
   };
 
   const pulseInterface = () => {
@@ -680,6 +685,7 @@ function initAdminAuthPage() {
     if (authInterface) authInterface.hidden = !lightsOn || Boolean(getSession()?.role === "admin");
     if (refreshAdminButton) refreshAdminButton.disabled = !lightsOn;
     if (adminLoginForm) adminLoginForm.inert = !lightsOn;
+    accountPanel.inert = !lightsOn || accountPanel.hidden;
   };
 
   const redirectAfterSuccess = (message, statusTarget) => {

@@ -44,15 +44,11 @@ test('Google callback completes sign-in and errors allow a fresh challenge', asy
   assert.equal(retry.hidden, true);
 });
 
-test('heading reveal preserves authored markup and cannot leave hidden letters', () => {
-  const source = readFileSync(new URL('../src/js/creative-animations.js', import.meta.url), 'utf8');
-  const start = source.indexOf('export function initTextReveal()');
-  const end = source.indexOf('\nexport function', start + 1);
-  const heading = {innerHTML:'The person<br>behind the studio.', animate(frames, options) {assert.equal(options.fill, 'none');}};
-  let callback;
-  const context = vm.createContext({window:{matchMedia:()=>({matches:false})}, document:{querySelectorAll:()=>[heading]},
-    IntersectionObserver:class {constructor(fn) {callback=fn;} observe() {} unobserve() {}}});
-  vm.runInContext(source.slice(start, end < 0 ? undefined : end).replace('export function', 'function') + '\ninitTextReveal();', context);
-  callback([{isIntersecting:true,target:heading}]);
+test('shared enhancements never rewrite heading markup', () => {
+  const source = readFileSync(new URL('../src/js/creative-animations.js', import.meta.url), 'utf8').replace(/^import .*;\r?\n/gm, '').replaceAll('export ', '');
+  const heading = { innerHTML: 'The person<br>behind the studio.' };
+  let start;
+  vm.runInNewContext(source + '\ninitCreativeAnimations();', { document: { addEventListener(type, callback) { start = callback; }, querySelectorAll(selector) { assert.equal(selector, 'a[href^="#"]'); return []; } } });
+  start();
   assert.equal(heading.innerHTML, 'The person<br>behind the studio.');
 });

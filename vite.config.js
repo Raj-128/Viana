@@ -2,6 +2,9 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 import { apiPlugin } from "./server/vite-plugin.js";
 import { wallpaperCataloguePlugin } from "./server/wallpaper-catalogue.js";
+import { modelCataloguePlugin } from "./server/model-library.js";
+import { devServerStatusPlugin } from './server/dev-server-status.js';
+import { legacyDetailPreviewsPlugin } from './server/legacy-detail-previews.js';
 
 import { securityHeaders, contentSecurityPolicy } from './server/security-headers.js';
 
@@ -9,9 +12,15 @@ export default defineConfig(({ command }) => ({
   base: "./",
   cacheDir: "node_modules/.vite-viana",
   appType: "mpa",
-  server: { headers: securityHeaders(true), port: 5173, strictPort: true, fs: { deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/.private/**", "**/server/**", "**/wallpapers/optimized/**", "**/wallpapers/*.jpeg"] } },
+  server: {
+    headers: securityHeaders(true), port: 5173, strictPort: true,
+    // Browser profiles and live databases contain locked files on Windows.
+    // Exclude their directories before the watcher attempts to traverse them.
+    watch: { ignored: file => /(?:^|\/)(?:\.gsd\/evidence|\.private)(?:\/|$)/.test(file.replaceAll('\\', '/')) },
+    fs: { deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/.private/**", "**/.gsd/evidence/**", "**/server/**", "**/wallpapers/optimized/**", "**/wallpapers/*.jpeg"] },
+  },
   preview: { headers: securityHeaders() },
-  plugins: [wallpaperCataloguePlugin(), apiPlugin(), {
+  plugins: [devServerStatusPlugin(), wallpaperCataloguePlugin(), modelCataloguePlugin(), legacyDetailPreviewsPlugin(), apiPlugin(), {
     name: "baseline-security-meta",
     transformIndexHtml() {
       return [
@@ -29,6 +38,7 @@ export default defineConfig(({ command }) => ({
         services: resolve(__dirname, "services.html"),
         work: resolve(__dirname, "work.html"),
         project: resolve(__dirname, "project.html"),
+        plans: resolve(__dirname, "plans.html"),
         login: resolve(__dirname, "login.html"),
         adminLogin: resolve(__dirname, "admin-login.html"),
         adminDownloads: resolve(__dirname, "admin-downloads.html")

@@ -1,11 +1,15 @@
+import { createVisibleRefresh } from './visible-refresh.js';
 import { getPrintRequests, downloadPrintFile, confirmPrintFileReceipt, printRequestSummary } from './print-requests.js';
 import { getSession } from "./auth.js";
-import { projects } from "./projects.js";
+import { projects, loadWallpaperCatalogue } from "./projects.js";
 import { CART_KEY, DOWNLOADS_KEY, createCommerceStore } from "./commerce-store.js";
 import "../css/commerce.css";
 import { requestProtectedDownload } from "./download-access.js";
 import { createPreviewDownload } from "./preview-download.js";
 import { fetchApi } from "./api-config.js";
+import { hasDirectModelDownload } from './direct-model-downloads.js';
+import { initActivePlanBadge } from './active-plan-badge.js';
+import { filterCommerceEntries } from './commerce-mode.js';
 
 const basketIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3-4 6m12-6 4 6M3 9h18l-2 11H5L3 9Z"/><path d="M9 13v3m6-3v3"/></svg>';
 const downloadIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>';
@@ -16,14 +20,20 @@ let notice = "";
 let selectedDownload;
 let accessRequests = [], approvedDesigns = [], printRequests = [], requestBusy = false;
 let printRequestError = '';
+let refreshingRequests = false;
+const commerceMode = () => document.documentElement.dataset.studioMode === '3d' ? '3d' : 'wallpaper';
+let renderedMode;
 const printDownloads = new Set();
-async function refreshDownloadRequests() {
+async function refreshDownloadRequests(fresh = false) {
+  if (!getSession() || refreshingRequests) return;
+  if (commerceMode() === '3d') { renderCommerce(); return; }
+  refreshingRequests = true;
   try {
-    printRequests = await getPrintRequests();
+    printRequests = await getPrintRequests({ fresh });
     printRequestError = '';
   } catch (error) { printRequests = []; printRequestError = error.message; }
   try {
-    const response = await fetchApi("api/download-requests", { cache: "no-store" });
+    const response = await fetchApi("api/download-requests", { cache: fresh ? 'reload' : 'no-store' });
     if (response.status === 401) { accessRequests = []; approvedDesigns = []; }
     else {
       const data = await response.json();
@@ -33,13 +43,14 @@ async function refreshDownloadRequests() {
     }
     renderCommerce();
   } catch (error) { notice = error.message; renderCommerce(); announce(error.message); }
+  finally { refreshingRequests = false; }
 }
 function checkApprovalStatus() {
   if (getSession()?.role === "admin") {
     window.location.href = "admin-downloads.html";
     return;
   }
-  return refreshDownloadRequests();
+  return refreshDownloadRequests(true);
 }
 async function requestOriginalAccess() {
   if (!selectedDownload || requestBusy) return;
@@ -86,7 +97,8 @@ function removeFromCart(project) {
 export function openCommerce(tab = "cart") {
   if (!dialog) return;
   activeTab = tab;
-  if (tab === "downloads") refreshDownloadRequests();
+  if (commerceMode() === 'wallpaper') void loadWallpaperCatalogue().then(() => renderCommerce()).catch(() => announce('The catalogue could not load. Please reopen this panel to retry.'));
+  if (tab === "downloads" && getSession()) refreshDownloadRequests();
   renderCommerce();
   if (!dialog.open) {
     dialog.showModal();
@@ -95,6 +107,16 @@ export function openCommerce(tab = "cart") {
 
 export async function downloadDesign(project, variant) {
   if (!store || !project || downloading.has(project.id)) return;
+  if (project.workType === '3d' && !hasDirectModelDownload(project)) {
+    notice = 'A model file is not available for this design yet.';
+    selectedDownload = project;
+    announce(notice);
+    return;
+  }
+  if (hasDirectModelDownload(project)) {
+    selectedDownload = project;
+    variant = 'original';
+  }
   if (!variant) {
     selectedDownload = project;
     notice = "Choose a watermarked preview or your approved original file.";
@@ -106,11 +128,13 @@ export async function downloadDesign(project, variant) {
   notice = "Preparing your download…";
   renderCommerce();
   announce(notice);
+  let redirected = false;
   try {
     const blob = variant === "preview" ? await createPreviewDownload(project) : await requestProtectedDownload(project.id);
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    const extension = ({ "image/png": "png", "image/webp": "webp", "image/avif": "avif", "image/jpeg": "jpg" })[blob.type] || "bin";
+    const extension = ({ "image/png": "png", "image/webp": "webp", "image/avif": "avif", "image/jpeg": "jpg", "application/vnd.rar": "rar", "application/zip": "zip" })[blob.type] ||
+      (hasDirectModelDownload(project) && project.sourceFiles?.[0]?.name.match(/\.(max|fbx|obj|blend|c4d|stl|skp|dwg|dxf|mat|matlib|sbsar|uasset|uproject)$/i)?.[1]) || "bin";
     link.href = url;
     link.download = `${project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}${variant === "preview" ? "-watermarked-preview" : "-original"}.${extension}`;
     document.body.append(link);
@@ -121,16 +145,33 @@ export async function downloadDesign(project, variant) {
     notice = saved ? "Download started. You can download it again from your library." : "Download started, but your browser could not save its history.";
     onChange();
   } catch (error) {
+    if (project.workType === '3d' && (error.code === 'PLAN_REQUIRED' || error.status === 401)) {
+      redirected = true;
+      window.location.assign(new URL('plans.html?notice=renew-plan', window.location.href).href);
+      return;
+    }
     notice = error instanceof TypeError ? "The image could not be downloaded. Check your connection and try again." : error.message;
   } finally {
     downloading.delete(project.id);
-    openCommerce("downloads");
-    announce(notice);
+    if (!redirected) {
+      if (project.workType === '3d') renderCommerce();
+      else openCommerce("downloads");
+      announce(notice);
+    }
   }
 }
 
 export function renderCommerce() {
   if (!store || !dialog) return;
+  const mode = commerceMode();
+  const is3d = mode === '3d';
+  if (renderedMode && renderedMode !== mode) { selectedDownload = undefined; notice = ''; }
+  renderedMode = mode;
+  if (selectedDownload && selectedDownload.workType !== mode) selectedDownload = undefined;
+  const cart = filterCommerceEntries(store.cart(), projects, mode);
+  const downloads = filterCommerceEntries(store.downloads(), projects, mode);
+  const visiblePrintRequests = is3d ? [] : filterCommerceEntries(printRequests, projects, mode, 'design_id');
+  const visibleAccessRequests = is3d ? [] : filterCommerceEntries(accessRequests, projects, mode, 'design_id');
   const choices = dialog.querySelector(".commerce-download-options");
   choices.hidden = activeTab !== "downloads" || !selectedDownload;
   if (selectedDownload) {
@@ -144,6 +185,14 @@ export function renderCommerce() {
     choices.querySelector('[data-download-variant="original"]').hidden = selectedDownload.workType === 'wallpaper' && !approved;
     choices.querySelector('[data-original-note]').hidden = selectedDownload.workType === 'wallpaper' && !approved;
     requestButton.textContent = requestBusy ? "Sending request…" : approved ? "Access approved" : pending ? "Request pending approval" : "Request original access";
+    const directModel = hasDirectModelDownload(selectedDownload);
+    choices.querySelector('[data-download-variant="preview"]').textContent = directModel ? 'Download file' : 'Download watermarked preview';
+    choices.querySelector('[data-preview-note]').textContent = directModel ? 'An approved download plan is required. Your daily limit applies.' : 'Free preview with Studio Viana watermarks.';
+    requestButton.hidden = directModel;
+    if (directModel) {
+      choices.querySelector('[data-download-variant="original"]').hidden = true;
+      choices.querySelector('[data-original-note]').hidden = true;
+    }
   }
   if (selectedDownload?.workType === 'wallpaper') {
     const requestButton = choices.querySelector('[data-request-original]');
@@ -151,11 +200,11 @@ export function renderCommerce() {
     requestButton.textContent = 'Choose size and request print file';
   }
   const printPanel = dialog.querySelector('[data-print-requests]');
-  printPanel.hidden = activeTab !== 'downloads';
-  printPanel.querySelector('[data-print-list]').innerHTML = printRequestError ? '<div class="commerce-request-error" role="status"><p>' + escape(printRequestError) + '</p><button type="button" data-retry-requests>Try again</button></div>' : printRequests.length ? printRequests.map(request => {
+  printPanel.hidden = is3d || activeTab !== 'downloads';
+  printPanel.querySelector('[data-print-list]').innerHTML = !is3d && printRequestError ? '<div class="commerce-request-error" role="status"><p>' + escape(printRequestError) + '</p><button type="button" data-retry-requests>Try again</button></div>' : visiblePrintRequests.length ? visiblePrintRequests.map(request => {
     const project = projects.find(project => project.id === request.design_id);
     return '<article class="commerce-request commerce-print-request"><strong>' + escape(project?.title || request.design_id) + '</strong><p class="commerce-request-size">' +
-      escape(printRequestSummary(request)) + '</p><small class="commerce-request-reference">Reference: ' + escape(request.id) + '</small><p class="commerce-request-status" data-status="' + escape(request.status) + '">' +
+      escape(printRequestSummary(request)) + '</p><small class="commerce-request-reference">Reference: ' + escape(request.reference || request.id) + '</small><p class="commerce-request-status" data-status="' + escape(request.status) + '">' +
       escape({pending:'Awaiting studio approval', approved:'Approved — ready to download', received:'Receipt confirmed', declined:'Request declined', revoked:'Download access revoked'}[request.status] || request.status) + '</p>' +
       '<div class="commerce-request-actions">' +
       (request.status === 'approved' ? '<button class="commerce-print-download" type="button" data-print-download="' + escape(request.id) + '" ' + (printDownloads.has(request.id) ? 'disabled' : '') + '>' + (printDownloads.has(request.id) ? 'Downloading…' : 'Download print-ready file') + '</button><p>Your approved file, made to the dimensions above.</p>' : '') +
@@ -166,23 +215,21 @@ export function renderCommerce() {
   choices.querySelector('a[href="login.html"]').hidden = Boolean(getSession());
   const requestsPanel = dialog.querySelector(".commerce-requests");
   requestsPanel.querySelector("[data-check-approvals]").textContent = getSession()?.role === "admin" ? "Check approval status / Review requests" : "Check approval status";
-  requestsPanel.hidden = activeTab !== "downloads";
-  requestsPanel.querySelector("[data-request-list]").innerHTML = accessRequests.length ? accessRequests.map((request) => {
+  requestsPanel.hidden = is3d || activeTab !== "downloads";
+  requestsPanel.querySelector("[data-request-list]").innerHTML = visibleAccessRequests.length ? visibleAccessRequests.map((request) => {
     const approved = approvedDesigns.includes(request.design_id);
     return `<div class="commerce-request"><strong>${escape(projects.find((p) => p.id === request.design_id)?.title || request.design_id)}</strong><p>${escape(approved ? "Approved — original ready to download" : ({ pending: "Pending studio approval", rejected: "Declined by the studio", revoked: "Access revoked" }[request.status] || request.status))}</p><button type="button" data-request-design="${escape(request.design_id)}">${approved ? "Download original" : "View download options"}</button></div>`;
   }).join("") : "";
-  const cart = store.cart();
-  const downloads = store.downloads();
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
   document.querySelectorAll("[data-commerce-count]").forEach((badge) => {
-    badge.textContent = badge.dataset.commerceCount === "cart" ? count : downloads.length + printRequests.filter(request => request.status === "approved").length;
+    badge.textContent = badge.dataset.commerceCount === "cart" ? count : downloads.length + visiblePrintRequests.filter(request => request.status === "approved").length;
   });
   document.querySelectorAll("[data-download-image]").forEach((button) => {
     button.disabled = downloading.has(button.dataset.downloadImage);
     button.setAttribute("aria-busy", String(button.disabled));
   });
   const list = activeTab === "cart" ? cart : downloads;
-  dialog.querySelector("#commerce-title").textContent = activeTab === "cart" ? "Your cart" : "Your requests and downloads";
+  dialog.querySelector("#commerce-title").textContent = activeTab === "cart" ? (is3d ? 'Your 3D cart' : 'Your wallpaper cart') : (is3d ? 'Your 3D downloads' : 'Your wallpaper requests and downloads');
   dialog.querySelectorAll("[data-commerce-tab]").forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.commerceTab === activeTab));
   });
@@ -190,9 +237,10 @@ export function renderCommerce() {
   dialog.querySelector(".commerce-items").innerHTML = list.length ? list.map((item) => {
     const project = projects.find((project) => project.id === item.id);
     const date = new Date(item.downloadedAt);
+    const projectUrl = `project.html?id=${encodeURIComponent(project.id)}`;
     return `<article class="commerce-item">
-      <img src="${escape(project.cover)}" alt="${escape(project.title)}" draggable="false">
-      <div class="commerce-item-copy"><h3>${escape(project.title)}</h3><p>${escape(project.mediumLabel || "Wallpaper")}</p>
+      <a class="commerce-item-link" href="${escape(projectUrl)}" aria-label="Open ${escape(project.title)}"><img src="${escape(project.cover)}" alt="" draggable="false"></a>
+      <div class="commerce-item-copy"><h3><a class="commerce-item-link" href="${escape(projectUrl)}">${escape(project.title)}</a></h3><p>${escape(project.mediumLabel || (is3d ? '3D model' : 'Wallpaper'))}</p>
       ${activeTab === "cart" ? `<div class="commerce-quantity" aria-label="Quantity for ${escape(project.title)}">
         <button type="button" data-quantity="${escape(item.id)}" data-step="-1" aria-label="Decrease quantity for ${escape(project.title)}" ${item.quantity <= 1 ? "disabled" : ""}>−</button>
         <span aria-label="Quantity">${item.quantity}</span>
@@ -201,15 +249,16 @@ export function renderCommerce() {
         <button type="button" class="commerce-redownload" data-redownload="${escape(item.id)}" ${downloading.has(item.id) ? "disabled" : ""}>${downloading.has(item.id) ? "Downloading…" : "Download again"}</button>`}
       <button type="button" class="commerce-remove" data-commerce-remove="${escape(item.id)}" aria-label="Remove ${escape(project.title)}${activeTab === "downloads" ? " from history" : " from cart"}">${activeTab === "cart" ? "Remove" : "Remove from history"}</button></div>
     </article>`;
-  }).join("") : `<div class="commerce-empty">${activeTab === "cart" ? basketIcon : downloadIcon}<h3>${activeTab === "cart" ? "Your cart is empty" : "No downloads yet"}</h3><p>${activeTab === "cart" ? "Add your favourite wallpapers to keep them together here." : "Images you download will appear here so you can find them again."}</p><button type="button" data-commerce-close>Continue browsing</button></div>`;
-  if (activeTab === 'downloads' && printRequests.length && !list.length) dialog.querySelector('.commerce-items').innerHTML = '';
+  }).join("") : `<div class="commerce-empty">${activeTab === "cart" ? basketIcon : downloadIcon}<h3>${activeTab === "cart" ? (is3d ? 'Your 3D cart is empty' : 'Your wallpaper cart is empty') : 'No downloads yet'}</h3><p>${activeTab === "cart" ? (is3d ? 'Add 3D models to keep them together here.' : 'Add your favourite wallpapers to keep them together here.') : (is3d ? 'Your downloaded 3D models will appear here.' : 'Wallpapers you download will appear here.')}</p><button type="button" data-commerce-close>Continue browsing</button></div>`;
+  if (activeTab === 'downloads' && visiblePrintRequests.length && !list.length) dialog.querySelector('.commerce-items').innerHTML = '';
   const footer = dialog.querySelector(".commerce-footer");
   footer.hidden = activeTab !== "cart" || !cart.length;
+  footer.querySelector('p').textContent = is3d ? 'Confirm model formats, pricing and download access with the studio.' : 'Made to measure. Final pricing is confirmed after your wall size and finish are selected.';
   dialog.querySelector(".commerce-summary").textContent = `${count} item${count === 1 ? "" : "s"} · ${cart.length} design${cart.length === 1 ? "" : "s"}`;
-  const message = ["Hello Studio Viana, I would like a quote for these designs:", ...cart.map((item) => {
+  const message = [is3d ? 'Hello Studio Viana, I would like a quote for these 3D models:' : 'Hello Studio Viana, I would like a quote for these wallpapers:', ...cart.map((item) => {
     const project = projects.find((project) => project.id === item.id);
     return `${project.title} — quantity ${item.quantity} (reference: ${project.id})`;
-  }), "Please help me confirm wall measurements, finish, pricing and download access."].join("\n");
+  }), is3d ? 'Please help me confirm model formats, pricing and download access.' : 'Please help me confirm wall measurements, finish, pricing and download access.'].join("\n");
   dialog.querySelector(".commerce-checkout").href = `https://api.whatsapp.com/send?phone=919737711570&text=${encodeURIComponent(message)}`;
 }
 
@@ -220,10 +269,11 @@ export function initCommerce(options) {
   const existingNav = document.querySelector('.header-inner .commerce-nav');
   const nav = existingNav || document.createElement("div");
   nav.className = "commerce-nav";
-  nav.innerHTML = `<button type="button" data-open-commerce="downloads" aria-label="Open downloads" title="Downloads">${downloadIcon}<span data-commerce-count="downloads">0</span></button><button type="button" data-open-commerce="cart" aria-label="Open cart" title="Cart">${basketIcon}<span data-commerce-count="cart">0</span></button>`;
+  nav.innerHTML = `<a class="unlimited-download-link" href="plans.html">Plans</a><button type="button" data-open-commerce="downloads" aria-label="Open downloads" title="Downloads">${downloadIcon}<span data-commerce-count="downloads">0</span></button><button type="button" data-open-commerce="cart" aria-label="Open cart" title="Cart">${basketIcon}<span data-commerce-count="cart">0</span></button>`;
   const header = document.querySelector(".header-inner");
   const anchor = header?.querySelector(".header-actions, .menu-toggle");
   if (header && !existingNav) header.insertBefore(nav, anchor || null);
+  initActivePlanBadge({ hasSession: () => Boolean(getSession()) });
   dialog = document.createElement("dialog");
   dialog.className = "commerce-dialog";
   dialog.setAttribute("aria-labelledby", "commerce-title");
@@ -232,7 +282,7 @@ export function initCommerce(options) {
     <section class="commerce-download-options" hidden aria-label="Download options">
       <h3></h3>
       <button type="button" data-download-variant="preview">Download watermarked preview</button>
-      <p>Free preview with Studio Viana watermarks.</p>
+      <p data-preview-note>Free preview with Studio Viana watermarks.</p>
       <button type="button" data-download-variant="original">Download approved original</button>
       <p data-original-note>This is a previously approved design original. For a file made to your wall size, send a size request.</p>
       <button type="button" data-request-original>Request original access</button>
@@ -247,12 +297,10 @@ export function initCommerce(options) {
   status.className = "commerce-toast";
   status.setAttribute("role", "status");
   document.body.append(dialog, status);
-  window.addEventListener("focus", () => {
-    if (dialog.open && activeTab === "downloads") refreshDownloadRequests();
+  const approvalUpdates = createVisibleRefresh(refreshDownloadRequests, { interval: 60000,
+    enabled: () => dialog.open && activeTab === 'downloads' && Boolean(getSession()) && commerceMode() === 'wallpaper',
   });
-  setInterval(() => {
-    if (dialog.open && activeTab === "downloads" && !document.hidden && [...accessRequests, ...printRequests].some(request => request.status === "pending")) refreshDownloadRequests();
-  }, 15000);
+  dialog.addEventListener('toggle', () => { if (dialog.open && activeTab === 'downloads') void approvalUpdates.refresh(); });
   let toastTimer;
   new MutationObserver(() => {
     clearTimeout(toastTimer);
@@ -265,7 +313,7 @@ export function initCommerce(options) {
   dialog.addEventListener("click", async (event) => {
     const button = event.target.closest("button");
     if (!button) return;
-    if (button.hasAttribute('data-retry-requests')) return refreshDownloadRequests();
+    if (button.hasAttribute('data-retry-requests')) return refreshDownloadRequests(true);
     if (button.dataset.requestPreview) {
       return downloadDesign(projects.find(project => project.id === button.dataset.requestPreview), 'preview');
     }

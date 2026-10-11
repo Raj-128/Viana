@@ -1,90 +1,68 @@
 import { projects } from './projects.js';
-import { selectHeroDesigns } from './hero-designs.js';
-import { corridorFrames, corridorTransform, galleryFrames, galleryTransform } from './hero-motion.js';
-import '../css/image-stream-hero.css';
+import { selectHeroDesigns, selectRecentModels } from './hero-designs.js';
+import { allowsMotion } from './motion-policy.js';
+import { corridorTransform, galleryTransform, heroFrames } from './hero-projection.js';
 
 const hero = document.querySelector('[data-image-stream-hero]');
 if (hero) {
+  const wide = window.matchMedia('(min-width: 801px)');
   const style = document.createElement('style');
-  style.textContent = corridorFrames(1, 'stream-right') + corridorFrames(-1, 'stream-left') + galleryFrames();
+  style.textContent = heroFrames();
   hero.append(style);
-
-  const collections = {
-    wallpaper: selectHeroDesigns(projects.filter(project => project.heroCover)),
-    '3d': projects.filter(project => project.workType === '3d'),
-  };
-  const stages = [...hero.querySelectorAll('[data-stream-mode]')];
-  let renderedMode;
-  let renderedCount;
-  function renderStream() {
+  let renderedKey;
+  function render() {
     const mode = document.documentElement.dataset.studioMode === '3d' ? '3d' : 'wallpaper';
-    const count = 9;
-    if (mode === renderedMode && count === renderedCount) return;
-    renderedMode = mode;
-    renderedCount = count;
-    // Only mount the selected collection: hidden cards need neither images
-    // nor animation layers. Theme changes also release the previous rail.
-    for (const stage of stages) stage.replaceChildren();
-    const stage = stages.find(stage => stage.dataset.streamMode === mode);
-    if (!stage) return;
-    const designs = collections[stage.dataset.streamMode];
-    if (!designs.length) return;
-    const rail = document.createElement('div');
-    rail.className = 'image-stream-rail';
-    stage.style.setProperty('--stream-count', String(count));
-    const directions = mode === '3d' ? ['gallery'] : ['right', 'left'];
-    const duration = mode === '3d' ? 32 : 24;
-    for (const direction of directions) {
-      for (let index = 0; index < count; index++) {
-        const offset = direction === 'left' ? count : 0;
-        const design = designs[(offset + index) % designs.length];
-        const slot = document.createElement('div');
-        slot.className = 'image-stream-slot';
-        const progress = (index + .5) / count;
-        slot.style.animationName = `stream-${direction}`;
+    const animated = allowsMotion() && wide.matches;
+    const key = `${mode}:${animated}`;
+    if (key === renderedKey) return;
+    renderedKey = key;
+    hero.dataset.presentation = animated ? 'corridor' : 'still';
+    for (const stage of hero.querySelectorAll('[data-stream-mode]')) stage.replaceChildren();
+    const stage = hero.querySelector(`[data-stream-mode="${mode}"]`);
+    // Nine cards on each wallpaper rail restores the original continuous
+    // corridor; five per side left visible gaps between projected cards.
+    const limit = animated ? (mode === '3d' ? 6 : 18) : 3;
+    const designs = mode === '3d' ? selectRecentModels(projects, limit) : selectHeroDesigns(projects.filter(project => project.heroCover), limit);
+    stage.style.setProperty('--stream-count', String(designs.length));
+    designs.forEach((design, index) => {
+      const slot = document.createElement('div');
+      slot.className = 'image-stream-slot';
+      if (animated) {
+        const sideCount = Math.ceil(designs.length / 2);
+        const direction = index < sideCount ? 1 : -1;
+        const position = mode === '3d' ? index : index % sideCount;
+        const count = mode === '3d' ? designs.length : (direction === 1 ? sideCount : designs.length - sideCount);
+        const progress = (position + .5) / count;
+        const duration = mode === '3d' ? 36 : 30;
+        slot.style.transform = mode === '3d' ? galleryTransform(progress) : corridorTransform(progress, direction);
+        slot.style.animationName = mode === '3d' ? 'stream-gallery' : direction === 1 ? 'stream-right' : 'stream-left';
         slot.style.animationDuration = `${duration}s`;
         slot.style.animationDelay = `${-progress * duration}s`;
-        // Keep dynamic animation settings together. A production CSS optimizer can
-        // discard timing/iteration values when the stylesheet has no static name.
-        // Do not set the shorthand: inline play-state would override hover pause.
         slot.style.animationTimingFunction = 'linear';
         slot.style.animationIterationCount = 'infinite';
         slot.style.animationFillMode = 'both';
-        slot.style.transform = mode === '3d' ? galleryTransform(progress)
-          : corridorTransform(progress, direction === 'right' ? 1 : -1);
-        const card = document.createElement('a');
-        card.className = 'image-stream-card';
-        card.href = `project.html?id=${encodeURIComponent(design.id)}`;
-        card.setAttribute('aria-label', `View ${design.title}`);
-        card.draggable = false;
-        const surface = document.createElement('span');
-        surface.className = 'image-stream-surface';
-        const image = document.createElement('img');
-        image.src = design.heroCover || design.cover;
-        image.alt = '';
-        image.draggable = false;
-        image.decoding = 'async';
-        surface.append(image);
-        card.append(surface);
-        slot.append(card);
-        rail.append(slot);
       }
-    }
-    stage.append(rail);
+      const card = document.createElement('a');
+      card.className = 'image-stream-card';
+      card.href = `project.html?id=${encodeURIComponent(design.id)}`;
+      card.setAttribute('aria-label', `View ${design.title}`);
+      card.draggable = false;
+      const image = document.createElement('img');
+      image.src = design.heroCover || design.thumbnail || design.cover;
+      image.alt = design.title;
+      image.width = 640; image.height = 800;
+      image.draggable = false;
+      image.decoding = 'async';
+      image.fetchPriority = index === 0 ? 'high' : 'auto';
+      card.append(image);
+      slot.append(card);
+      stage.append(slot);
+    });
   }
-  renderStream();
-  const themeObserver = new MutationObserver(renderStream);
-  themeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-studio-mode'],
-  });
-
-  // Avoid rendering the animation when the hero is outside the viewport.
-  const observer = new IntersectionObserver(([entry]) => {
-    hero.classList.toggle('stream-offscreen', !entry.isIntersecting);
-  });
-  observer.observe(hero);
-  const syncVisibility = () => hero.classList.toggle('stream-background', document.hidden);
-  document.addEventListener('visibilitychange', syncVisibility);
-  syncVisibility();
+  render();
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-studio-mode'] });
+  wide.addEventListener('change', render);
+  window.addEventListener('studio:motion-change', render);
+  window.addEventListener('studio:model-catalogue-updated', () => { renderedKey = undefined; render(); });
+  new IntersectionObserver(([entry]) => hero.classList.toggle('stream-offscreen', !entry.isIntersecting)).observe(hero);
 }

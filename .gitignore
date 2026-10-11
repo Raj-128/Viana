@@ -18,6 +18,9 @@ src/assets/images/*/
 !src/assets/images/wallpapers/
 src/assets/images/wallpapers/*
 !src/assets/images/wallpapers/previews/
+!src/assets/images/clean-model-previews/
+src/assets/images/clean-model-previews/*
+!src/assets/images/clean-model-previews/bathroom-accessories-1.png
 .gsd/*-results.txt
 .gsd/catalogue-build.txt
 .gsd/catalogue-tests.txt
@@ -26,6 +29,8 @@ src/assets/images/wallpapers/*
 .gsd/*-build.txt
 .gsd/*-tests.txt
 .gsd/release-audit/
+.gsd/evidence/chrome-profile/
+.gsd/evidence/plans-premium-preview/
 
 # Editor directories and files
 .vscode/*

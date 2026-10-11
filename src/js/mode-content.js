@@ -29,23 +29,9 @@ export function updateModeContent(mode) {
     change(".page-hero .page-title", copy[page][0], active);
     change(".page-hero .page-lead", copy[page][1], active);
     change(".page-hero .section-kicker", "STUDIO VIANA / 3D VISUALS", active);
-    const container = document.querySelector(".page-hero .container");
-    const scene = scenes[{ about: 0, services: 1, contact: 3 }[page]];
-    if (container && scene && !container.querySelector(".mode-scene")) {
-      const figure = document.createElement("figure");
-      figure.className = "mode-scene";
-      const image = document.createElement("img");
-      image.src = scene.cover;
-      image.alt = scene.title;
-      image.draggable = false;
-      const caption = document.createElement("figcaption");
-      caption.textContent = `3D STUDY / ${scene.title}`;
-      figure.append(image, caption);
-      container.append(figure);
-    }
   }
   if (page === "work") {
-    const designs = active ? scenes : projects.filter(project => project.heroCover);
+    const designs = active ? scenes : projects.filter(project => project.workType === 'wallpaper' && project.heroCover);
     document.querySelectorAll(".hero-slide").forEach((slide, index) => {
       const project = designs[index % designs.length];
       if (!project) return;
@@ -57,6 +43,12 @@ export function updateModeContent(mode) {
     });
   }
   if (page === "about") {
+    change("[data-about-credential] .credential-platform", "Library", active);
+    change("[data-about-credential] .credential-value", "3D assets & materials", active);
+    change(".principles li:nth-child(1)", "Purposeful geometry", active);
+    change(".principles li:nth-child(2)", "Considered materials", active);
+    change(".principles li:nth-child(3)", "Light that tells a story", active);
+    change(".principles li:nth-child(4)", "Details that hold up close", active);
     change(".about-text > p:nth-of-type(1)", "Studio Viana is a digital art practice led by Vicky Rana. Our 3D work turns ideas into carefully composed environments, objects and visual stories.", active);
     change(".about-text > p:nth-of-type(2)", "Each scene starts with a question of space, light and material. We develop the form, explore surfaces and refine the camera until the image communicates its idea clearly.", active);
     change(".about-text > p:nth-of-type(3)", "Explore our render studies and contact the studio for a custom visualization brief.", active);
@@ -67,7 +59,7 @@ export function updateModeContent(mode) {
       if (!project) return;
       const base = `.showcase-track .showcase-item:nth-child(${index + 1})`;
       change(base, `project.html?id=${project.id}`, active, "href");
-      change(`${base} img`, project.cover, active, "src");
+      change(`${base} img`, project.thumbnail || project.cover, active, "src");
       change(`${base} img`, project.title, active, "alt");
       change(`${base} strong`, project.title, active);
       change(`${base} span`, "3D / Studio study", active);

@@ -1,146 +1,41 @@
-.home-hero.image-stream-hero,
-body.mode-3d .home-hero.image-stream-hero {
-  position: relative;
-  display: block;
-  isolation: isolate;
+/* A studio corridor of artwork, with a compact still gallery on modest devices. */
+body .home-hero.image-stream-hero {
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%; margin: var(--site-header-height, 80px) auto 0;
+  min-height: 0; height: auto; padding: 28px 0 38px;
+  background: var(--bg); overflow: clip; position: relative; isolation: isolate;
   container-type: inline-size;
-  height: clamp(760px, calc(100svh - 90px), 1000px);
-  min-height: 760px;
-  margin-top: 90px;
-  padding: 0;
-  overflow: hidden;
-  /* Unlike hidden, clip cannot auto-scroll to an offscreen moving link. */
-  overflow: clip;
-  background: var(--bg);
 }
-.hero-mode-toggle {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  justify-content: center;
-  padding: 24px 20px 0;
-}
+.hero-mode-toggle { display: flex; justify-content: center; padding: 0 20px; position: relative; z-index: 2; }
 .hero-mode-toggle .work-pill-toggle { width: auto; max-width: 100%; box-shadow: none; }
-.image-stream-copy {
-  position: relative;
-  z-index: 2;
-  padding: 28px 24px 0;
-  text-align: center;
-}
-.image-stream-copy .hero-eyebrow { justify-content: center; margin: 0 0 16px; }
+.image-stream-copy { position: relative; z-index: 2; text-align: center; padding: 26px 20px 0; }
+.image-stream-copy .hero-eyebrow { justify-content: center; margin: 0 0 18px; font-size: 10px; letter-spacing: .17em; line-height: 1.8; }
 .image-stream-copy .hero-eyebrow::before { display: none; }
-.hero.image-stream-hero h1 {
-  max-width: 760px;
-  margin: 0 auto;
-  font-size: clamp(38px, 4.8vw, 70px);
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -.045em;
-  text-transform: none;
-  text-wrap: balance;
-}
-.image-stream-stage {
-  position: absolute;
-  z-index: 0;
-  isolation: isolate;
-  inset: 0;
-  pointer-events: none;
-}
-.image-stream-rail { position: absolute; inset: 0; pointer-events: none; }
-.image-stream-slot {
-  will-change: transform;
-  position: absolute;
-  pointer-events: none;
-  left: 50%;
-  top: 55%;
-  width: 18cqw;
-  height: 25cqw;
-  margin: -12.5cqw 0 0 -9cqw;
-}
-.image-stream-card {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: auto;
-  cursor: pointer;
-  border-radius: .4cqw;
-}
-.image-stream-surface {
-  position: absolute;
-  inset: 0;
-  display: block;
-  pointer-events: none;
-  overflow: hidden;
-  border-radius: inherit;
-  background: var(--surface);
-  transition: transform .25s ease, box-shadow .25s ease;
-}
-.image-stream-surface img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; }
-/* 3D work travels along one horizontal gallery, with a gentle depth arc. */
-.image-stream-stage[data-stream-mode="3d"] {
-  inset: 0;
-  container-type: normal;
-  --gallery-width: clamp(200px, 26cqw, 380px);
-  --gallery-height: clamp(160px, 20cqw, 280px);
-  --gallery-gap: clamp(24px, 3cqw, 52px);
-  --gallery-span: calc((var(--gallery-width) + var(--gallery-gap)) * var(--stream-count, 9));
-}
-[data-stream-mode="3d"] .image-stream-slot {
-  top: 58%;
-  width: var(--gallery-width);
-  height: var(--gallery-height);
-  margin: calc(var(--gallery-height) / -2) 0 0 calc(var(--gallery-width) / -2);
-}
-[data-stream-mode="3d"] .image-stream-card {
-  border-radius: 12px;
-}
-[data-stream-mode="3d"] .image-stream-surface {
-  border: 1px solid #ffffff26;
-  box-shadow: 0 24px 45px #0005;
-}
-.image-stream-footer {
-  position: absolute;
-  z-index: 2;
-  bottom: 35px;
-  left: 24px;
-  right: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  text-align: center;
-}
-.image-stream-footer p { max-width: 400px; font-size: 14px; line-height: 1.6; color: var(--muted); text-wrap: balance; }
+body .hero.image-stream-hero h1 { font-family: var(--font-heading); font-size: clamp(40px, 5vw, 76px); font-weight: 400; line-height: 1.04; letter-spacing: -.045em; text-transform: none; text-wrap: balance; max-width: 780px; margin: 0 auto; }
+.image-stream-stage { position: relative; isolation: isolate; width: 100%; height: clamp(280px, 30vw, 480px); margin-block: 12px 24px; }
+.image-stream-slot { position: absolute; left: 50%; top: 50%; width: 18cqw; height: 25cqw; margin: -12.5cqw 0 0 -9cqw; animation-timing-function: linear; animation-iteration-count: infinite; animation-fill-mode: both; }
+.image-stream-card { display: block; width: 100%; height: 100%; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+.image-stream-card img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.image-stream-stage[data-stream-mode="3d"] { --gallery-width: clamp(210px, 26cqw, 380px); --gallery-height: clamp(190px, 23cqw, 320px); --gallery-gap: 32px; --gallery-span: calc((var(--gallery-width) + var(--gallery-gap)) * var(--stream-count, 6)); }
+[data-stream-mode="3d"] .image-stream-slot { width: var(--gallery-width); height: var(--gallery-height); margin: calc(var(--gallery-height) / -2) 0 0 calc(var(--gallery-width) / -2); }
+[data-stream-mode="3d"] .image-stream-card img { object-fit: contain; background: #fff; padding: 12px; }
+.image-stream-footer { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 0 20px; }
+.image-stream-footer p { max-width: 440px; font-size: 14px; line-height: 1.8; color: var(--muted); }
 .image-stream-footer .cta-link { margin: 0; }
-.image-stream-stage:has(.image-stream-card:focus-visible) .image-stream-slot,
-.stream-background .image-stream-slot,
-.stream-offscreen .image-stream-slot { animation-play-state: paused; }
-.image-stream-card:focus-visible {
-  outline: 3px solid var(--text);
-  outline-offset: 4px;
-}
-.image-stream-card:focus-visible .image-stream-surface { transform: translateY(-6px) scale(1.04); }
+.stream-offscreen .image-stream-slot, .image-stream-stage:focus-within .image-stream-slot { animation-play-state: paused !important; }
+.image-stream-card:focus-visible { outline: 3px solid var(--text); outline-offset: -5px; }
 @media (hover: hover) and (pointer: fine) {
   .image-stream-stage:has(.image-stream-card:hover) .image-stream-slot { animation-play-state: paused; }
-  /* Only the visual surface lifts; the travel path and hit area stay put. */
-  .image-stream-card:hover .image-stream-surface {
-    transform: translateY(-6px) scale(1.04);
-    box-shadow: 0 22px 45px #0004, 0 0 0 1px #ffffff55;
-  }
 }
-@media (max-width: 600px) {
-  .home-hero.image-stream-hero,
-  body.mode-3d .home-hero.image-stream-hero { height: 740px; min-height: 740px; margin-top: 80px; }
-  .image-stream-copy { padding-top: 26px; }
-  .image-stream-stage { left: -45%; right: -45%; container-type: inline-size; }
-  .image-stream-stage[data-stream-mode="3d"] { --gallery-width: 42cqw; --gallery-height: 48cqw; }
-  .image-stream-footer { bottom: 30px; }
+/* The automatic fallback reserves real image space and never stacks animated cards. */
+[data-presentation="still"] .image-stream-stage { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; width: min(1040px, calc(100% - 40px)); height: clamp(240px, 32vw, 360px); margin-block: 32px; }
+[data-presentation="still"] .image-stream-slot { position: relative; inset: auto; width: 100%; height: 100%; margin: 0; transform: none !important; animation: none !important; }
+[data-presentation="still"] .image-stream-slot:nth-child(2) { padding-block: 18px; }
+@media (max-width: 800px) {
+  body .home-hero.image-stream-hero { margin-top: var(--site-header-height, 72px); padding-block: 24px 36px; }
+  body .hero.image-stream-hero h1 { font-size: clamp(38px, 7.5vw, 60px); }
+  .image-stream-copy { padding-top: 22px; }
+  .image-stream-copy .hero-eyebrow { max-width: 300px; margin: 0 auto 14px; }
+  [data-presentation="still"] .image-stream-stage { gap: 8px; height: clamp(190px, 50vw, 320px); margin-block: 24px; width: calc(100% - 32px); }
 }
-@media (prefers-reduced-motion: reduce) {
-  /* Keep authored delays/durations: the global .01ms rule otherwise stacks cards. */
-  .image-stream-slot { animation: none !important; }
-  .image-stream-surface { transition: none; }
-  .image-stream-card:hover .image-stream-surface,
-  .image-stream-card:focus-visible .image-stream-surface { transform: none; }
-}
+body.mode-3d [data-presentation="still"] .image-stream-stage.show-3d { display: grid !important; }

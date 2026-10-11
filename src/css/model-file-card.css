@@ -1,0 +1,27 @@
+.model-preview-layout { min-width: 0; }
+.model-preview-layout.has-model-files { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); gap: 20px; align-items: stretch; }
+.has-model-files > .wallpaper-viewer-frame { min-width: 0; }
+.has-model-files .wallpaper-viewer-artwork { max-width: 100%; }
+.model-file-card { box-sizing: border-box; padding: 24px; min-width: 0; background: #15171b; border: 1px solid #ffffff20; color: #f4f3ef; border-radius: 8px; }
+.model-file-card[hidden] { display: none; }
+.model-file-card .model-file-kicker { margin: 0 0 10px; font-size: 10px; letter-spacing: .18em; color: #bbb6ac; }
+.model-file-card h3 { margin: 0 0 22px; font-size: 22px; line-height: 1.25; }
+.model-file-formats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.model-file-format { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 8px; background: #ffffff08; border: 1px solid #ffffff16; border-radius: 6px; text-align: center; }
+body .model-file-card .model-file-format img { display: block; width: 48px; height: 48px; max-width: 100%; padding: 0; object-fit: contain; background: transparent; }
+.model-file-format strong { font-size: 12px; line-height: 1.3; }
+.model-file-format > span { font: 11px/1.3 monospace; color: #b7b9c0; }
+.model-file-card h4 { margin: 26px 0 12px; font-size: 12px; font-weight: 600; }
+.model-file-packages { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.model-file-packages li { display: flex; align-items: flex-start; gap: 9px; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.model-file-extension { flex-shrink: 0; border: 1px solid #ffffff38; border-radius: 4px; padding: 3px 5px; color: #d6c8aa; font: 10px/1.3 monospace; }
+.model-file-package-details { min-width: 0; flex: 1; }
+.model-file-contents-label { margin: 14px 0 6px; color: #b7b9c0; font-size: 11px; }
+.model-file-contents { margin: 0; padding: 0; list-style: none; max-height: 260px; overflow-y: auto; }
+.model-file-packages .model-file-contents li { display: block; padding: 5px 0; border-bottom: 1px solid #ffffff0d; font-size: 11px; overflow-wrap: anywhere; }
+.model-file-card .model-file-note { margin: 22px 0 0; font-size: 11px; line-height: 1.6; color: #afb1b9; }
+@media (max-width: 760px) {
+  .model-preview-layout.has-model-files { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .model-file-card { padding: 18px; }
+  .model-file-formats { grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); }
+}

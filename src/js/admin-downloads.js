@@ -1,11 +1,18 @@
 import { initAccountRecords } from './admin-accounts.js';
+import { initAdminTabs } from './admin-tabs.js';
+import { initMediaDeterrents } from './media-deterrents.js';
+import { summarizeRequests } from './admin-request-summary.js';
+import { initAdminNotifications } from './admin-notifications.js';
+import { initPlanOrders } from './admin-plan-orders.js';
 import { downloadPrintFile, printRequestSummary } from './print-requests.js';
 import { authReady, getSession } from "./auth.js";
-import { projects } from "./projects.js";
+import { projects, loadWallpaperCatalogue } from "./projects.js";
 import { fetchApi } from "./api-config.js";
 
 const $ = (id) => document.getElementById(id);
+initMediaDeterrents();
 const status = $("approval-status");
+const planInbox = initPlanOrders({ api, status });
 let state, printRequests = [], busy = false;
 async function api(path, body, file) {
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
@@ -42,6 +49,13 @@ function uploadState() {
   $("original-form").querySelector("button").disabled = busy || exists;
 }
 let requestFilter = "pending";
+function updateRequestSummary() {
+  const counts = summarizeRequests(state.requests, printRequests);
+  $("pending-count").textContent = counts.pending;
+  $("access-count").textContent = counts.approved;
+  document.querySelectorAll('[data-filter-count]').forEach(badge => { badge.textContent = counts[badge.dataset.filterCount]; });
+  document.querySelectorAll('[data-summary-filter]').forEach(card => card.setAttribute('aria-pressed', String(card.dataset.summaryFilter === requestFilter)));
+}
 function renderRequests() {
   if (!state) return;
   renderPrintRequests();
@@ -65,11 +79,11 @@ function renderPrintRequests() {
   const host = $("print-requests"); host.replaceChildren();
   const search = $("request-search").value.trim().toLowerCase();
   const requests = printRequests.filter(request => (requestFilter === 'all' || request.status === requestFilter) &&
-    [request.id, request.name, request.email, title(request.design_id), printRequestSummary(request)].join(' ').toLowerCase().includes(search));
+    [request.reference, request.id, request.name, request.email, title(request.design_id), printRequestSummary(request)].join(' ').toLowerCase().includes(search));
   for (const request of requests) {
     const el = row(request, request.status), info = el.querySelector('.approval-row-info');
     const size = document.createElement('p'); size.textContent = printRequestSummary(request);
-    const reference = document.createElement('small'); reference.textContent = 'Request: ' + request.id;
+    const reference = document.createElement('small'); reference.textContent = 'Request: ' + (request.reference || request.id);
     info.append(size, reference);
     const actions = document.createElement('div'); actions.className = 'approval-print-actions';
     const decide = action => run(() => api('/api/admin/print-requests/' + request.id + '/decision', {
@@ -104,22 +118,30 @@ function renderPrintRequests() {
         approve.disabled = true; checkbox.addEventListener('change', () => { approve.disabled = busy || !checkbox.checked; });
         actions.append(confirmLabel, approve);
       }
-      actions.append(button('Decline request', () => decide('decline')));
+      const decline = button('Decline request', () => decide('decline'));
+      decline.className = 'approval-danger';
+      actions.append(decline);
     }
-    if (request.status === 'approved') actions.append(button('Revoke download access', () => decide('revoke')));
+    if (request.status === 'approved') {
+      const revoke = button('Revoke download access', () => decide('revoke'));
+      revoke.className = 'approval-danger';
+      actions.append(revoke);
+    }
     el.append(actions); host.append(el);
   }
   if (!requests.length) host.textContent = 'No matching size requests. New customer requests will appear here.';
 }
 async function refresh() {
   const [legacy, custom] = await Promise.all([api("/api/admin/downloads"), api("/api/admin/print-requests")]);
-  state = legacy; printRequests = custom.requests;
+  const wallpaper = id => projects.some(project => project.id === id && project.workType === 'wallpaper');
+  state = { ...legacy, requests: legacy.requests.filter(item => wallpaper(item.design_id)), access: legacy.access.filter(item => wallpaper(item.design_id)), designs: legacy.designs.filter(item => wallpaper(item.id)) };
+  printRequests = custom.requests.filter(item => wallpaper(item.design_id));
   const previous = $("access-customer").value;
+  $("free-plan-customers")?.replaceChildren(...state.customers.map(customer => option(customer.email, `${customer.name} · ${customer.email}`)));
   $("access-customer").replaceChildren(option("", "Choose a registered customer"), ...state.customers.map((c) => option(c.email, `${c.name} · ${c.email}`)));
   $("access-customer").value = previous;
   renderRequests();
-  $("pending-count").textContent = [...state.requests, ...printRequests].filter((r) => r.status === "pending").length;
-  $("access-count").textContent = state.access.length + printRequests.filter(r => r.status === "approved").length;
+  updateRequestSummary();
   $("original-count").textContent = state.designs.length + printRequests.filter(r => r.file_ready).length;
   const access = $("approval-access"); access.replaceChildren();
   state.access.forEach((item) => {
@@ -134,10 +156,18 @@ async function refresh() {
 async function run(action, message) {
   if (busy) return;
   busy = true; status.textContent = "Working…";
-  [...$("approval-content").querySelectorAll("button")].filter(button => !button.closest("#customer-records")).forEach((b) => { b.disabled = true; });
+  const panel = $("panel-wallpaper");
+  const controls = [...panel.querySelectorAll("button")].map(button => [button, button.disabled]);
+  panel.setAttribute("aria-busy", "true");
+  controls.forEach(([button]) => { button.disabled = true; });
   try { await action(); await refresh(); status.textContent = message; }
   catch (error) { status.textContent = error.message; }
-  finally { busy = false; [...$("approval-content").querySelectorAll("button")].filter(button => !button.closest("#customer-records")).forEach((b) => { b.disabled = false; }); uploadState(); renderPrintRequests(); }
+  finally {
+    busy = false;
+    panel.setAttribute("aria-busy", "false");
+    controls.forEach(([button, disabled]) => { if (button.isConnected) button.disabled = disabled; });
+    uploadState(); renderPrintRequests();
+  }
 }
 function changeAccess(email, designId, action) {
   return run(() => api("/api/admin/download-access", { email, designId, action }),
@@ -149,13 +179,21 @@ if (getSession()?.role !== "admin") {
   const link = document.createElement("a"); link.href = "admin-login.html?redirect=admin-downloads.html"; link.textContent = "Sign in as admin"; status.append(link);
   const customerLink = document.createElement('a'); customerLink.href = 'work.html#requests'; customerLink.textContent = ' View my requests as a customer'; status.append(customerLink);
 } else {
-  document.querySelectorAll("[data-request-filter]").forEach((button) => button.addEventListener("click", () => {
-    requestFilter = button.dataset.requestFilter;
-    document.querySelectorAll("[data-request-filter]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+  await loadWallpaperCatalogue();
+  document.querySelectorAll("[data-request-filter], [data-summary-filter]").forEach((button) => button.addEventListener("click", () => {
+    requestFilter = button.dataset.requestFilter || button.dataset.summaryFilter;
+    if (button.dataset.summaryFilter) $("request-search").value = '';
+    document.querySelectorAll("[data-request-filter]").forEach((item) => item.setAttribute("aria-pressed", String(item.dataset.requestFilter === requestFilter)));
+    updateRequestSummary();
     renderRequests();
+    if (button.dataset.summaryFilter) $("request-search").focus({ preventScroll: true });
   }));
+  $("review-private-files").addEventListener('click', () => {
+    const details = $("original-file").closest('details'); details.open = true;
+    $("original-design").focus();
+  });
   $("request-search").addEventListener("input", renderRequests);
-  ["original-design", "access-design"].forEach((id) => $(id).replaceChildren(...projects.map((p) => option(p.id, p.title))));
+  ["original-design", "access-design"].forEach((id) => $(id).replaceChildren(...projects.filter(p => p.workType === 'wallpaper').map((p) => option(p.id, p.title))));
   $("original-design").addEventListener("change", uploadState);
   $("refresh-requests").addEventListener("click", () => run(async () => {}, "Requests refreshed."));
   $("original-form").addEventListener("submit", (event) => {
@@ -166,6 +204,9 @@ if (getSession()?.role !== "admin") {
   });
   $("access-form").addEventListener("submit", (event) => { event.preventDefault(); changeAccess($("access-customer").value, $("access-design").value, "grant"); });
   $("approval-content").hidden = false;
-  initAccountRecords();
+  const accountRecords = initAccountRecords();
+  const notifications = initAdminNotifications({ api, refreshPanel: category => category === 'login' ? accountRecords.refresh() : category === 'models' ? planInbox.refresh() : refresh() });
+  initAdminTabs(document, category => notifications.viewed(category));
+  void planInbox.refresh().catch(error => { $("plan-orders").textContent = `Could not load plans: ${error.message}. Use Refresh plans to retry.`; });
   await run(async () => {}, "Ready to review download requests.");
 }

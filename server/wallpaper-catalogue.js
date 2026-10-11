@@ -3,10 +3,26 @@ import { resolve, relative, extname, basename, dirname, sep, posix } from 'node:
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { selectHeroDesigns } from '../src/js/hero-designs.js';
+import { atomicWrite } from './atomic-write.js';
 
 const extensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif', '.tif', '.tiff']);
 const siteImages = new Set(['flower.png', 'vt-logo-black.png', 'vicky-profile.jpeg', 'vicky-profile-2.png', 'three-d-lunar-console.png', 'three-d-petal-lamp.png', 'three-d-playroom.png', 'three-d-canyon-void.png']);
 const digest = data => createHash('sha256').update(data).digest('hex');
+// Regenerate from originals once when encoding changes, never repeatedly
+// recompress an already-lossy preview during normal builds.
+const previewProfile = 'mozjpeg-78-detail-76-card-v1';
+// Keep the landing page independent of the full browsing catalogue. The
+// generated snapshot is also committed for deployments without private files.
+async function writeFeaturedCatalogue(generated, code) {
+  const lines = code.split('\n');
+  const rows = lines.filter(line => line.startsWith('{...'));
+  const selected = [...new Set([...rows.slice(0, 6), ...rows.filter(row => row.includes('heroCover:'))])];
+  const references = new Set(selected.flatMap(row => row.match(/\b(?:image|hero)\d+\b/g) || []));
+  const imports = lines.filter(line => line.startsWith('const ') && references.has(line.split(' ')[1]));
+  const featured = `${imports.join('\n')}\nexport default [\n${selected.map(row => row.replace(/,$/, '')).join(',\n')}\n];\n`;
+  const file = resolve(generated, 'wallpaper-featured.js');
+  if (featured !== await readFile(file, 'utf8').catch(() => '')) await atomicWrite(file, featured);
+}
 // Filenames become text in existing HTML templates, never markup.
 const titleCase = text => text.replace(/[<>&"']/g, '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase().replace(/\b\p{L}/gu, letter => letter.toUpperCase());
 const themeFor = name => {
@@ -43,7 +59,7 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
   await mkdir(previews, { recursive: true });
   await mkdir(dirname(cacheFile), { recursive: true });
   const directories = (await readdir(imagesRoot, { withFileTypes: true }))
-    .filter(entry => entry.isDirectory() && entry.name !== 'wallpapers' && !entry.name.startsWith('.'));
+    .filter(entry => entry.isDirectory() && !['wallpapers', '3d file', 'clean-model-previews'].includes(entry.name.toLowerCase()) && !entry.name.startsWith('.'));
   const files = [...await filesUnder(library)];
   for (const entry of await readdir(imagesRoot, { withFileTypes: true })) {
     if (entry.isFile() && extensions.has(extname(entry.name).toLowerCase()) && !siteImages.has(entry.name)) files.push(resolve(imagesRoot, entry.name));
@@ -56,13 +72,18 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
   const cacheText = await readFile(cacheFile, 'utf8').catch(() => null);
   // A clean checkout includes the public catalogue snapshot, not private
   // originals. Keep that snapshot until a source library is provided.
-  if (!files.length && !cacheText) {
+  const hasWallpaperSources = files.length > 0;
+  if (!hasWallpaperSources && !cacheText) {
     const snapshot = await readFile(resolve(generated, 'wallpaper-catalogue.js'), 'utf8').catch(() => null);
-    if (snapshot) return { count: (snapshot.match(/cover:image/g) || []).length, errors: [], changed: false, snapshot: true };
+    if (snapshot) {
+      await writeFeaturedCatalogue(generated, snapshot);
+      return { count: (snapshot.match(/cover:image/g) || []).length, errors: [], changed: false, snapshot: true };
+    }
   }
   const cache = JSON.parse(cacheText || '{}');
   const nextCache = {}, seen = new Set(), designs = [], errors = [];
   const sourceFiles = new Map();
+  const refreshPreviews = new Set();
   for (const file of files) {
     const key = relative(root, file).split(sep).join('/');
     try {
@@ -71,17 +92,19 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
       let hash = cache[key]?.signature === signature ? cache[key].hash : null;
       let source;
       if (!hash) { source = await readFile(file); hash = digest(source); }
-      nextCache[key] = { signature, hash };
+      nextCache[key] = { signature, hash, previewProfile };
       if (seen.has(hash)) continue;
       seen.add(hash);
       sourceFiles.set(`${hash}.jpg`, file);
+      if (cache[key]?.previewProfile !== previewProfile) refreshPreviews.add(`${hash}.jpg`);
       const output = resolve(previews, `${hash}.jpg`);
-      if (!await access(output).then(() => true, () => false)) {
+      if (refreshPreviews.has(`${hash}.jpg`) || !await access(output).then(() => true, () => false)) {
         const { data, info: resized } = await sharp(source || await readFile(file), { limitInputPixels: 80000000 })
           .rotate().resize({ width: 1000, height: 1000, fit: 'inside', withoutEnlargement: true })
           .flatten({ background: '#eee9e2' }).png().toBuffer({ resolveWithObject: true });
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${resized.width}" height="${resized.height}"><defs><pattern id="mark" width="230" height="130" patternUnits="userSpaceOnUse"><text x="12" y="75" transform="rotate(-28 110 65)" font-family="Arial,sans-serif" font-size="19" font-weight="bold" fill="white" fill-opacity=".6" stroke="#222" stroke-opacity=".4" stroke-width=".6">STUDIO VIANA</text></pattern></defs><rect width="100%" height="100%" fill="url(#mark)"/></svg>`;
-        await sharp(data).composite([{ input: Buffer.from(svg) }]).jpeg({ quality: 78 }).toFile(output);
+        await atomicWrite(output, await sharp(data).composite([{ input: Buffer.from(svg) }])
+          .jpeg({ quality: 78, mozjpeg: true }).toBuffer());
       }
       const fromLibrary = relative(library, file);
       const parts = (fromLibrary.startsWith('..') ? relative(imagesRoot, file) : fromLibrary).split(sep);
@@ -100,6 +123,7 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
         preview: `${hash}.jpg`, productKey: product ? `${collection}/${product}` : null,
       });
     } catch (error) {
+      delete nextCache[key];
       const message = `${key}: ${error.message}`;
       errors.push(message); onWarning(`Wallpaper skipped: ${message}`);
     }
@@ -124,10 +148,10 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
   for (const [index, design] of catalogue.entries()) {
     const filename = design.previews[0];
     const output = resolve(heroFolder, filename);
-    if (!await access(output).then(() => true, () => false)) {
-      await sharp(await readFile(sourceFiles.get(filename)), { limitInputPixels: 80000000 }).rotate()
+    if (refreshPreviews.has(filename) || !await access(output).then(() => true, () => false)) {
+      await atomicWrite(output, await sharp(await readFile(sourceFiles.get(filename)), { limitInputPixels: 80000000 }).rotate()
         .resize({ width: 640, height: 640, fit: 'inside', withoutEnlargement: true })
-        .flatten({ background: '#eee9e2' }).jpeg({ quality: 76 }).toFile(output);
+        .flatten({ background: '#eee9e2' }).jpeg({ quality: 76, mozjpeg: true }).toBuffer());
     }
     imports.push(`const hero${index} = new URL('./hero-previews/${filename}', import.meta.url).href;`);
     heroImages.set(design.id, `hero${index}`);
@@ -137,8 +161,9 @@ export async function generateWallpaperCatalogue(root, onWarning = console.warn)
   const code = `${imports.join('\n')}\nexport default [\n${rows.join(',\n')}\n];\n`;
   const moduleFile = resolve(generated, 'wallpaper-catalogue.js');
   const changed = code !== await readFile(moduleFile, 'utf8').catch(() => '');
-  if (changed) await writeFile(moduleFile, code);
-  await writeFile(cacheFile, JSON.stringify(nextCache));
+  if (changed) await atomicWrite(moduleFile, code);
+  await writeFeaturedCatalogue(generated, code);
+  await atomicWrite(cacheFile, JSON.stringify(nextCache));
   return { count: grouped.size, images: designs.length, duplicates: files.length - designs.length - errors.length, errors, changed };
 }
 

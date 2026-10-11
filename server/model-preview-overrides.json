@@ -1,0 +1,662 @@
+{
+  "artwork/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-25c4ca7cdea90d062e69a60e.png",
+    "sourceSha256": "7fcf64cf3a5c6d1475a807dafe5abb9fa884b0d2dbcb6f7a8bf4929bb0976264"
+  },
+  "artwork/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e62e8e5f9b31f4f867982b97.png",
+    "sourceSha256": "b0178274b3d39c10e3c3bd15e3bff6df2467f1a0c71b6682db0a13266be716b1"
+  },
+  "artwork/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-f1c4e62fdbfb7908887c0585.png",
+    "sourceSha256": "165bb7c7bbf4a85b2dc342604b11d05c508e3a2a5b308b365e8d8b2e75e87432"
+  },
+  "artwork/DESIGN -7 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-9b36b05f72badcb48228d3f3.png",
+    "sourceSha256": "190d2dac8bf7cd648bc7a210da159ee797da53a20064fe8b287296c474904c65"
+  },
+  "CHAIR/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6b37882384c2ff75154f6090.png",
+    "sourceSha256": "c3af63a71d3d57f4fc37c915f24429da10308eccb4fc339376b1dc9aa722c345"
+  },
+  "BATHROOM DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-c2c5a46cff53dfc37f411555.png",
+    "sourceSha256": "32bfe285089d02fc6b0e18d94735ffbcca5d52b173454600c4c0db98f6ca2729"
+  },
+  "BATHROOM DESIGN/DESIGN -2  IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-c151e2fde410ebb0ffa3e3ef.png",
+    "sourceSha256": "fa183dc480d4a66afd28f7bb139e3444c80fae691a93d6651f595bfd79981fee"
+  },
+  "BED DESIGN/DESIGN-2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-d732f1143e5c223a647e1fac.png",
+    "sourceSha256": "eb7a2d14889537ecb790850973adf9180f10876c4b1776297e17f738fe32fef6"
+  },
+  "BED DESIGN/DESIGN-3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-aba28dd975224a3d37f888df.png",
+    "sourceSha256": "412c9ec2d60ec35b1e4d66f01b24b0ca516448b568ea71aae4e6cba8e0a682ec"
+  },
+  "BED DESIGN/DESIGN-5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-716d99b248e121fddffa1787.png",
+    "sourceSha256": "d0152200f29d8486a2ee68f6020f3bf4fb49968bb41a1bece511aa1edea57147"
+  },
+  "BED DESIGN/DESIGN-6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-d20c7e59b60b430257ab30cf.png",
+    "sourceSha256": "62167dee0e630532762dc3baffcc6d3757fe2158b834ea88778cbdb6bc0eef09"
+  },
+  "CAR DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-dc66c5437d7b8b71c4682b1c.png",
+    "sourceSha256": "1284dd57854d6e76244e2e6088411f167b17914bcc96c153701c3274ffb5846d"
+  },
+  "CAR DESIGN/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-7eecd741bfeac8ffbf2f50cc.png",
+    "sourceSha256": "0b95634ad016feea051b95fc9ed146783ce6aacbad0c9d8e2ead312842f4ab97"
+  },
+  "CAR DESIGN/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-55798a7682618f3fbfdf7f45.png",
+    "sourceSha256": "c206a75d782f06cc98a5d60c99a8c4da0c016f1d77befd69876ec42b536e50b8"
+  },
+  "CHAIR/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-88009c613f800eec62e0fd46.png",
+    "sourceSha256": "5ff30e2708fe5d301f6a3364755e809e3356e19264116e791a6a9f4706d6e624"
+  },
+  "CHAIR/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-d0cbaaa9d4a996351071c4d4.png",
+    "sourceSha256": "1e230be852b0502e9fd8882511a2647680b58f7233abd24c95e725b2a599ea99"
+  },
+  "CHAIR/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-aa71c999cd7072ca3d03504e.png",
+    "sourceSha256": "41408c75bb22630e7b50b63359309053e3d5005a34fdabe82a069829ab77b650"
+  },
+  "CHAIR/DESIGN -5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-72c1127678c4392fb4f7c7c7.png",
+    "sourceSha256": "8685e74340b33ae0835a412bf6f12ef26b0aa976cf3b16bdf59feae64c8697a7"
+  },
+  "CHAIR/DESIGN -6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-21c6a023a78f12f9f02f92b2.png",
+    "sourceSha256": "da6454d6405811dca4baf8a79c995b562cfeea0dcb10e6f4d2bbc2f900ee1e38"
+  },
+  "CHAIR/DESIGN -8 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-bf345844c850f71874b9d0de.png",
+    "sourceSha256": "9e2432ba0b5eac647c66015af4ced0d3f7151bc10528abcb01e134dd891592bf"
+  },
+  "CHAIR/DESIGN -10 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-890435131132ddc649a6c8be.png",
+    "sourceSha256": "e84093c4d6e587b7125cb5e5e7e6c196cc5f75b2d0437a883223587f7007e567"
+  },
+  "CHAIR/DESIGN -11 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-170e4301e7202c002ca9b70f.png",
+    "sourceSha256": "457173c237f857c7a5ce5af3177627952517c7d09b3015fa8cd8e1e2c4ec7d95"
+  },
+  "CHAIR/DESIGN -12 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e30e29a7ee29bcd970f5b9ca.png",
+    "sourceSha256": "4a18c2b4f1ba1a47f6d349c20a84ab117633c86832690aecd8bafdb31f13554e"
+  },
+  "CHAIR/DESIGN -13 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e0f63f6a0cc9277da105e650.png",
+    "sourceSha256": "da23b7e38f0cc86bca67b8bc83a3fc278589839ce13a8f69ebbe97c9a3534b79"
+  },
+  "CHAIR/DESIGN -15 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e06b7b9c81c4e9a5a2c98c89.png",
+    "sourceSha256": "08380bb79d0f75618b8a8980fb308ee5674bd1104eed461e9ec2d97fb4ba2bcd"
+  },
+  "CLOCK DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-9d0c948ec424455d0168f8fd.png",
+    "sourceSha256": "c52e9ea769bfb6af2a47ea611fbb9881c1a86fa58d10263e4a3f403fe0aab7ee"
+  },
+  "concole design/DESIGN -15 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-d5359aee49c00dd9062a4570.png",
+    "sourceSha256": "60590565627137e81c353de9a080ecb1578df7aee6b0adf4d670d3c189244184"
+  },
+  "concole design/DESIGN -16 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-be0694857c345e20ab338168.png",
+    "sourceSha256": "442e5f7f529a8923cfd06819bc68e018f5751d9b71a56a8f07d85bc4ccf0fdb4"
+  },
+  "concole design/DESIGN -17 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-a414e85614ba50d6a4a331c2.png",
+    "sourceSha256": "3142c6b3c29bfce4cad045751c54690d900b3a97eb6c77feeba7aaff0f7dcba2"
+  },
+  "concole design/DESIGN -18 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-de5a23068ed78ed49f1317db.png",
+    "sourceSha256": "8e7709afa8b91e2d09039a2bba3ebf614b1c54df517ee5b863d175a81b38c2ea"
+  },
+  "concole design/DESIGN -19 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-a21608c1dd07f27258ce3a3e.png",
+    "sourceSha256": "f974bd4dea3c8a14f4f9cd2a7efd96f4f807a99a86d7b5f204d41aa2310ff152"
+  },
+  "concole design/DESIGN 2  IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-309e3525cdbd4119d69fef19.png",
+    "sourceSha256": "1b89aaec3484498dea2526992d0cb28d1ef9538c8b55179df4d03f0e434f9a0f"
+  },
+  "concole design/DESIGN 3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-70c325610d3458465686eb32.png",
+    "sourceSha256": "29b8a86f6a7c8e3a4380a1939a40e9dcd2b6fe272e82a234c0c17dfde3550073"
+  },
+  "concole design/DESIGN 4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-7cdc9fbe406c1f77c34306fc.png",
+    "sourceSha256": "d672fe6fc53a1b776d791697ceff78f4f9147294abfee660ae0c24e1838be881"
+  },
+  "concole design/DESIGN 5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-2dde6d872807da0e58f915bc.png",
+    "sourceSha256": "faf700ca73f42cb5cb62f9b67118551f474bc3984ede642d6a43b635fe7b620f"
+  },
+  "concole design/DESIGN 7 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-515c9b527e2167579c3c39e5.png",
+    "sourceSha256": "0af30c30d34fe1750a46215855f1a8e2d532e3fc7b0129799d1fae4b5080a6ec"
+  },
+  "concole design/DESIGN 9 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-9f6c735e3949e07112acdff0.png",
+    "sourceSha256": "756a88075c249662a216a5d6474d6ca2b56e28838b4cf209207ade2af4fc7845"
+  },
+  "concole design/DESIGN 10 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-47f6358028ac27d22415ed52.png",
+    "sourceSha256": "16734d672a0ea2fba1b18750c62b9bb5a5cadf1d1916691f01409e305b3f9440"
+  },
+  "concole design/DESIGN 11 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-3ed3010ff2e6d7bb7a4b953d.png",
+    "sourceSha256": "3458276891f983f61ef73d5f465e16a239850e4feeb8612e0a9321f3e9124f26"
+  },
+  "concole design/DESIGN 12 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-30bcb92468cea1fd9eadac7f.png",
+    "sourceSha256": "efb3ce62b2c6fc283d7b2161518577dd2373dd49f13c93c7d1f49e3a3c1a9388"
+  },
+  "CURTAIN DESIGN/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-56206dbce5a6100fe56b5f3a.png",
+    "sourceSha256": "2c8d36dac6dc06a7017b10ec20b142fc57839b026581157daeb015fd0f21caff"
+  },
+  "CURTAIN DESIGN/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-1586803507655b71e2b9ea7e.png",
+    "sourceSha256": "474014a312519be2b73701941d8b131ae50dd7f50e79deda775f66f11d59e077"
+  },
+  "CURTAIN DESIGN/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-1e8141a1e9831482e4af0458.png",
+    "sourceSha256": "fefbbb46e960cba5fe30e0f82736dfd290d8146f7b05ef6b6fe6b780681a91d0"
+  },
+  "CURTAIN DESIGN/DESIGN -6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e7ebd454d38c943e9b1f151a.png",
+    "sourceSha256": "b55750ec861d62f4f12e3f035bdba652b34dad7c45d8cff6861d6b337b24c54f"
+  },
+  "DINNING TABLE/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-71f165beeebd9c6f46c0359e.png",
+    "sourceSha256": "d6d3491bff0712e218424e3069fabac193597175670cf1b7328473e90ef05cdb"
+  },
+  "DINNING TABLE/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-544e88d36bfca508d51e5300.png",
+    "sourceSha256": "e1255ec7dc1117f2d2f89fec3b832a3d8564998d0f8d3f2d011ad584faeb0743"
+  },
+  "DINNING TABLE/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-4fb5b55453348167b6deaf32.png",
+    "sourceSha256": "f7093eb3cdb8a09615e896d99588e46ca5ef7b84b00aeb834a5db21048513c67"
+  },
+  "DOOR DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-f05036fa003b3d20480251f2.png",
+    "sourceSha256": "d09c79bde762bb6cf07ca479af7ee7293c3a5f1bd497e2d42c10513d40dfd6ef"
+  },
+  "DOOR DESIGN/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-da1d952d4f094847b62630c6.png",
+    "sourceSha256": "177f76b40f66a68a30bfa420921adf91ffdf974a15bca6a35d690225ff94ff81"
+  },
+  "DOOR DESIGN/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-703866356424ade72f3f2db5.png",
+    "sourceSha256": "478b02c6e33d4f072cf9f334bbb8d84e8ad263f090c39853b5f9613b67b64552"
+  },
+  "FLOORING DESIGN/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-d142dd8563bce2b0ac266db6.png",
+    "sourceSha256": "ffa63cf240a23846b5ee5a1e1e562a5a6810f137662b99757e45b9f8848f0c64"
+  },
+  "FLOORING DESIGN/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-14bc8fbabb43766b838f4dee.png",
+    "sourceSha256": "b6110a608077af74fb672887bc70e29719f36389bc9af08faecc266564bb42ee"
+  },
+  "GRASS DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-5028d56bbe497bc09fff65fd.png",
+    "sourceSha256": "aabc9a463412f1467a2b2280c53d941cc9c69169d1fdecb9b60564725d6121a2"
+  },
+  "LAMPS DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-0d06c21effe51fc7f7704c7d.png",
+    "sourceSha256": "9e6945d845057cb2cebb0c64f5c70b6b63f88191bd9ce34f3492810a637521da"
+  },
+  "LAMPS DESIGN/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-5be8922fb80dbd4cd98e3706.png",
+    "sourceSha256": "00459ddd9e344c73751974353a3e19edc5ad44828cb95ef5797611008299f3b0"
+  },
+  "LAMPS DESIGN/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-cdc11004ccbd9acf3e8b09b3.png",
+    "sourceSha256": "e01ab1fbf20508cd01113919f0415f2b3867e0bb60620f979e6a3fc08cb04936"
+  },
+  "LIGHT DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-bd7b7bdc0bd082fcd828c70d.png",
+    "sourceSha256": "cecb2ad3c33202026772cce7e65537e03df0eac151ac58fc56eeb5946a738a5f"
+  },
+  "LIGHT DESIGN/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-ab5a2f6204961fe90d071bfc.png",
+    "sourceSha256": "abe63c4b72ff87c2eb456a5d1a7a46f62620fece8cdcb854099fec0a6b11cb44"
+  },
+  "LIGHT DESIGN/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-5f1b666954ac4a7196e6e78f.png",
+    "sourceSha256": "20d4e7f1ea62f6fa2100ea209804ab17779c9c5b2cec2a181f190bccd3874f60"
+  },
+  "LIGHT DESIGN/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-8969d644d008028102c94896.png",
+    "sourceSha256": "f1a7875119609f4aea535ea23b97a4e5d73ed25ee7b75841e96893688626b279"
+  },
+  "LIGHT DESIGN/DESIGN -5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-780a57f9473b6afe7557905b.png",
+    "sourceSha256": "9c336ea746fa9f196e86eb1980461ed4053b50471560ec8a278788774f9324e7"
+  },
+  "LIGHT DESIGN/DESIGN -6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6e5474bcdfa0d392c07a64f5.png",
+    "sourceSha256": "6cdaf365510c78b98a9c620aa7a82368b9f6031eaaeecfa724360e608264975a"
+  },
+  "LIGHT DESIGN/DESIGN -7 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-df7b9c2b6327644100608915.png",
+    "sourceSha256": "0a5a32c4e1904a41b1a4f2e9fcdd77f493b727c835cbce5d266b789faf830d66"
+  },
+  "LIGHT DESIGN/DESIGN -8 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-393225d98e8bdba66bdc7310.png",
+    "sourceSha256": "92af8352a6942f4b12d4e2e773c48f1806778548c5bf39c34e9fb48c12cdc79a"
+  },
+  "LIGHT DESIGN/DESIGN -9 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-02b3214f90020857f1b7601c.png",
+    "sourceSha256": "dbc5b2a73a1db44b0dcf486f016df7dc7a5926dccba4040f1bb4ea7bf722a865"
+  },
+  "LIGHT DESIGN/DESIGN -10 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-668e142ef7dcf1f4c4e2c5a5.png",
+    "sourceSha256": "ea4196e409075d5d16d593711492c53a8e6c9f6458b9a5172b0c3e76f88f393c"
+  },
+  "LIGHT DESIGN/DESIGN -11 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-1693144ec76d370ac59239f0.png",
+    "sourceSha256": "ede574dc84d45099ebcdd1d0053f3a539c9efab0c72e86ade41230104ed765ad"
+  },
+  "LIGHT DESIGN/DESIGN -12 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6f46c957f9ad1ee5355b0b41.png",
+    "sourceSha256": "200d20db4263f541c4749a1734e15743304483fe2ce9bc1da74def3f1d1a9983"
+  },
+  "LIGHT DESIGN/DESIGN -13 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-2a9cfbdb7dc8022ce373adcd.png",
+    "sourceSha256": "5ae632d2a96f8c7000474f53c6efc1032b3b84a3c65c4f3bfef249ac7ac467bf"
+  },
+  "LIGHT DESIGN/DESIGN -14 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-63b89adf79d4fffacaee4fb2.png",
+    "sourceSha256": "8c99003ff3fb07fef9940cfd5bbbbce80fea16a026e366722d8f98e41c4153c3"
+  },
+  "LIGHT DESIGN/DESIGN -15 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-1914815b555428278d82cef6.png",
+    "sourceSha256": "388a5822181086c01542f557a5b6770ad7baa136fcb4d2826bba78000587fd90"
+  },
+  "LIGHT DESIGN/DESIGN -16 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-c63f835e70b6cfb76097b4ae.png",
+    "sourceSha256": "dc617a1311138f55d7d16f0d0773252df9e38d30eeb5f0331ddba2101d77cbda"
+  },
+  "LIGHT DESIGN/DESIGN -19 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-93d78ada8a8131bccd2df963.png",
+    "sourceSha256": "faef738db3c41ff834d3def7f9d4703263b581cdc327266ffe96052d6bec4ec2"
+  },
+  "LIGHT DESIGN/DESIGN -20 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-cc08ea508df48e38464da0f8.png",
+    "sourceSha256": "2bce3bfa02c5218ad4955e000a35d3df5b449620fcc9c7ab1b7b18236d3e8386"
+  },
+  "LIGHT DESIGN/DESIGN -22 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-837394998b6c8d96503368a1.png",
+    "sourceSha256": "aca9f6b3f52b74ad6687c091f1c42bf2aa0f249540999860627b81035c6b74d4"
+  },
+  "LIGHT DESIGN/DESIGN -23 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-0be491ae65959571828d6c3d.png",
+    "sourceSha256": "5e45daeb06eb01879e77abdfda1b7ab2c0034cc8a478540a2c42f48e54b00566"
+  },
+  "LIGHT DESIGN/DESIGN -27 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-3d300c7a1723e949f47dc731.png",
+    "sourceSha256": "eb4827bdfb99b8fc85a4bc9cfd3d9b995e89d6e6574f67af977420ca30fe0ba3"
+  },
+  "LIGHT DESIGN/DESIGN -29 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-c2024955f7e8161211b706b1.png",
+    "sourceSha256": "e57a8b0fb5147a26001911ecc8e5cd37cfe14943bec569b830c6935860de1f5a"
+  },
+  "LIGHT DESIGN/DESIGN -30 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-fe8d61e7c1a9644e12870a59.png",
+    "sourceSha256": "a9cb90b5a73ba9432aa92a24321c674b031012fd1c609c8e01ef7aecbf1e523f"
+  },
+  "LIGHT DESIGN/DESIGN -32 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-f1cd5db158c0e0f4e41b8539.png",
+    "sourceSha256": "cb4715e29cb140577edb1cd27583fe0f1fbe383010f2eb14dc6bc701e6198f95"
+  },
+  "LIGHT DESIGN/DESIGN -33 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-1f98db453b3e0df13195729d.png",
+    "sourceSha256": "070110bcee28c72b0f8219bbcbae77eb311ada7ad9dfee012eafc63aea146031"
+  },
+  "PLANTERS DESIGN/DESIGN -12 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-7c23a55bd580aeb4b571ce19.png",
+    "sourceSha256": "121eaff0b500e014e465c4219e0cde2e6ec5b66f3a4d1e26c2fdc84c1ba5247d"
+  },
+  "PLANTERS DESIGN/DESIGN -14 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-5973a4e96057145e189447e6.png",
+    "sourceSha256": "096b49eb9659aec8592a5273d85a960f19e4d95d817898e5b554205b9976479f"
+  },
+  "PLANTERS DESIGN/DESIGN -16 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-af4be4a7681eeeb9b7b879c6.png",
+    "sourceSha256": "10af445d6e3732ad1ef61b03f1adf013973b542efc0822ede9116536032ea393"
+  },
+  "SCULPTURES DESIGNS/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e3e8bd9bc5187e670f3bdb25.png",
+    "sourceSha256": "b5d0684a89cc911af2e2327c2afd33e1aed75e442a258a95c838fe4a853ba3f8"
+  },
+  "SOFA DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-f36566360b8a23911fb8c048.png",
+    "sourceSha256": "2437a6a4f4544b5d69db809b99faf5c8b59b3106f7711d9c60b329bcc1e4781d"
+  },
+  "SOFA DESIGN/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6cafd783290f10de18d2f7ed.png",
+    "sourceSha256": "33a3c2fdf128fcd076e691670c2c533c257d458a7b6fc3712d69c4453cc30a1b"
+  },
+  "SOFA DESIGN/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6f6a45dfd3321e9dcbfb51e4.png",
+    "sourceSha256": "35ced6e2d844e506ccb359c9fcc6f76ee0e3e79b341ad3098bccc64e2235a162"
+  },
+  "SOFA DESIGN/DESIGN -5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-077b9576bc9eb4d553f65082.png",
+    "sourceSha256": "e25cf8c98ef108568044443be98dafa28cb5876f7756fe09ec7136e2e10f8de8"
+  },
+  "SOFA DESIGN/DESIGN -6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-f6e7d5636bbb9bef8d09a80f.png",
+    "sourceSha256": "5c457c28528e8b3b00103023d7ad6086d16bd71fd09fa3d7ee4c965022397497"
+  },
+  "SOFA DESIGN/DESIGN -7 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-720cad6708ab725540194125.png",
+    "sourceSha256": "3b1a1a95e5821a7339f1e93ac1d34c75296b0738555df7ab96d69f1944292a91"
+  },
+  "SOFA DESIGN/DESIGN -8 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-696946126365a5cf21d5df42.png",
+    "sourceSha256": "6265cdd83597adbe657a4f5c383d64085571b2bdc9c7eaaf36fa73d08f373845"
+  },
+  "SOFA DESIGN/DESIGN -9 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-f393a771295c8bd1e7adf6e4.png",
+    "sourceSha256": "5031acc351926b8563a88eff5688a4a57bc706dc2447a706f5fc0f743526bced"
+  },
+  "SOFA DESIGN/DESIGN -10 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-ca46c9ca28a4f14a4f607d04.png",
+    "sourceSha256": "d2db0a8200c1bb161e5e7886c916f502c4030b5757c0191f24f08893257857c4"
+  },
+  "SOFA DESIGN/DESIGN -12 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-4270c97b7dc36a972de2d897.png",
+    "sourceSha256": "5d9b449fa4d49c34e15128c79bb99aaf5eb26a99cf4e96c61f4a16b5a470804a"
+  },
+  "SOFA DESIGN/DESIGN -13 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-33d09ce36c76fa86f93e1027.png",
+    "sourceSha256": "d6aa98205849a202acb1aee639f588db6fa0bbdfa414e515edd4bbeccb910735"
+  },
+  "SOFA DESIGN/DESIGN -14 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-fe57854ad53a57ea9d784a80.png",
+    "sourceSha256": "627bc1336f6fb7dec9f615f104ce5cc0996a4b1c4d39ffadd6ebb225a32b9a4a"
+  },
+  "SOFA DESIGN/DESIGN -15 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-4b138cd580552b816f9ee6ea.png",
+    "sourceSha256": "e9531a8c964165441dc43b3ee72ac08c65224611706e9ae142d786462a848c61"
+  },
+  "SOFA DESIGN/DESIGN -16 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e49a8628017939e55858afd3.png",
+    "sourceSha256": "5545c7b77f81e809ccae1ff9f2466d928a7cf7a20e64cdada0b00e82baf7fd53"
+  },
+  "SOFA DESIGN/DESIGN -17 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-3cdf39a898d4e0c7aa620126.png",
+    "sourceSha256": "b18848917ce45a5b4efe20467a99ccb233546896e2b38059a37388c139804fc2"
+  },
+  "SOFA DESIGN/DESIGN -21 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e6afece8cd562d04dca9edbc.png",
+    "sourceSha256": "b51925a884f2dd0bc42f77288989ab212ef208ac1159270ed35c2daee85c6c66"
+  },
+  "SOFA DESIGN/DESIGN -22 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-2550ed8bb1a5ece743bb296f.png",
+    "sourceSha256": "7b9c3702839a87154b008276f67f347d3e4b5b3402cb6ca85dd520ccf69e3ddf"
+  },
+  "TEXTURE DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-fdd1b0b2ec65df2b74583e4b.png",
+    "sourceSha256": "cce2cf269cc49e5e0aba3eb3ee8ddfc86c68080f4dcf510f4b7aca91699daba3"
+  },
+  "TEXTURE DESIGN/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6f53d0bcce94058c8914aa50.png",
+    "sourceSha256": "cdb1dd993f958d4c893a69b767f5a54bd87371f73f35677f31ede3c6ae98d85e"
+  },
+  "TEXTURE DESIGN/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-c2a3baf67b23c75dafc6ad6b.png",
+    "sourceSha256": "1cc98545d8bd885b9440616f4e3deae049c9c2fd002798c4f55abcdfd47493b5"
+  },
+  "TEXTURE DESIGN/DESIGN -10 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-b1fa26f8dba2b8507fe8dc79.png",
+    "sourceSha256": "3ea653765a62f8ae2225982367e11bfad1fd6276aa42203746798aef4aa7f9ab"
+  },
+  "TEXTURE DESIGN/DESIGN -11 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e6a40b4dccc17968414c0732.png",
+    "sourceSha256": "558c1e1d4a60f110cce9a6504f3aa6bff39ceaea4384c1b12eb73d14ae420bcf"
+  },
+  "TEXTURE DESIGN/DESIGN -14 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-3b0c40740236bb4b09569c76.png",
+    "sourceSha256": "bdfe82ed83cb986f621caf33bee65e1641859e038b82b1fd30e68237196673f1"
+  },
+  "TEXTURE DESIGN/DESIGN -15 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6a39565300a0fdd1afbfd6d9.png",
+    "sourceSha256": "fa3b857fad0c2905ba214fb140bdc43bb5f66311bcbae227eec84e346c752a26"
+  },
+  "TEXTURE DESIGN/DESIGN -17 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-954629f973a892c6275938ac.png",
+    "sourceSha256": "6abf7a11d25cea776d94c5e6d2be74c930c5f8d921c95f09a99f20617a817119"
+  },
+  "TV CONSOLES DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-b4adac61e56155bd5ec46c0c.png",
+    "sourceSha256": "6aa764739dbfc3b5088310a3242df72570c80c2093cfcf1dd417ecf0eb4cf07d"
+  },
+  "WALL PANNEL/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-435164af337245cd49e64e3b.png",
+    "sourceSha256": "9f9b28f4430e7e58bfa7aafdad674a2716f620ac9d95d6d638de7345d1f58067"
+  },
+  "BED DESIGN/DESIGN-1.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-280b88413995749d7c7f2d31.png",
+    "sourceSha256": "c2cf22a05035978e32caccaf23a7a13b118b44171d8459dea21e14bee2d01a96"
+  },
+  "BED DESIGN/DESIGN-4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-7dcd4178a3c395782a719b88.png",
+    "sourceSha256": "a79e27c8abe8dceac2e213232740134df3bd644e42b9af9e06d9977dee6809a4"
+  },
+  "concole design/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-1b451fa2d9992aac25a82f00.png",
+    "sourceSha256": "81d7cf5e65fce9835d9bea22534a732fec7cdead2cbde3bf400f4c1a468eac85"
+  },
+  "concole design/DESIGN 6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-7bf5e64f768df6bf63c36130.png",
+    "sourceSha256": "5d6f9a895939b9a5e85629b22cab53b446a79c3c79da7c74cfc7c1ff44ef6f8b"
+  },
+  "CURTAIN DESIGN/DESIGN -5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-a07ccc88204adcede4780b84.png",
+    "sourceSha256": "b7d4bd85a2e2689097c19090a3cf0536cdb16d592cfb27ee82a936f49c8ddae1"
+  },
+  "DINNING TABLE/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-73b1f3114b38c5851f846f85.png",
+    "sourceSha256": "ccdda7c9bea83f20f948b30513ac2c28fa44fa98a649f372dbd318349a8571b1"
+  },
+  "DINNING TABLE/DESIGN -5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e2cbd527bd5828483c2b0daa.png",
+    "sourceSha256": "0af2cb5b87272a86ba76ce5218f8aee3d71ac37ce306ef0384e0af37a84c1973"
+  },
+  "DOOR DESIGN/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-90a7a606f0a02cb6e2ff8e94.png",
+    "sourceSha256": "5d4f906629c3ead35160cbc774edc21e66d1a94c02a407b4ece564158f6b4a49"
+  },
+  "FAN DESIGNS/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-d8dd62ffa0b0aeceb77e00ea.png",
+    "sourceSha256": "5c4024b320afb6e1b62d1d101c6039058ffe90fb6544bd23f62eb86e03a59f7e"
+  },
+  "FLOORING DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-53431373fbebbb782fba48d8.png",
+    "sourceSha256": "d59a1dece9b3da68e2b5587117cc23dc9ef6a4c9feb236e59dba604a69e7f548"
+  },
+  "LIGHT DESIGN/DESIGN -17 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-19b461c40b027c5630030852.png",
+    "sourceSha256": "a9d47bd0be71b22678a1fd7a316639d87844f3e9088446da93f8c6a9ea08d123"
+  },
+  "LIGHT DESIGN/DESIGN -24 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e78c66aa14793314527e05b7.png",
+    "sourceSha256": "cd09fdee475dbfa9be1aee08e27f7330282d813b9da9bb98a560cb651686696d"
+  },
+  "LIGHT DESIGN/DESIGN -25 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-3e871c6913ef9289a7561906.png",
+    "sourceSha256": "cd2af1dfa3672beecdbb7e32ef4ab1cf8f2aefb86c89dfc2bd943ee72f1d17a7"
+  },
+  "LIGHT DESIGN/DESIGN -26  IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-04a9b23ad9c63eb820ce06f1.png",
+    "sourceSha256": "9c99da2b430b7c90e0442ee4c78e699c89c3427195f85f9e7afede545bd86a74"
+  },
+  "LIGHT DESIGN/DESIGN -31 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-d79d19ff6e1adaaf30675774.png",
+    "sourceSha256": "b0f32799c98bd2661b298ab3800047297655d8454352d207ac7b5238284fc578"
+  },
+  "LIGHT DESIGN/DESIGN -34 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-d4b5844374ef28e0a9c86b01.png",
+    "sourceSha256": "db6f017c173908fbec8d788c0e0a11f669201e1689edb3d938880fa1211a3427"
+  },
+  "LIGHT DESIGN/DESIGN -35 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-fca5cb9f65e7af6ee3d9eb19.png",
+    "sourceSha256": "7e62eb958c4363e20a9633ea4cb3538f058dac6d2fc8f8cbb7d4766a27396e54"
+  },
+  "LIGHT DESIGN/DESIGN -36  IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-10a62281f3f48e0ac1304f72.png",
+    "sourceSha256": "06b8c518340fca51235e408a84e24ae7a5e701e866309e3748e6c77374e2da2f"
+  },
+  "LIGHT DESIGN/DESIGN -38 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-3d008c8c4280b32095a8acd8.png",
+    "sourceSha256": "b14d7dfb77d1249dff7fb9c3050a539bff720f42eb31e90e28d117f237334235"
+  },
+  "PLANTERS DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-8a5a3b0c17637580b38ec0d2.png",
+    "sourceSha256": "4c0aafc923085a8f5d7cdf03265c9a189497461ca2b4e17074658502fe2672c7"
+  },
+  "PLANTERS DESIGN/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-4ac424247604ff396e912f3b.png",
+    "sourceSha256": "f324aa357c90944d16f23fa798d231e30a8ba309890ae568e17c38785ad75bee"
+  },
+  "PLANTERS DESIGN/DESIGN -6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-03b09048487f040662c41703.png",
+    "sourceSha256": "b455f2301353cc98009b168903be6179ab21b784ffe9baed50c40f61a72435db"
+  },
+  "PLANTERS DESIGN/DESIGN -7 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-42ae042560da0c720524af66.png",
+    "sourceSha256": "5727449919f4c06bfc0fbf6aa727aa62711b46ded0ec9f5b04e9c95af6344a51"
+  },
+  "SOFA DESIGN/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-f6b237cf575c4ecf6c02f093.png",
+    "sourceSha256": "a1fa4963abb3388f4c57c418e18139d81dc527ffae524ba45d5823ec490ef980"
+  },
+  "SOFA DESIGN/DESIGN -11 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-518ffebca7883e3a8704a074.png",
+    "sourceSha256": "0a5a413b12b4c5161938971535d63ecc66f731513b8e38dc1366946974e36d5c"
+  },
+  "SOFA DESIGN/DESIGN -19 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-9ec99c14dd362c2b43537b1d.png",
+    "sourceSha256": "b83c11f88226677fb3ff86d20b73a006cd7e1f2d7b3d09650a7f724029bbe948"
+  },
+  "SOFA DESIGN/DESIGN -20 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-cf695fea99e5cef0ada7f9a1.png",
+    "sourceSha256": "df91a336a238006c11d38c31d016a5c05158673f8509e580819d3df4ec4ff99a"
+  },
+  "TEXTURE DESIGN/DESIGN -3 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-a8ef6b2e1d458db1efcf462f.png",
+    "sourceSha256": "fce9fcfa53eea2fc3d5b64d88888de6cfc9ad40dae07798ed30b33684504a59c"
+  },
+  "TEXTURE DESIGN/DESIGN -6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-4635cc45b7b5530a30789704.png",
+    "sourceSha256": "10b4d4f6f0314ca8e06f73f8f380e05c72b390e0944f8c16934378a72243878b"
+  },
+  "TEXTURE DESIGN/DESIGN -7 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-e451f8b5fe92675e4c3bf7a2.png",
+    "sourceSha256": "dcecff7906178fb8b4be67d1cfd8ad1dbf24393cd7ce3df26dcb3b1b464de40b"
+  },
+  "TEXTURE DESIGN/DESIGN -8 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-400d6616751e5f3460306b3a.png",
+    "sourceSha256": "7e5b97c6df4e3ea1b6997f28d2136febaa24ae93c70ad45dfd695e9bbb331fd4"
+  },
+  "TEXTURE DESIGN/DESIGN -9 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6faa1d481aae5897657357e4.png",
+    "sourceSha256": "a96f5255004513b6f91cf00fdc4d6cfb7ea97e290bb7ca5ba8f487285177679c"
+  },
+  "TEXTURE DESIGN/DESIGN -13 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-4580ede3c9fa43ef685ad250.png",
+    "sourceSha256": "eb977fa6443bc1b2c2a2ab0cae61be909859add1fb003c3eea0ac71e69fdaee0"
+  },
+  "TEXTURE DESIGN/DESIGN -19 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-9f339ef91f38b143426f8f76.png",
+    "sourceSha256": "5c19b35083dcc649edbf39aacbfd33b7cd27fd6c5e28b65de8383af6e3635800"
+  },
+  "TEXTURE DESIGN/DESIGN -20 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-c38ec7b3e6b192818dc58f5b.png",
+    "sourceSha256": "e9368faeb606a6f2a477ee874ce8a91bd7586d77ad2ae11dc0ce5b92ee6b0120"
+  },
+  "CHAIR/DESIGN -14 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-46a2a07ab3a304c3827e8c54.png",
+    "sourceSha256": "96cbcc0fd4cfa90c48d7a4b87ab173c974969406505b414f3cdd3409b97dac57"
+  },
+  "SOFA DESIGN/DESIGN -18 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-ae268a3d1c7f1f1a86ae2cee.png",
+    "sourceSha256": "f6d264c623f84cbb53dbfdd1d205264b6fc837defb383cb747896f01ae450c56"
+  },
+  "CURTAIN DESIGN/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-61f4ddfa4fcbc13b63a98bf1.png",
+    "sourceSha256": "78e2c08abba21a6bd34d1d22087ceb26ea94746784c929fa44eae3dfbe6fa1eb"
+  },
+  "PLANTERS DESIGN/DESIGN -15 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-0f61759284993ea000239b75.png",
+    "sourceSha256": "edc6e4742b3de675d4c73e26e0999408ebdbd65330fdc1446030e5073eed0e81"
+  },
+  "concole design/DESIGN -13 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-93eff818c1ab61c832e33d92.png",
+    "sourceSha256": "336274dad3a1fc512eda07fd567bc6483ef33f384c8c3893dcd44c76f8dde182"
+  },
+  "LIGHT DESIGN/DESIGN -37 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-f0b4a6b664dfede55eb2f2dd.png",
+    "sourceSha256": "070994fadd3ed3a35bb45ed85a13589ac96f95f382f07fe27ad33c69fd92b840"
+  },
+  "PLANTERS DESIGN/DESIGN -4 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-7f9eb01136a34f6f29b9254f.png",
+    "sourceSha256": "47641ad271ece5a38894dbf8f3fe0b933169f5741a59c20c697b4f3b35df9a3f"
+  },
+  "PLANTERS DESIGN/DESIGN -5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-dcaffed7c1d8c838d2c1a87e.png",
+    "sourceSha256": "09fa210d3ce56e7dee5a0b9e01597ad140322bb9de8a170a3af115bb558ab160"
+  },
+  "artwork/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-0d1ac828ad61ed35f4801499.png",
+    "sourceSha256": "95e7bddffc414cd20a1034f43f3ff0bab2909f11581c863ec608059815bce004"
+  },
+  "artwork/DESIGN -5 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-49aea0ec65696e3b9f53049a.png",
+    "sourceSha256": "50acc554b0e3e760a7fa2dab32d70322ca0713c98b2e5dd4fd85808f57956885"
+  },
+  "artwork/DESIGN -6 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-417a58f960713ad14b42e098.png",
+    "sourceSha256": "123fc21cce16616c573b06dd3b1b9882dd8ded23187103438555af48fedf7992"
+  },
+  "concole design/DESIGN 8 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-ec2fe28efb3c8e09dec7433a.png",
+    "sourceSha256": "d8b70e1beebea7ecfd3e93af86031a6383cf9cd3f07066e2070d5a06c05f4ac6"
+  },
+  "LAMPS DESIGN/DESIGN -2 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-c9332cc95b8939f7eba3df08.png",
+    "sourceSha256": "c81c7b308948cb2dd5e8a2d7fd2d3a64afe13a20e0d2f47176501560ce60cc7d"
+  },
+  "LIGHT DESIGN/DESIGN -18 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-fd90dc35757423bbe34bd25c.png",
+    "sourceSha256": "5a3cae10235349694a998bfa250a5212d17e25c54223811b8b99c22b7c803690"
+  },
+  "PLANTERS DESIGN/DESIGN -9 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-81232224df055fc881ffe725.png",
+    "sourceSha256": "e44b0a510f63c9f89d14e281442ec346e895f9376abe9af6fa6c64862ef1b858"
+  },
+  "PLANTERS DESIGN/DESIGN -10 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-6fec246f5924c7d24499b122.png",
+    "sourceSha256": "d5de7a87b4b6e39509dbdaf101ef97003a38608046db47328b0a530dc9c04632"
+  },
+  "PLANTERS DESIGN/DESIGN -13 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-8e12204b637e61f7d95e1a61.png",
+    "sourceSha256": "0132906173f5e94c7316e5f4453305402812f4c6bdeaaa7ab6e5adecd109865e"
+  },
+  "WALL PANNEL/DESIGN -1 IMAGE.jpg": {
+    "file": "src/assets/images/clean-model-previews/model-c9dd338452039809e471ff94.png",
+    "sourceSha256": "a1fb1564c2b77e99a778b5185c2b0a3502f1cfda4ec942fb6c506fead98d0d2e"
+  }
+}
