@@ -30,13 +30,18 @@ test('hero automatically switches between bounded animation and a still gallery'
   assert.equal(wallpaper.children[0].style.animationIterationCount, 'infinite');
   visible([{ isIntersecting: false }]); assert.equal(offscreen, true);
   visible([{ isIntersecting: true }]); assert.equal(offscreen, false);
+  // Without motion the corridor is held still rather than replaced: the whole
+  // collection stays on screen, carrying its position but no animation.
   motion = false; events['studio:motion-change']();
-  assert.equal(hero.dataset.presentation, 'still');
-  assert.equal(wallpaper.children.length, 3);
+  assert.equal(hero.dataset.presentation, 'corridor');
+  assert.equal(wallpaper.children.length, 18);
   assert.equal(wallpaper.children[0].style.animationName, undefined);
+  assert.ok(wallpaper.children[0].style.transform, 'a still card keeps its place on the path');
+  assert.ok(Number(wallpaper.children[8].style.zIndex) > Number(wallpaper.children[0].style.zIndex),
+    'depth order the keyframes would have applied is set directly');
   document.documentElement.dataset.studioMode = '3d'; modeChanged();
   assert.equal(wallpaper.children.length, 0);
-  assert.equal(models.children.length, 3);
+  assert.equal(models.children.length, 6);
   motion = true; events['studio:motion-change']();
   assert.equal(models.children.length, 6);
   media.matches = false; media.change();

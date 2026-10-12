@@ -12,22 +12,25 @@ if (hero) {
   let renderedKey;
   function render() {
     const mode = document.documentElement.dataset.studioMode === '3d' ? '3d' : 'wallpaper';
-    const animated = allowsMotion() && wide.matches;
-    const key = `${mode}:${animated}`;
+    // The corridor is a layout, not an animation: a narrow screen cannot hold it,
+    // but a motion preference only decides whether the cards travel along it.
+    const corridor = wide.matches;
+    const moving = corridor && allowsMotion();
+    const key = `${mode}:${corridor}:${moving}`;
     if (key === renderedKey) return;
     renderedKey = key;
-    hero.dataset.presentation = animated ? 'corridor' : 'still';
+    hero.dataset.presentation = corridor ? 'corridor' : 'still';
     for (const stage of hero.querySelectorAll('[data-stream-mode]')) stage.replaceChildren();
     const stage = hero.querySelector(`[data-stream-mode="${mode}"]`);
     // Nine cards on each wallpaper rail restores the original continuous
     // corridor; five per side left visible gaps between projected cards.
-    const limit = animated ? (mode === '3d' ? 6 : 18) : 3;
+    const limit = corridor ? (mode === '3d' ? 6 : 18) : 3;
     const designs = mode === '3d' ? selectRecentModels(projects, limit) : selectHeroDesigns(projects.filter(project => project.heroCover), limit);
     stage.style.setProperty('--stream-count', String(designs.length));
     designs.forEach((design, index) => {
       const slot = document.createElement('div');
       slot.className = 'image-stream-slot';
-      if (animated) {
+      if (corridor) {
         const sideCount = Math.ceil(designs.length / 2);
         const direction = index < sideCount ? 1 : -1;
         const position = mode === '3d' ? index : index % sideCount;
@@ -35,12 +38,21 @@ if (hero) {
         const progress = (position + .5) / count;
         const duration = mode === '3d' ? 36 : 30;
         slot.style.transform = mode === '3d' ? galleryTransform(progress) : corridorTransform(progress, direction);
-        slot.style.animationName = mode === '3d' ? 'stream-gallery' : direction === 1 ? 'stream-right' : 'stream-left';
-        slot.style.animationDuration = `${duration}s`;
-        slot.style.animationDelay = `${-progress * duration}s`;
-        slot.style.animationTimingFunction = 'linear';
-        slot.style.animationIterationCount = 'infinite';
-        slot.style.animationFillMode = 'both';
+        if (moving) {
+          slot.style.animationName = mode === '3d' ? 'stream-gallery' : direction === 1 ? 'stream-right' : 'stream-left';
+          slot.style.animationDuration = `${duration}s`;
+          slot.style.animationDelay = `${-progress * duration}s`;
+          slot.style.animationTimingFunction = 'linear';
+          slot.style.animationIterationCount = 'infinite';
+          slot.style.animationFillMode = 'both';
+        } else if (mode !== '3d') {
+          // A still corridor carries no animation at all, because a global
+          // reduced-motion rule strips animations and would take the negative
+          // delay that holds each card in place with them. The transform above
+          // already positions the card; only the depth order the keyframes
+          // would have applied still has to be set.
+          slot.style.zIndex = String(Math.round(progress * 100) + 1);
+        }
       }
       const card = document.createElement('a');
       card.className = 'image-stream-card';
