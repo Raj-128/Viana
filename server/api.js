@@ -258,7 +258,10 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
         limit(`download:${user.id}`, 60);
         const design = db.prepare("SELECT file FROM designs WHERE id=?").get(match[1]);
         const modelDownload = planOrders.isModelDownload(match[1], design?.file);
-        if (!modelDownload && user.role !== "admin" && !db.prepare("SELECT 1 FROM entitlements WHERE user_id=? AND design_id=?").get(user.id, match[1])) throw fail(403, "Download access has not been granted.");
+        // One wording for both a design this account cannot take and one the studio
+        // has not uploaded, so a customer cannot probe which design ids exist. The
+        // owner skips this check and reads the missing-file answer below.
+        if (!modelDownload && user.role !== "admin" && !db.prepare("SELECT 1 FROM entitlements WHERE user_id=? AND design_id=?").get(user.id, match[1])) throw fail(403, "This design is not available to download. If your plan is active, the studio may not have uploaded this file yet.");
         if (!design) throw fail(404, "This file has not been uploaded yet.");
         let file;
         try { file = realpathSync(resolve(filesRoot, design.file)); } catch { throw fail(404, "File is unavailable."); }

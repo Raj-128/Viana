@@ -15,6 +15,10 @@ export async function requestProtectedDownload(projectId, fetcher = fetchApi) {
     const data = await response.json().catch(() => ({}));
     throw Object.assign(new Error(data.error || (response.status === 403 ? 'Download access is required for this design.' : 'Too many download requests. Please wait and try again.')), { status: response.status, code: data.code });
   }
+  if (response.status === 404) {
+    const data = await response.json().catch(() => ({}));
+    throw Object.assign(new Error(data.error || "This file has not been uploaded yet."), { status: 404 });
+  }
   if (!response.ok) throw new Error("Secure downloads are not available yet. Please contact Studio Viana through your cart.");
   const type = response.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (!["image/jpeg", "image/png", "image/webp", "image/avif", "application/octet-stream", "application/vnd.rar", "application/zip"].includes(type)) {

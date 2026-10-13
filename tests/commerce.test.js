@@ -70,7 +70,7 @@ test("download requests use the protected endpoint and same-origin credentials",
   assert.equal(result.size, 3);
 });
 
-for (const [status, message] of [[401, /sign in/], [403, /access is required/], [404, /not available/], [429, /Too many/], [500, /not available/]]) {
+for (const [status, message] of [[401, /sign in/], [403, /access is required/], [404, /not been uploaded/], [429, /Too many/], [500, /not available/]]) {
   test(`download refuses HTTP ${status}`, async () => {
     await assert.rejects(requestProtectedDownload("design-0", async () => new Response(null, { status })), message);
   });
