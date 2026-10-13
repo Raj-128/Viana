@@ -1,7 +1,7 @@
 import { randomUUID, createHash } from 'node:crypto';
-import { open, unlink, realpath, stat } from 'node:fs/promises';
-import { createReadStream, unlinkSync } from 'node:fs';
-import { resolve, relative, isAbsolute } from 'node:path';
+
+import { resolve } from 'node:path';
+import { Readable } from 'node:stream';
 import { createRequestReferences } from './request-reference.js';
 
 const papers = new Set(['standard', 'canvas', 'feather', 'linen', 'earthy']);
@@ -16,7 +16,7 @@ function fileType(bytes) {
   return null;
 }
 
-export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json, fail, limit }) {
+export function createPrintRequests({ db, filesRoot, store, sessionUser, readBody, json, fail, limit }) {
   const reference = createRequestReferences(db);
   const publicRequest = ({ file, fingerprint, ...request }) => ({ ...request,
     reference: reference('print', request), file_ready: Boolean(file), file_version: version(file) });
@@ -81,8 +81,8 @@ export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json
         .run(Date.now(), Date.now(), current.id);
       if (current.file) {
         if (!/^[a-f0-9-]{36}\.(pdf|tif|jpg|png)$/.test(current.file)) throw fail(409, 'Invalid stored file. Contact the studio.');
-        try { unlinkSync(resolve(filesRoot, current.file)); }
-        catch (error) { if (error.code !== 'ENOENT') throw fail(503, 'Receipt recorded, but file deletion failed. Please retry the removal.'); }
+        try { await store.remove(current.file); }
+        catch { throw fail(503, 'Receipt recorded, but file deletion failed. Please retry the removal.'); }
         db.prepare('UPDATE print_requests SET file=NULL,updated_at=? WHERE id=?').run(Date.now(), current.id);
       }
       json(res, 200, { request: publicRequest(get(current.id)) });
@@ -94,16 +94,23 @@ export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json
       const mime = req.headers['content-type']?.split(';')[0];
       if (!formats[mime]) throw fail(415, 'Choose a PDF, TIFF, JPG or PNG print file.');
       if (Number(req.headers['content-length']) > maxBytes) throw fail(413, 'Use a file up to 250 MB.');
-      const filename = `${randomUUID()}${formats[mime]}`, target = resolve(filesRoot, filename);
-      const handle = await open(target, 'wx');
+      const filename = `${randomUUID()}${formats[mime]}`;
       let size = 0, signature = Buffer.alloc(0), saved = false;
-      try {
+      // The file is checked as it passes through rather than after it lands, so a
+      // mislabelled or oversized upload is cut off instead of being stored first.
+      async function* checked() {
         for await (const chunk of req) {
           size += chunk.length;
           if (size > maxBytes) throw fail(413, 'Use a file up to 250 MB.');
-          if (signature.length < 16) signature = Buffer.concat([signature, chunk.subarray(0, 16 - signature.length)]);
-          await handle.writeFile(chunk);
+          if (signature.length < 16) {
+            signature = Buffer.concat([signature, chunk.subarray(0, 16 - signature.length)]);
+            if (signature.length === 16 && fileType(signature) !== mime) throw fail(415, 'The file contents do not match its selected format.');
+          }
+          yield chunk;
         }
+      }
+      try {
+        await store.put(filename, Readable.from(checked()), { contentType: mime, size: Number(req.headers['content-length']) || undefined });
         if (size < 24 || fileType(signature) !== mime) throw fail(415, 'The file contents do not match its selected format.');
         // Do not replace a file after another admin has approved or changed it.
         const result = db.prepare("UPDATE print_requests SET file=?,mime=?,file_bytes=?,updated_at=? WHERE id=? AND status='pending' AND file IS ?")
@@ -111,10 +118,9 @@ export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json
         if (!result.changes) throw fail(409, 'This request changed while uploading. Refresh and review it.');
         saved = true;
       } finally {
-        await handle.close();
-        if (!saved) await unlink(target).catch(() => {});
+        if (!saved) await store.remove(filename).catch(() => {});
       }
-      if (request.file) await unlink(resolve(filesRoot, request.file)).catch(() => {});
+      if (request.file) await store.remove(request.file).catch(() => {});
       json(res, 201, { request: publicRequest(get(request.id)) });
       return true;
     }
@@ -135,16 +141,12 @@ export function createPrintRequests({ db, filesRoot, sessionUser, readBody, json
     if (match[3] === 'download' && req.method === 'GET') {
       if (!request.file || request.status === 'received' || (user.role !== 'admin' && request.status !== 'approved')) throw fail(403, 'Your print file is not available for download.');
       limit(`print-download:${user.id}`, 60);
-      let file;
-      try { file = await realpath(resolve(filesRoot, request.file)); } catch { throw fail(404, 'The print file is unavailable. Contact the studio.'); }
-      const rel = relative(filesRoot, file);
-      if (rel.startsWith('..') || isAbsolute(rel) || !formats[request.mime]) throw fail(403, 'Invalid file.');
-      const info = await stat(file);
-      if (!info.isFile()) throw fail(404, 'The print file is unavailable.');
-      res.writeHead(200, { 'Content-Type': request.mime, 'Content-Length': info.size,
+      if (!formats[request.mime]) throw fail(403, 'Invalid file.');
+      const stored = await store.read(request.file);
+      if (!stored) throw fail(404, 'The print file is unavailable. Contact the studio.');
+      res.writeHead(200, { 'Content-Type': request.mime, 'Content-Length': stored.size,
         'Content-Disposition': `attachment; filename="viana-${reference('print', request)}-${request.width}x${request.height}in${formats[request.mime]}"` });
-      const stream = createReadStream(file);
-      stream.on('error', () => res.destroy()); res.on('close', () => stream.destroy()); stream.pipe(res);
+      stored.stream.on('error', () => res.destroy()); res.on('close', () => stored.stream.destroy()); stored.stream.pipe(res);
       return true;
     }
     throw fail(405, 'This action is not supported.');

@@ -29,6 +29,12 @@ export async function fileHash(file) {
   for await (const chunk of createReadStream(file)) digest.update(chunk);
   return digest.digest('hex');
 }
+/** Archive signatures live in the first bytes, so a stream can be judged as it passes. */
+export function archiveTypeFromHead(head) {
+  if (head.subarray(0, 6).equals(Buffer.from('526172211a07', 'hex'))) return 'rar';
+  if (head.subarray(0, 4).equals(Buffer.from('504b0304', 'hex'))) return 'zip';
+  return null;
+}
 export async function modelFileType(file) {
   const handle = await open(file, 'r');
   try {

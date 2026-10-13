@@ -1,12 +1,13 @@
 import { applySecurityHeaders } from './security-headers.js';
 import { DatabaseSync } from "node:sqlite";
-import { mkdirSync, realpathSync, createReadStream } from "node:fs";
-import { stat } from "node:fs/promises";
-import { resolve, relative, isAbsolute, extname } from "node:path";
+import { mkdirSync, realpathSync } from "node:fs";
+
+import { resolve, extname } from "node:path";
 import { randomBytes, randomUUID, createHash } from "node:crypto";
 import { hashPassword, verifyPassword, needsPasswordUpgrade } from './passwords.js';
 import { verifyTotp } from './totp.js';
 import { createMfaVault } from './mfa-vault.js';
+import { createFileStore } from './file-store.js';
 import { createGoogleAuth } from './google-auth.js';
 import { createDownloadAdmin } from "./download-admin.js";
 import { createPrintRequests } from "./print-requests.js";
@@ -23,6 +24,9 @@ const types = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"
 export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".private"), origin = process.env.APP_ORIGIN, secureCookies = process.env.NODE_ENV === "production", googleVerifier } = {}) {
   mkdirSync(resolve(dataDir, "files"), { recursive: true });
   const filesRoot = realpathSync(resolve(dataDir, "files"));
+  // Private files live in object storage once it is configured, so a rebuilt
+  // container still holds the packages and print files customers paid for.
+  const store = createFileStore(filesRoot);
   const mfaVault = createMfaVault(dataDir);
   const db = new DatabaseSync(resolve(dataDir, "studio.sqlite"), { timeout: 5000 });
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
@@ -102,10 +106,10 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
     catch { throw fail(400, "Invalid request."); }
   };
 
-  const handleDownloadAdmin = createDownloadAdmin({ db, filesRoot, sessionUser, readBody, json, fail, limit });
+  const handleDownloadAdmin = createDownloadAdmin({ db, filesRoot, store, sessionUser, readBody, json, fail, limit });
   const planOrders = createPlanOrders({ db, sessionUser, readBody, json, fail, limit });
-  const handleModelLibrary = createModelLibraryApi({ dataDir, filesRoot, db, json, fail });
-  const handlePrintRequests = createPrintRequests({ db, filesRoot, sessionUser, readBody, json, fail, limit });
+  const handleModelLibrary = createModelLibraryApi({ dataDir, filesRoot, store, db, json, fail });
+  const handlePrintRequests = createPrintRequests({ db, filesRoot, store, sessionUser, readBody, json, fail, limit });
   const accounts = createAccountRecords({ db, sessionUser, json, fail });
   const googleAuth = createGoogleAuth({ db, fail, limit, verify: googleVerifier });
 
@@ -263,22 +267,21 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
         // owner skips this check and reads the missing-file answer below.
         if (!modelDownload && user.role !== "admin" && !db.prepare("SELECT 1 FROM entitlements WHERE user_id=? AND design_id=?").get(user.id, match[1])) throw fail(403, "This design is not available to download. If your plan is active, the studio may not have uploaded this file yet.");
         if (!design) throw fail(404, "This file has not been uploaded yet.");
-        let file;
-        try { file = realpathSync(resolve(filesRoot, design.file)); } catch { throw fail(404, "File is unavailable."); }
-        const relativeFile = relative(filesRoot, file);
-        if (relativeFile.startsWith("..") || isAbsolute(relativeFile) || !types[extname(file).toLowerCase()]) throw fail(403, "Invalid file.");
-        const info = await stat(file);
-        if (!info.isFile()) throw fail(404, "File is unavailable.");
+        // The store refuses a name that climbs out of its prefix, so the extension
+        // allowlist is what remains to check before the bytes are served.
+        const extension = extname(design.file).toLowerCase();
+        if (!types[extension]) throw fail(403, "Invalid file.");
+        const stored = await store.read(design.file);
+        if (!stored) throw fail(404, "File is unavailable.");
         if (modelDownload) planOrders.consumeDownload(user, match[1], design.file);
         if (modelDownload) res.once('finish', () => {
           try { planOrders.recordDownload(user, match[1], design.file); }
           catch { console.error('Could not save model download history.'); }
         });
-        res.writeHead(200, { "Content-Type": types[extname(file).toLowerCase()], "Content-Length": info.size, "Content-Disposition": `attachment; filename="${match[1]}${extname(file).toLowerCase()}"` });
-        const stream = createReadStream(file);
-        stream.on("error", () => res.destroy());
-        res.on("close", () => stream.destroy());
-        return stream.pipe(res);
+        res.writeHead(200, { "Content-Type": types[extension], "Content-Length": stored.size, "Content-Disposition": `attachment; filename="${match[1]}${extension}"` });
+        stored.stream.on("error", () => res.destroy());
+        res.on("close", () => stored.stream.destroy());
+        return stored.stream.pipe(res);
       }
       throw fail(404, "API route not found.");
     } catch (error) {
@@ -320,5 +323,5 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
       db.exec('COMMIT');
     } catch (error) { db.exec('ROLLBACK'); throw error; }
   }
-  return { handler, db, createUser, resetAdminPassword, setAdminMfa, filesRoot, close: () => db.close() };
+  return { handler, db, createUser, resetAdminPassword, setAdminMfa, filesRoot, store, close: () => db.close() };
 }

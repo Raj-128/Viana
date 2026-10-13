@@ -16,6 +16,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server/start.js",
+    "start:local": "node --env-file=.env server/start.js",
     "server:admin": "node server/manage.js admin",
     "server:reset-admin": "node server/manage.js reset-admin",
     "server:admin-mfa": "node server/manage.js admin-mfa",

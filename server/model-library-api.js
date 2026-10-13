@@ -1,12 +1,14 @@
 import { resolve } from 'node:path';
-import { open, stat, rename, rm } from 'node:fs/promises';
+import { stat } from 'node:fs/promises';
 import { createHash, timingSafeEqual, randomUUID } from 'node:crypto';
 import sharp from 'sharp';
-import { readJson, atomicJson, registerModel, modelFileType } from './model-library.js';
+import { Readable } from 'node:stream';
+import { readJson, atomicJson, registerModel, archiveTypeFromHead } from './model-library.js';
 import { cleanText } from './model-classification.js';
 import { watermarkPreview } from './preview-watermark.js';
+import { createFileStore } from './file-store.js';
 
-export function createModelLibraryApi({ dataDir, filesRoot, db, json, fail, syncToken = process.env.MODEL_SYNC_TOKEN }) {
+export function createModelLibraryApi({ dataDir, filesRoot, store = createFileStore(filesRoot), db, json, fail, syncToken = process.env.MODEL_SYNC_TOKEN }) {
   const manifestFile = resolve(dataDir, 'model-library.json');
   let pending = Promise.resolve(), cachedStamp, cached;
   const markedPreviews = new Map();
@@ -53,23 +55,29 @@ export function createModelLibraryApi({ dataDir, filesRoot, db, json, fail, sync
       const params = new URL(req.url, 'http://local').searchParams;
       const digest = params.get('sha256'), type = params.get('type');
       if (!/^[a-f0-9]{64}$/.test(digest || '') || !['rar', 'zip', 'max', 'fbx', 'obj', 'blend', 'c4d', 'stl', 'skp', 'dwg', 'dxf', 'mat', 'matlib', 'sbsar', 'uasset', 'uproject'].includes(type)) throw fail(400, 'Invalid model format or checksum.');
-      const target = resolve(filesRoot, `${id}-${digest.slice(0, 16)}.${type}`);
+      const target = `${id}-${digest.slice(0, 16)}.${type}`;
       const temp = `${target}.${randomUUID()}.partial`;
       const maxSize = 2 * 1024 ** 3;
       if (Number(req.headers['content-length']) > maxSize) throw fail(413, 'Model package exceeds 2 GB.');
-      let handle, size = 0;
-      try {
-        handle = await open(temp, 'wx'); const hash = createHash('sha256');
+      let size = 0, head = Buffer.alloc(0);
+      const hash = createHash('sha256');
+      // Checksum and signature are taken from the bytes as they pass, so a package
+      // is never read back to be judged; only a package that matches is published.
+      async function* measured() {
         for await (const chunk of req) {
           size += chunk.length; if (size > maxSize) throw fail(413, 'Model package exceeds 2 GB.');
-          hash.update(chunk); await handle.writeFile(chunk);
+          if (head.length < 8) head = Buffer.concat([head, chunk.subarray(0, 8 - head.length)]);
+          hash.update(chunk);
+          yield chunk;
         }
-        await handle.close(); handle = null;
-        if (!size || hash.digest('hex') !== digest || (['rar', 'zip'].includes(type) && await modelFileType(temp) !== type)) throw fail(400, 'File checksum or format did not match.');
-        // The temporary file has no source extension. Archive signatures are
+      }
+      try {
+        await store.put(temp, Readable.from(measured()), { size: Number(req.headers['content-length']) || undefined });
+        if (!size || hash.digest('hex') !== digest || (['rar', 'zip'].includes(type) && archiveTypeFromHead(head) !== type)) throw fail(400, 'File checksum or format did not match.');
+        // The temporary name carries no source extension. Archive signatures are
         // checked above; raw formats are admitted only by the sync credential.
-        await rename(temp, target);
-      } finally { if (handle) await handle.close(); await rm(temp, { force: true }); }
+        await store.move(temp, target);
+      } finally { await store.remove(temp).catch(() => {}); }
       json(res, 200, { uploaded: true }); return true;
     }
     let size = 0; const chunks = [];
@@ -78,8 +86,8 @@ export function createModelLibraryApi({ dataDir, filesRoot, db, json, fail, sync
     try { record = JSON.parse(Buffer.concat(chunks)); } catch { throw fail(400, 'Invalid metadata.'); }
     if (record.project?.id !== id || !/^[a-f0-9]{64}$/.test(record.sha256 || '') || !/^[a-f0-9]{64}$/.test(record.signature || '')) throw fail(400, 'Invalid model metadata.');
     if (!new RegExp(`^${id}-${record.sha256.slice(0, 16)}\\.(rar|zip|max|fbx|obj|blend|c4d|stl|skp|dwg|dxf|mat|matlib|sbsar|uasset|uproject)$`).test(record.file)) throw fail(400, 'Invalid private file name.');
-    const info = await stat(resolve(filesRoot, record.file)).catch(() => null);
-    if (!info?.isFile() || info.size !== record.size) throw fail(409, 'Upload the complete model file first.');
+    const info = await store.stat(record.file).catch(() => null);
+    if (!info || info.size !== record.size) throw fail(409, 'Upload the complete model file first.');
     let preview;
     try { preview = await sharp(Buffer.from(record.preview, 'base64'), { limitInputPixels: 4000000 }).resize({ width: 640, height: 640, fit: 'inside', withoutEnlargement: true }).webp({ quality: 78 }).toBuffer(); }
     catch { throw fail(400, 'Invalid model preview.'); }

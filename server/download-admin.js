@@ -1,8 +1,7 @@
-import { writeFile, unlink } from "node:fs/promises";
 import { resolve } from "node:path";
 import { randomUUID } from "node:crypto";
 
-export function createDownloadAdmin({ db, filesRoot, sessionUser, readBody, json, fail, limit }) {
+export function createDownloadAdmin({ db, filesRoot, store, sessionUser, readBody, json, fail, limit }) {
   db.exec(`CREATE TABLE IF NOT EXISTS download_requests (
     user_id TEXT NOT NULL REFERENCES users(id), design_id TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending', updated_at INTEGER NOT NULL,
@@ -58,10 +57,10 @@ export function createDownloadAdmin({ db, filesRoot, sessionUser, readBody, json
       if (mime === "image/webp" && bytes.toString("ascii", 0, 4) === "RIFF" && bytes.toString("ascii", 8, 12) === "WEBP") extension = ".webp";
       if (!extension || bytes.length < 24) throw fail(415, "Upload a JPG, PNG or WebP image. The file type must match its contents.");
       const file = `${randomUUID()}${extension}`;
-      const target = resolve(filesRoot, file);
-      await writeFile(target, bytes, { flag: "wx" });
+      await store.put(file, bytes, { exclusive: true });
+      // A stored file with no row would be unreachable and never cleaned up.
       try { db.prepare("INSERT INTO designs VALUES (?,?)").run(designId, file); }
-      catch (error) { await unlink(target); throw error; }
+      catch (error) { await store.remove(file); throw error; }
       json(res, 201, { designId });
       return true;
     }

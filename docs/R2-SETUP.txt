@@ -1,0 +1,163 @@
+STUDIO VIANA - CLOUDFLARE R2 SETUP
+==================================
+Keep this file. It contains no secrets, only the names of what to collect.
+
+
+WHAT R2 REPLACES
+----------------
+The hosting container is rebuilt on every deploy, restart and sleep, and
+anything written inside it is erased. That has been taking customer accounts,
+approved plans, 3D model packages and print files with it. R2 holds them
+outside the container, so a rebuild loses nothing.
+
+Wallpaper previews are NOT affected and do NOT go to R2. They are committed to
+the repository and served free by GitHub Pages. Nothing changes for them.
+
+
+THE FOUR VALUES TO COLLECT
+--------------------------
+  R2_ACCOUNT_ID            Cloudflare account id, shown on the R2 overview page
+  R2_BUCKET                viana-storage
+  R2_ACCESS_KEY_ID         from the R2 API token
+  R2_SECRET_ACCESS_KEY     from the R2 API token (shown once only)
+
+The same four cover both the files and the database backup. One bucket, one
+token, one free allowance.
+
+Send the ACCOUNT ID only. The access key and secret go straight into Render and
+should never be pasted into a chat, an email or a commit.
+
+
+STEP 1 - CLOUDFLARE
+-------------------
+  1. dash.cloudflare.com  ->  R2 Object Storage
+  2. If asked, add the R2 subscription. The screen reads: Total Due Now $0.00
+  3. Create bucket
+       Name      viana-storage      (exactly this)
+       Location  Automatic
+       Class     Standard           (other classes are not in the free tier)
+  4. Copy the Account ID from the R2 overview page
+  5. Manage R2 API Tokens  ->  Create API Token
+       Permission   Object Read & Write
+       Scope        this bucket only (viana-storage)
+     Copy the Access Key ID and the Secret Access Key.
+     The secret is displayed once and cannot be shown again.
+  6. Notifications  ->  Create  ->  Budget alert  ->  threshold $1
+     Cloudflare has no hard spending cap, so this is the tripwire.
+
+
+STEP 2 - RENDER
+---------------
+Service viana-fpph  ->  Environment  ->  add four variables:
+
+  R2_ACCOUNT_ID=<from step 4>
+  R2_BUCKET=viana-storage
+  R2_ACCESS_KEY_ID=<from step 5>
+  R2_SECRET_ACCESS_KEY=<from step 5>
+
+Nothing else changes. The server uses R2 when all four are present and local
+disk when they are not, so removing them falls back safely instead of breaking.
+
+For the database backup as well, two more are needed:
+
+  STUDIO_DATA_DIR=/opt/render/project/src/.private
+  MFA_KEY=<32 random bytes, base64>
+
+Generate the MFA key once and never change it. It encrypts the admin
+authenticator secret, so a replaced key locks the owner out permanently:
+
+  node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+
+STEP 3 - AFTER IT IS LIVE
+-------------------------
+  1. Run  npm run models:sync  once, to upload the model library
+  2. Confirm a download works for an account with an approved plan
+  3. Deploy again on purpose, and confirm the same download still works
+
+Step 3 is the one that proves it. Storage that has never survived a restart has
+not been tested.
+
+
+PRICING
+-------
+  Storage, first 10 GB ............ FREE
+  Each GB above 10 GB ............. $0.015 per month
+  Uploads (Class A operations) .... 1,000,000 per month free
+  Downloads (Class B operations) .. 10,000,000 per month free
+  Bandwidth out (egress) .......... FREE, always, at any volume
+
+Only the storage above 10 GB is charged. The first 10 GB is never billed.
+
+  Stored    Billable    Per month (USD)    Per month (INR approx)
+  -------   ---------   ---------------    ----------------------
+   6.7 GB      0 GB         $0.00                Rs 0
+  10   GB      0 GB         $0.00                Rs 0
+  11   GB      1 GB         $0.015               Rs 1.30
+  15   GB      5 GB         $0.075               Rs 6
+  20   GB     10 GB         $0.15                Rs 13
+  50   GB     40 GB         $0.60                Rs 50
+  100  GB     90 GB         $1.35                Rs 115
+
+Current expected use is about 6.7 GB: the 3D model library plus a small
+database backup. That is inside the free tier, so the expected bill is zero.
+
+Customer downloads are never charged, at any volume. That matters because the
+business sells download plans.
+
+REQUESTS (OPERATIONS)
+---------------------
+Storage is billed by the gigabyte; requests are billed separately.
+
+  Class A, writes .... 1,000,000 per month free, then $4.50 per million
+  Class B, reads .... 10,000,000 per month free, then $0.36 per million
+  Deleting a file .... free, never counted
+  Refused requests ... not charged
+
+Class A is anything that writes: PutObject, CopyObject, ListObjects and the
+multipart upload operations. Class B is anything that reads: GetObject and
+HeadObject. A customer download is Class B.
+
+Expected use per month:
+
+  Class A
+    Database replication .......... up to 259,000  (6 per minute, and only
+                                                    while the database changes)
+    Database snapshots ............         120    (one every 6 hours)
+    Model library upload ..........        ~360    (181 packages, once)
+    Print file uploads ............    a few dozen
+    TOTAL .........................  under 300,000  against 1,000,000 free
+
+  Class B
+    Customer downloads ............     hundreds
+    File existence checks .........     hundreds
+    Restores after a deploy .......     a handful
+    TOTAL .........................    thousands    against 10,000,000 free
+
+Requests are not a cost risk at this scale. Writes would have to grow about
+four times, and reads about a thousand times, before anything is billed.
+
+IMPORTANT: litestream.yml sets sync-interval to 10 seconds. Litestream's own
+default is 1 second, which would be roughly 2.6 million writes per month and
+would cost about Rs 600 per month. Do not lower this value.
+
+
+WHAT IT WOULD COST ON RENDER INSTEAD
+  Paid instance (free tier cannot have a disk) ..... $7.00 per month
+  Disk, 10 GB, at $0.25 per GB .................... $2.50 per month
+  Total ........................................... $9.50 per month, about
+                                                    Rs 800 per month
+
+Storage on Render costs about 16 times more per GB than R2.
+
+
+THINGS TO KNOW
+--------------
+  - Cloudflare cannot cap spending. The budget alert warns; it does not stop.
+  - A card is required on the account even while the bill is zero.
+  - Keep the bucket Standard class. Other classes are billed separately and do
+    not count toward the free tier.
+  - Database replication is asynchronous, so a sudden crash can lose the last
+    few seconds of writes.
+  - Only one server may write the database, so this service cannot run more
+    than one instance while the backup is in use.
