@@ -51,8 +51,24 @@ main { max-width: 1600px; margin: auto; padding: 48px 4vw; }
 .plans-compare-tools :is(select, button) { min-height: 44px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); color: var(--text); font: inherit; font-size: 12px; }
 .plans-compare-tools select { min-width: 150px; color-scheme: dark; }
 .plans-compare-tools button { min-width: 185px; }
-.plan-card:has([data-purchased="true"]) { border-color: #ddd; }
-.plan-card:has([data-purchased="true"]) .plan-tier::after { content: ' / ACTIVE'; color: var(--text); }
+/* Five cards look alike, so the one already paid for carries an accent edge and
+   a label rather than a slightly lighter border that is easy to scan past. */
+.plan-card:has([data-purchased="true"]) {
+  position: relative;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 16px 36px var(--accent-soft);
+  background: linear-gradient(var(--accent-soft), transparent 160px), var(--surface);
+}
+.plan-card:has([data-purchased="true"])::before {
+  content: 'YOUR ACTIVE PLAN';
+  position: absolute; top: -9px; inset-inline: 0;
+  width: max-content; max-width: calc(100% - 16px); margin-inline: auto;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--accent); color: var(--bg);
+  font-size: 9px; font-weight: 700; letter-spacing: .14em; white-space: nowrap;
+}
+.plan-card:has([data-purchased="true"]) .plan-top { padding-top: 30px; }
+.plan-card:has([data-purchased="true"]) .plan-purchase-status { color: var(--text); font-weight: 600; }
 .plans-journey { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; padding-block: 30px; margin-bottom: 40px; border-block: 1px solid var(--line); }
 .plans-journey article { position: relative; padding-left: 42px; }
 .plans-journey article > span { position: absolute; left: 0; top: 2px; color: var(--muted); font-size: 12px; }
