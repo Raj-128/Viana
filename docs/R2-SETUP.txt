@@ -105,6 +105,43 @@ database backup. That is inside the free tier, so the expected bill is zero.
 Customer downloads are never charged, at any volume. That matters because the
 business sells download plans.
 
+REQUESTS (OPERATIONS)
+---------------------
+Storage is billed by the gigabyte; requests are billed separately.
+
+  Class A, writes .... 1,000,000 per month free, then $4.50 per million
+  Class B, reads .... 10,000,000 per month free, then $0.36 per million
+  Deleting a file .... free, never counted
+  Refused requests ... not charged
+
+Class A is anything that writes: PutObject, CopyObject, ListObjects and the
+multipart upload operations. Class B is anything that reads: GetObject and
+HeadObject. A customer download is Class B.
+
+Expected use per month:
+
+  Class A
+    Database replication .......... up to 259,000  (6 per minute, and only
+                                                    while the database changes)
+    Database snapshots ............         120    (one every 6 hours)
+    Model library upload ..........        ~360    (181 packages, once)
+    Print file uploads ............    a few dozen
+    TOTAL .........................  under 300,000  against 1,000,000 free
+
+  Class B
+    Customer downloads ............     hundreds
+    File existence checks .........     hundreds
+    Restores after a deploy .......     a handful
+    TOTAL .........................    thousands    against 10,000,000 free
+
+Requests are not a cost risk at this scale. Writes would have to grow about
+four times, and reads about a thousand times, before anything is billed.
+
+IMPORTANT: litestream.yml sets sync-interval to 10 seconds. Litestream's own
+default is 1 second, which would be roughly 2.6 million writes per month and
+would cost about Rs 600 per month. Do not lower this value.
+
+
 WHAT IT WOULD COST ON RENDER INSTEAD
   Paid instance (free tier cannot have a disk) ..... $7.00 per month
   Disk, 10 GB, at $0.25 per GB .................... $2.50 per month
