@@ -17,5 +17,8 @@ export function planWhatsAppUrl(order, email) {
     'Please review my request and approve this selected plan from the admin account.',
     'Downloads remain locked until admin approval.',
   ].join('\n');
-  return `https://web.whatsapp.com/send?phone=919737711570&text=${encodeURIComponent(message)}`;
+  // api.whatsapp.com lets the device choose the installed app or the web client,
+  // as every other WhatsApp link on the site already does; web.whatsapp.com forced
+  // the browser client even on a phone.
+  return `https://api.whatsapp.com/send?phone=919737711570&text=${encodeURIComponent(message)}`;
 }

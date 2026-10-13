@@ -67,7 +67,7 @@ test("real HTTP server: registration, session, protected file, logout and persis
     assert.equal(response.status, 201);
     const { order } = await response.json();
     const whatsapp = new URL(order.whatsappUrl);
-    assert.equal(whatsapp.origin, 'https://web.whatsapp.com');
+    assert.equal(whatsapp.origin, 'https://api.whatsapp.com');
     assert.equal(whatsapp.searchParams.get('phone'), '919737711570');
     assert.match(whatsapp.searchParams.get('text'), /Login email: test@example.com/);
     assert.doesNotMatch(whatsapp.searchParams.get('text'), /forged/);

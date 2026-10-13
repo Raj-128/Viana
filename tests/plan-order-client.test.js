@@ -73,7 +73,9 @@ test('popup blocking leaves a working manual WhatsApp link after saved request',
   await buttons[0].handlers.click();
   assert.equal(events.some(event => event[0] === 'navigate'), false);
   const link = nodes['plan-order-status'].children.find(item => item.href);
-  assert.equal(new URL(link.href).hostname, 'web.whatsapp.com');
+  // api.whatsapp.com hands a phone to the installed app and offers a desktop
+  // visitor the choice; web.whatsapp.com forced the browser client on both.
+  assert.equal(new URL(link.href).hostname, 'api.whatsapp.com');
 });
 
 test('failed save closes reserved tab; signed-out user cannot open WhatsApp', async () => {
