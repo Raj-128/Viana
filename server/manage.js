@@ -1,7 +1,7 @@
 import { createApi } from "./api.js";
 import { createInterface } from "node:readline/promises";
 import { Writable } from "node:stream";
-import { copyFile, realpath } from "node:fs/promises";
+
 import { resolve, extname } from "node:path";
 import { createTotpSecret } from './totp.js';
 
@@ -61,7 +61,7 @@ try {
     const existing = api.db.prepare("SELECT file FROM designs WHERE id=?").get(designId);
     if (!existing) {
       const file = `${designId}${extension}`;
-      await copyFile(await realpath(source), resolve(api.filesRoot, file), 1);
+      await api.store.copyFrom(source, file);
       api.db.prepare("INSERT INTO designs VALUES (?,?)").run(designId, file);
     }
     api.db.prepare("INSERT OR IGNORE INTO entitlements VALUES (?,?)").run(user.id, designId);
