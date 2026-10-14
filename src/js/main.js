@@ -1290,7 +1290,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  searchInput?.addEventListener("input", applyFilters);
+  // Typing re-filters and re-renders the whole catalogue, so a keystroke waits
+  // for the next one rather than redrawing seventeen hundred cards per letter.
+  let searchPending;
+  searchInput?.addEventListener("input", () => {
+    clearTimeout(searchPending);
+    searchPending = setTimeout(applyFilters, 160);
+  });
+  // A cleared or submitted field answers at once; waiting there only feels broken.
+  searchInput?.addEventListener("search", () => { clearTimeout(searchPending); applyFilters(); });
+  searchInput?.addEventListener("change", () => { clearTimeout(searchPending); applyFilters(); });
   clearBtn?.addEventListener("click", () => {
     catalogueFilters?.clear();
     if (searchInput) {
