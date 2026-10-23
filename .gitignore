@@ -50,3 +50,6 @@ src/assets/images/clean-model-previews/*
 *.sqlite
 *.sqlite-*
 mfa.key
+
+# Scratch files from AI coding tools
+__agent__/
