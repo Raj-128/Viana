@@ -1,9 +1,9 @@
-﻿/* Shared Studio Viana identity. Keep content, interaction state and page-specific
+/* Shared Studio Viana identity. Keep content, interaction state and page-specific
    layouts in their own files; these are the common visual tokens and surfaces. */
 /* Preserve the original wallpaper cream and monochrome 3D palettes. */
 body, body.mode-wallpaper {
   --bg: #f6f3ee; --surface: #f2ece5; --surface-2: #e6ddd3; --header-bg: #efe7dd;
-  --header-glass: #efe7dd; --text: #1e1b17; --nav-text: #6f6156; --muted: #7a7268;
+  --header-glass: #efe7dd; --text: #1e1b17; --nav-text: #594c41; --muted: #645d54;
   --accent: #8b6d58; --accent-soft: #8b6d5822; --line: #d5cbbf; --ink-soft: #3b332b;
   background: var(--bg);
 }

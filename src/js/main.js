@@ -1,5 +1,8 @@
 import { allowsMotion } from './motion-policy.js';
 import { brandDesignImage } from './design-branding.js';
+import './cookie-consent.js';
+import './analytics.js';
+
 import './trust-marquee.js';
 import { createPrintRequest, printRequestSummary } from './print-requests.js';
 import { MODE_KEY, readStudioMode, applyStudioTheme } from "./site-mode.js";

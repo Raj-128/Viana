@@ -12,7 +12,12 @@ test('CSP blocks inline script while allowing existing fonts, animations, API an
   assert.match(policy, /fonts.googleapis.com/); assert.match(policy, /fonts.gstatic.com/);
   assert.match(policy, /https:\/\/accounts.google.com\/gsi\/client/);
   assert.match(policy, /frame-src https:\/\/accounts.google.com\/gsi\//);
-  assert.match(policy, /connect-src 'self' https:\/\/viana-fpph.onrender.com https:\/\/accounts.google.com;/);
+  assert.match(policy, /connect-src 'self' https:\/\/viana-fpph.onrender.com https:\/\/accounts.google.com /);
+  // Analytics is loaded from the bundle, so measurement needs these origins but
+  // never an inline script exception, which the assertion above still forbids.
+  assert.match(policy.match(/script-src[^;]+/)[0], /https:\/\/www.googletagmanager.com/);
+  assert.match(policy.match(/connect-src[^;]+/)[0], /https:\/\/\*.google-analytics.com/);
+  assert.match(policy.match(/img-src[^;]+/)[0], /https:\/\/\*.google-analytics.com/);
   assert.doesNotMatch(policy, / ws:/);
   assert.match(securityHeaders(true)['Content-Security-Policy'], / ws: wss:/);
   assert.match(policy, /frame-ancestors 'none'/);

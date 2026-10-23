@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -29,7 +29,7 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS -->
+
   <link rel="stylesheet" href="./src/css/base.css">
   <link rel="stylesheet" href="./src/css/components.css">
   <link rel="stylesheet" href="./src/css/layout.css">
@@ -237,6 +237,10 @@
 
       <!-- Right: Form -->
       <form class="contact-form" id="contact-form" novalidate>
+        <div style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
+          <label for="contact-hp">Leave this field blank</label>
+          <input type="text" name="website_hp" id="contact-hp" tabindex="-1" autocomplete="off">
+        </div>
         <label>
           Your Name
           <input type="text" name="name" id="contact-name" placeholder="Priya Mehta" required>
@@ -277,6 +281,9 @@
         <a href="services.html">Services</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
+        <a href="plans.html">Download Plans</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
       </div>
       <div class="footer-contact">
         <p class="footer-heading">Contact</p>

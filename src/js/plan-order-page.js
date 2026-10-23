@@ -2,6 +2,8 @@ import { createVisibleRefresh } from './visible-refresh.js';
 import { fetchApi } from './api-config.js';
 import { downloadPlans, downloadFormats, planLimitLabel } from './download-plans.js';
 import { renderRecentDownloads } from './recent-plan-downloads.js';
+import './cookie-consent.js';
+import './analytics.js';
 
 const status = document.getElementById('plan-order-status');
 const history = document.getElementById('plan-order-history');
@@ -127,3 +129,4 @@ window.addEventListener('storage', event => { if (['viana-plan-orders-updated', 
 // Check expiry locally; only authenticated visible pages refresh server state.
 setInterval(() => { if (!document.hidden) controls(); }, 60000);
 await updates.refresh();
+

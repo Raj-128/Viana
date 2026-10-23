@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin-login.html
+Disallow: /admin-downloads.html
+Disallow: /api/
 
 Sitemap: https://studioviana.work.gd/sitemap.xml

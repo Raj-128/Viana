@@ -41,7 +41,10 @@ export default defineConfig(({ command }) => ({
         plans: resolve(__dirname, "plans.html"),
         login: resolve(__dirname, "login.html"),
         adminLogin: resolve(__dirname, "admin-login.html"),
-        adminDownloads: resolve(__dirname, "admin-downloads.html")
+        adminDownloads: resolve(__dirname, "admin-downloads.html"),
+        privacy: resolve(__dirname, "privacy.html"),
+        terms: resolve(__dirname, "terms.html"),
+        notFound: resolve(__dirname, "404.html")
       }
     }
   }

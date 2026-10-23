@@ -1,0 +1,124 @@
+/* Cookie Consent Banner - Studio Viana */
+.viana-cookie-banner {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  max-width: 520px;
+  margin: 0 auto 0 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--font-body, system-ui, sans-serif);
+  color: var(--text);
+  animation: vianaBannerSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes vianaBannerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.viana-cookie-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.viana-cookie-title {
+  font-family: var(--font-heading, "Playfair Display", serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text);
+}
+
+.viana-cookie-copy {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+
+.viana-cookie-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.viana-cookie-link:hover {
+  opacity: 0.85;
+}
+
+.viana-cookie-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viana-cookie-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: opacity 0.2s ease, background 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.viana-cookie-btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.viana-cookie-btn-primary:hover {
+  opacity: 0.9;
+}
+
+.viana-cookie-btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.viana-cookie-btn-secondary:hover {
+  background: var(--surface-2);
+}
+
+@media (max-width: 600px) {
+  .viana-cookie-banner {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    max-width: 100%;
+    padding: 16px 18px;
+  }
+  .viana-cookie-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .viana-cookie-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}
