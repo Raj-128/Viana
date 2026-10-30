@@ -6,6 +6,10 @@ a { color: inherit; }
 button { font: inherit; cursor: pointer; }
 [hidden] { display: none !important; }
 .plans-nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 80px; padding: 16px 4vw; border-bottom: 1px solid var(--line); }
+.plans-page .seo-breadcrumb { margin: 0 0 20px; font-size: 12px; color: var(--muted); }
+.plans-page .seo-breadcrumb ol { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.plans-page .seo-breadcrumb li + li::before { content: "/"; margin-right: 8px; }
+.plans-page .seo-breadcrumb a { color: inherit; text-underline-offset: 3px; }
 .brand { font-family: Georgia, serif; letter-spacing: .12em; text-decoration: none; font-size: 17px; }
 .plans-nav-actions { display: flex; align-items: center; gap: 20px; }
 .back-link { font-size: 12px; text-decoration: none; }

@@ -13,6 +13,7 @@
     "assets:optimize": "node scripts/optimize-site-images.js",
     "assets:catalogue": "node scripts/optimize-catalogue-images.js",
     "dev": "node scripts/dev.js",
+    "prebuild": "node scripts/generate-sitemap.js",
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server/start.js",
