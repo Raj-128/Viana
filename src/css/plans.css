@@ -62,15 +62,15 @@ main { max-width: 1600px; margin: auto; padding: 48px 4vw; }
 .plans-compare-tools button { min-width: 185px; }
 /* Five cards look alike, so the one already paid for carries an accent edge and
    a label rather than a slightly lighter border that is easy to scan past. */
-.plan-card:has([data-purchased="true"]) {
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"]) {
   position: relative;
   border: 2px solid #a92338;
   box-shadow: 0 0 0 1px #d8b96b, 0 18px 48px rgb(145 22 44 / 28%);
   background: linear-gradient(160deg, #fffaf1, #fff 44%, #fff7ed);
   color: #26191a;
 }
-.plan-card:has([data-purchased="true"])::before {
-  content: '♛  YOUR ROYAL PLAN';
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"])::before {
+  content: 'PLAN PURCHASED';
   position: absolute; top: -9px; inset-inline: 0;
   width: max-content; max-width: calc(100% - 16px); margin-inline: auto;
   padding: 4px 12px; border-radius: 999px;
@@ -78,13 +78,14 @@ main { max-width: 1600px; margin: auto; padding: 48px 4vw; }
   box-shadow: 0 2px 12px rgb(143 23 45 / 24%);
   font-size: 9px; font-weight: 700; letter-spacing: .14em; white-space: nowrap;
 }
-.plan-card:has([data-purchased="true"]) .plan-top { padding-top: 30px; }
-.plan-card:has([data-purchased="true"]) :is(.plan-tier, .plan-features dt, .price-circle span) { color: #76605d; }
-.plan-card:has([data-purchased="true"]) .plan-identity h2,
-.plan-card:has([data-purchased="true"]) .price-circle strong { color: #8f172d; }
-.plan-card:has([data-purchased="true"]) .plan-badge { color: #a92338; }
-.plan-card:has([data-purchased="true"]) .plan-features > div { border-color: rgb(143 23 45 / 13%); }
-.plan-card:has([data-purchased="true"]) .plan-purchase-status { color: #8f172d; font-weight: 700; }
+.plan-card:has([data-purchased="true"])::before { content: '♛  YOUR ROYAL PLAN'; }
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"]) .plan-top { padding-top: 30px; }
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"]) :is(.plan-tier, .plan-features dt, .price-circle span) { color: #76605d; }
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"]) .plan-identity h2,
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"]) .price-circle strong { color: #8f172d; }
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"]) .plan-badge { color: #a92338; }
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"]) .plan-features > div { border-color: rgb(143 23 45 / 13%); }
+.plan-card:is(:has([data-purchased="true"]), [data-has-purchase="true"]) .plan-purchase-status { color: #8f172d; font-weight: 700; }
 .plans-journey { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; padding-block: 30px; margin-bottom: 40px; border-block: 1px solid var(--line); }
 .plans-journey article { position: relative; padding-left: 42px; }
 .plans-journey article > span { position: absolute; left: 0; top: 2px; color: var(--muted); font-size: 12px; }
@@ -103,7 +104,7 @@ main { max-width: 1600px; margin: auto; padding: 48px 4vw; }
 .plan-order { border: 1px solid #fff; margin: 16px; padding: 13px 10px; min-height: 44px; border-radius: 9px; background: #f5f5f5; color: #111; font-size: 12px; font-weight: 600; }
 .plan-pro .plan-order { background: #f5f5f5; color: #111; }
 .plan-order:disabled { cursor: default; background: #242424; color: #aaa; border: 1px solid #444; }
-.plan-order[data-purchased="true"] { color: #fff; background: linear-gradient(100deg, #8f172d, #b82d42); border-color: #d8b96b; box-shadow: 0 5px 16px rgb(143 23 45 / 20%); }
+.plan-order[data-purchased="true"], .plan-card[data-has-purchase="true"] .plan-order { color: #fff; background: linear-gradient(100deg, #8f172d, #b82d42); border-color: #d8b96b; box-shadow: 0 5px 16px rgb(143 23 45 / 20%); }
 .plan-purchase-status { margin: 10px 16px 0; font-size: 11px; line-height: 1.6; }
 .plans-note { font-size: 12px; line-height: 1.9; color: var(--muted); margin: 24px 0 40px; max-width: 900px; }
 .plan-account-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }

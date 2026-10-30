@@ -55,6 +55,7 @@ function controls() {
     button.disabled = busy || active || Boolean(pending && !ownPending);
     button.textContent = active ? purchased.paymentStatus === 'complimentary' ? 'Active · Free plan' : 'Purchased' : ownPending ? 'Open WhatsApp · Pending' : purchased ? 'Renew plan' : 'Order now';
     button.dataset.purchased = active ? 'true' : 'false';
+    button.closest('.plan-card').dataset.hasPurchase = purchased?.approved_at != null ? 'true' : 'false';
     let badge = button.closest('.plan-card').querySelector('.plan-purchase-status');
     if (!badge) {
       badge = document.createElement('p'); badge.className = 'plan-purchase-status';
