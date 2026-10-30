@@ -12,5 +12,9 @@ export function estimateDimensions(rawWidth, rawHeight, unit = 'cm') {
   const widthInFeet = inches ? width / 12 : width / 30.48;
   const heightInFeet = inches ? height / 12 : height / 30.48;
   const areaSquareFeet = Math.round(widthInFeet * heightInFeet * 100) / 100;
-  return { width, height, areaSquareFeet };
+  // Keep the prior dimension summary fields for callers that still consume them.
+  const dimensionFactor = Math.round((width + height) * 100) / 100;
+  const rateMultiplier = inches ? 2.54 : 1;
+  const centimeters = dimensionFactor * rateMultiplier;
+  return { width, height, areaSquareFeet, dimensionFactor, rateMultiplier, centimeters };
 }
