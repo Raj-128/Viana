@@ -2,8 +2,7 @@
 
 Studio Viana is a digital artist and 3D visualization studio producing custom wallpapers, mural concepts and 3D renders for residential and commercial spaces. This repository holds the whole product: a dual-mode portfolio (Wallpaper and 3D Model Art) plus the ordering, account and download system behind it.
 
-- **Site:** <https://studioviana.work.gd/> — also reachable at <https://raj-128.github.io/Viana/>
-- **API:** <https://viana-fpph.onrender.com>
+- **Site:** <https://studioviana.work.gd/> 
 
 > **The custom domain is blocked on some networks.** Airtel, Quad9 and Cloudflare's security resolver sinkhole `*.work.gd`, a free subdomain space with a poor reputation. Affected visitors get a connection timeout, not an error page. The github.io address always works. Moving to an owned domain is the only real fix.
 
