@@ -994,6 +994,49 @@ body.mode-3d .filter-group select {
    COLLECTION CARDS
 ========================= */
 
+.visual-search-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px 32px;
+  align-items: center;
+  margin: 24px 0;
+  padding: clamp(20px, 4vw, 34px);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.visual-search-copy h3,
+.visual-search-results h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+}
+
+.visual-search-copy > p:not(.section-kicker),
+.visual-search-privacy,
+.visual-search-action .shop-count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.visual-search-privacy { margin-top: 10px !important; }
+.visual-search-privacy a { text-decoration: underline; }
+.visual-search-action { display: grid; justify-items: start; gap: 10px; }
+.visual-search-action button:disabled { opacity: 0.6; cursor: wait; }
+.visual-search-results { grid-column: 1 / -1; padding-top: 18px; border-top: 1px solid var(--line); }
+.visual-search-results[hidden] { display: none; }
+.visual-search-rank { display: inline-block; margin-bottom: 6px; color: var(--muted); font-size: 0.75rem; }
+
+.quote-rate-amount { font-weight: 700; }
+.quote-rate-unit { margin-left: 0.45rem; color: var(--muted); font-size: 0.85em; font-weight: 500; }
+
+@media (max-width: 700px) {
+  .visual-search-panel { grid-template-columns: 1fr; }
+  .visual-search-action { width: 100%; }
+}
+
 .collection-body h2 {
   font-family: var(--font-heading);
   font-size: clamp(1.8rem, 3vw, 2.6rem);

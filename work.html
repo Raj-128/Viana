@@ -191,6 +191,23 @@
           </select>
         </label>
       </div>
+      <section class="visual-search-panel" aria-labelledby="visual-search-title">
+        <div class="visual-search-copy">
+          <p class="section-kicker">Search by image</p>
+          <h3 id="visual-search-title">Find a wallpaper like your photo</h3>
+          <p>Anyone can upload a room or inspiration photo and find visually similar designs in the Studio Viana wallpaper collection. No account needed.</p>
+          <p class="visual-search-privacy">Your photo is sent to Google Cloud only to compare it with our catalogue. Studio Viana does not save the uploaded photo. <a href="privacy.html">Privacy details</a></p>
+        </div>
+        <div class="visual-search-action">
+          <input id="visual-search-file" class="sr-only" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choose a room or inspiration photo">
+          <button id="visual-search-button" class="quote-cta" type="button">Choose a photo</button>
+          <p id="visual-search-status" class="shop-count" role="status" aria-live="polite">Matches are limited to Studio Viana wallpapers.</p>
+        </div>
+        <div id="visual-search-results" class="visual-search-results" hidden>
+          <h3>Closest designs in our collection</h3>
+          <div id="visual-search-grid" class="work-grid"></div>
+        </div>
+      </section>
       <p id="work-count" class="shop-count" role="status" aria-live="polite">Loading designs?</p>
       <div class="shop-suggestions">
         <p>Explore styles</p>
@@ -249,7 +266,7 @@
         </div>
 
         <div class="quote-field">
-          <label for="price-paper">Paper type</label>
+          <label for="price-paper">Material / finish</label>
           <select id="price-paper"></select>
         </div>
 
@@ -275,16 +292,20 @@
 
         <div class="quote-breakdown">
           <div>
-            <span>Dimension factor</span>
-            <strong id="price-dimension">300 cm</strong>
+            <span>Wall area</span>
+            <strong id="price-dimension">21.53 sq ft</strong>
           </div>
           <div>
-            <span>Theme rate</span>
-            <strong id="price-theme-rate">Rs. 46 / cm</strong>
+            <span>Material / finish</span>
+            <strong id="price-paper-label">Canvas</strong>
           </div>
           <div>
-            <span>Paper note</span>
-            <strong id="price-paper-note">Smooth non-woven paper for everyday spaces.</strong>
+            <span>Rate</span>
+            <strong id="price-theme-rate"><span class="quote-rate-amount">₹150</span><span class="quote-rate-unit">per sq ft</span></strong>
+          </div>
+          <div>
+            <span>Details</span>
+            <strong id="price-paper-note">Canvas print · ₹150 per sq ft.</strong>
           </div>
         </div>
 
@@ -295,7 +316,7 @@
         </div>
 
         <a id="quote-whatsapp-link" href="#" class="quote-cta" target="_blank" rel="noopener">Request this design</a>
-        <p class="quote-note">Formula: (width + height) x theme rate x paper multiplier x quantity, plus setup. The WhatsApp message will include the selected details.</p>
+        <p class="quote-note">Estimate: wall area (sq ft) × selected material rate × quantity. Final price and material suitability are confirmed by the studio; installation and delivery are quoted separately.</p>
       </aside>
     </div>
   </section>
@@ -324,7 +345,7 @@
       </div>
       <div class="footer-social">
         <p class="footer-heading">Social Links</p>
-        <a href="https://www.instagram.com/_studio_viana?igsh=bXEyZndkYjA4eGFo" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/studio_viana_01" target="_blank" rel="noopener">Instagram</a>
         <a href="https://www.behance.net/vickyrana8" target="_blank" rel="noopener">Behance</a>
         <a href="https://stock.adobe.com/in/contributor/212160808/viana2-o?load_type=author&prev_url=detail" target="_blank" rel="noopener">Adobe Stock</a>
       </div>

@@ -1,4 +1,4 @@
-// Stored theme rates are per centimeter; convert inch inputs before pricing.
+// Normalize wall measurements and calculate area for per-square-foot print rates.
 export function estimateDimensions(rawWidth, rawHeight, unit = 'cm') {
   const inches = unit === 'in';
   const min = inches ? 15.75 : 40;
@@ -9,7 +9,8 @@ export function estimateDimensions(rawWidth, rawHeight, unit = 'cm') {
   };
   const width = normalize(rawWidth);
   const height = normalize(rawHeight);
-  const dimensionFactor = Math.round((width + height) * 100) / 100;
-  const rateMultiplier = inches ? 2.54 : 1;
-  return { width, height, dimensionFactor, rateMultiplier, centimeters: dimensionFactor * rateMultiplier };
+  const widthInFeet = inches ? width / 12 : width / 30.48;
+  const heightInFeet = inches ? height / 12 : height / 30.48;
+  const areaSquareFeet = Math.round(widthInFeet * heightInFeet * 100) / 100;
+  return { width, height, areaSquareFeet };
 }

@@ -14,6 +14,7 @@ import { createPrintRequests } from "./print-requests.js";
 import { createAccountRecords } from "./account-records.js";
 import { createPlanOrders } from './plan-orders.js';
 import { createModelLibraryApi } from './model-library-api.js';
+import { createVisualSearch } from './visual-search.js';
 
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 const phone = (value = "") => { const digits = String(value).replace(/\D/g, ""); return digits.length === 10 ? `91${digits}` : digits; };
@@ -98,10 +99,10 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
     if (db.prepare("SELECT count FROM limits WHERE key=?").get(key).count > maximum) throw fail(429, "Too many requests. Try again in 15 minutes.");
   };
 
-  const readBody = async (req) => {
+  const readBody = async (req, maxSize = 8192) => {
     if (!req.headers["content-type"]?.startsWith("application/json")) throw fail(415, "JSON is required.");
     const chunks = []; let size = 0;
-    for await (const chunk of req) { size += chunk.length; if (size > 8192) throw fail(413, "Request is too large."); chunks.push(chunk); }
+    for await (const chunk of req) { size += chunk.length; if (size > maxSize) throw fail(413, "Request is too large."); chunks.push(chunk); }
     try { const data = JSON.parse(Buffer.concat(chunks).toString()); if (!data || Array.isArray(data) || typeof data !== "object") throw new Error(); return data; }
     catch { throw fail(400, "Invalid request."); }
   };
@@ -112,6 +113,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
   const handlePrintRequests = createPrintRequests({ db, filesRoot, store, sessionUser, readBody, json, fail, limit });
   const accounts = createAccountRecords({ db, sessionUser, json, fail });
   const googleAuth = createGoogleAuth({ db, fail, limit, verify: googleVerifier });
+  const visualSearch = createVisualSearch({ fail });
 
   async function createUser(data, role = "user") {
     const name = String(data.name || "").trim();
@@ -176,6 +178,13 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
       }
 
       if (path === "/api/health" && req.method === "GET") return json(res, 200, { ok: true });
+      if (path === '/api/visual-search/config' && req.method === 'GET') return json(res, 200, visualSearch.config());
+      if (path === '/api/visual-search' && req.method === 'POST') {
+        limit(`visual-search:${req.socket.remoteAddress}`, 20);
+        const data = await readBody(req, 5_700_000);
+        const results = await visualSearch.search(data);
+        return json(res, 200, { results });
+      }
       if (path === '/api/auth/google/config' && req.method === 'GET') {
         limit(`google-config:${req.socket.remoteAddress}`, 60);
         return json(res, 200, googleAuth.config());

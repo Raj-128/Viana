@@ -33,11 +33,20 @@ export const wallpaperShowcaseImages = [
 ];
 
 export const paperTypes = [
-  { id: "standard", label: "Standard Matte", multiplier: 1, note: "Smooth non-woven paper for everyday spaces." },
-  { id: "canvas", label: "Premium Canvas", multiplier: 1.16, note: "Visible texture with a richer, hand-finished feel." },
-  { id: "feather", label: "Feather Texture", multiplier: 1.28, note: "Soft grain that diffuses light well in bedrooms." },
-  { id: "linen", label: "Wall Linen", multiplier: 1.42, note: "Structured weave for premium residential projects." },
-  { id: "earthy", label: "Earthy Textile", multiplier: 1.58, note: "Warm tactile finish for statement walls and hospitality work." },
+  { id: "canvas", label: "Canvas", rate: 150, note: "Canvas print · ₹150 per sq ft." },
+  { id: "canvas-emboss", label: "Canvas Emboss", rate: 180, note: "Embossed canvas · ₹180 per sq ft." },
+  { id: "canvas-emboss-varnish", label: "Canvas Emboss + Varnish", rate: 200, note: "Embossed and varnished canvas · ₹200 per sq ft." },
+  { id: "canvas-double-emboss", label: "Canvas Double Emboss", rate: 280, note: "Double embossed canvas · ₹280 per sq ft." },
+  { id: "vinyl", label: "Vinyl", rate: 100, note: "Vinyl print · ₹100 per sq ft." },
+  { id: "backlit-fabric", label: "Backlit Fabric", rate: 150, note: "Backlit fabric print · ₹150 per sq ft." },
+  { id: "translite", label: "Translite", rate: 160, note: "Translite print · ₹160 per sq ft." },
+  { id: "wallpaper-non-woven", label: "Wallpaper Non-woven", rate: 110, note: "Non-woven wallpaper · ₹110 per sq ft." },
+  { id: "glass-film-frosted", label: "Glass Film Frosted", rate: 130, note: "Frosted glass film · ₹130 per sq ft." },
+  { id: "optical-clear-film", label: "Optical Clear Film", rate: 160, note: "Optical clear film · ₹160 per sq ft." },
+  { id: "acrylic-print-only", label: "Acrylic* Print Only", rate: 240, note: "Acrylic print only · ₹240 per sq ft. Confirm substrate and finish before ordering." },
+  { id: "photo-clear-acrylic-white", label: "Photo on Clear Acrylic* + White", rate: 460, note: "Photo on clear acrylic with white · ₹460 per sq ft. Confirm substrate and finish before ordering." },
+  { id: "glass-precoat-print-white", label: "Glass* Pre-coat + Print + White", rate: 500, note: "Glass pre-coat, print and white · ₹500 per sq ft. Confirm substrate and finish before ordering." },
+  { id: "metal-precoat-white-print", label: "Metal* Pre-coat + White + Print", rate: 500, note: "Metal pre-coat, white and print · ₹500 per sq ft. Confirm substrate and finish before ordering." },
 ];
 
 export const pricingThemes = [

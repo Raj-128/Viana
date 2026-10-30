@@ -12,6 +12,8 @@
     "models:sync": "node scripts/sync-model-library.js",
     "assets:optimize": "node scripts/optimize-site-images.js",
     "assets:catalogue": "node scripts/optimize-catalogue-images.js",
+    "visual-search:export": "node scripts/export-visual-search-catalogue.js",
+    "visual-search:import": "node scripts/import-visual-search-catalogue.js",
     "dev": "node scripts/dev.js",
     "prebuild": "node scripts/generate-sitemap.js",
     "build": "vite build",

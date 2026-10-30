@@ -13,6 +13,7 @@ import { shopFormats, filterShopProjects } from "./shop-catalogue.js";
 import { hasDirectModelDownload } from './direct-model-downloads.js';
 import { initCommerce, renderCommerce, addToCart, openCommerce, downloadDesign } from "./commerce.js";
 import { filterCommerceEntries } from './commerce-mode.js';
+import { fetchApi } from './api-config.js';
 
 import { initWallpaperViewer } from "./wallpaper-viewer.js";
 import { initMediaDeterrents, isArtworkTarget, addViewerWatermarks } from "./media-deterrents.js";
@@ -440,6 +441,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const selectedDesignOutput = document.getElementById("price-selected-design");
   const dimensionOutput = document.getElementById("price-dimension");
   const themeRateOutput = document.getElementById("price-theme-rate");
+  const paperLabelOutput = document.getElementById("price-paper-label");
   const paperNoteOutput = document.getElementById("price-paper-note");
   const totalOutput = document.getElementById("price-total");
   const rangeOutput = document.getElementById("price-range");
@@ -653,6 +655,68 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     return element;
+  }
+
+  const visualSearchInput = document.getElementById('visual-search-file');
+  const visualSearchButton = document.getElementById('visual-search-button');
+  const visualSearchStatus = document.getElementById('visual-search-status');
+  const visualSearchResults = document.getElementById('visual-search-results');
+  const visualSearchGrid = document.getElementById('visual-search-grid');
+  if (visualSearchInput && visualSearchButton && visualSearchStatus && visualSearchResults && visualSearchGrid) {
+    visualSearchButton.addEventListener('click', () => visualSearchInput.click());
+    visualSearchInput.addEventListener('change', async () => {
+      const file = visualSearchInput.files?.[0];
+      visualSearchInput.value = '';
+      visualSearchGrid.replaceChildren();
+      visualSearchResults.hidden = true;
+      if (!file) return;
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        visualSearchStatus.textContent = 'Please choose a JPEG, PNG, or WebP photo.';
+        return;
+      }
+      if (file.size > 4 * 1024 * 1024) {
+        visualSearchStatus.textContent = 'Please choose a photo smaller than 4 MB.';
+        return;
+      }
+      visualSearchButton.disabled = true;
+      visualSearchStatus.textContent = 'Finding visually similar Studio Viana wallpapers…';
+      try {
+        const dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error('This photo could not be read.'));
+          reader.readAsDataURL(file);
+        });
+        const response = await fetchApi('/api/visual-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mimeType: file.type, image: String(dataUrl).split(',')[1] || '' }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'Photo search is unavailable. Please try again.');
+        const matches = (payload.results || []).map(match => projects.find(project => project.id === match.id))
+          .filter(project => project?.workType === 'wallpaper');
+        if (!matches.length) {
+          visualSearchStatus.textContent = 'No close matches found. Try a clearer photo with the wall or pattern visible.';
+          return;
+        }
+        matches.forEach((project, index) => {
+          const card = renderProjectCard(project);
+          card.classList.add('visual-search-match');
+          const rank = document.createElement('span');
+          rank.className = 'visual-search-rank';
+          rank.textContent = `Visual match ${index + 1}`;
+          card.querySelector('.catalogue-card-copy')?.prepend(rank);
+          visualSearchGrid.append(card);
+        });
+        visualSearchResults.hidden = false;
+        visualSearchStatus.textContent = `Found ${matches.length} similar design${matches.length === 1 ? '' : 's'} in our wallpaper collection.`;
+      } catch (error) {
+        visualSearchStatus.textContent = error.message || 'Photo search is unavailable. Please try again.';
+      } finally {
+        visualSearchButton.disabled = false;
+      }
+    });
   }
 
   let catalogueList = [];
@@ -887,7 +951,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     populateSelect(
       estimatorPaperSelect,
-      paperTypes.map((paper) => ({ value: paper.id, label: paper.label })),
+      paperTypes.map((paper) => ({ value: paper.id, label: `${paper.label} — ${formatPrice(paper.rate)} / sq ft` })),
       "Select paper"
     );
 
@@ -908,7 +972,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const theme = getThemeDetails(estimatorState.theme) ?? pricingThemes[0];
     const paper = paperTypes.find((item) => item.id === estimatorState.paper) ?? paperTypes[0];
     const unit = estimatorWidthInput?.dataset.unit === 'in' ? 'in' : 'cm';
-    const { width, height, dimensionFactor, rateMultiplier, centimeters } =
+    const { width, height, areaSquareFeet } =
       estimateDimensions(estimatorState.width, estimatorState.height, unit);
     const quantity = Math.min(12, Math.max(1, Number(estimatorState.quantity) || 1));
     const selectedDesign = activeProject?.title ?? theme.title;
@@ -917,9 +981,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const previewBody = activeProject?.summary ?? theme.description;
     const previewEyebrow = activeProject ? "Selected wallpaper" : theme.label;
 
-    const baseAmount = centimeters * theme.rate;
-    const multipliedAmount = baseAmount * paper.multiplier;
-    const total = (multipliedAmount + theme.setupFee) * quantity;
+    const total = areaSquareFeet * paper.rate * quantity;
     const rangeStart = total * 0.9;
     const rangeEnd = total * 1.12;
 
@@ -958,13 +1020,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       estimatorQuantityInput.value = `${quantity}`;
     }
     if (dimensionOutput) {
-      dimensionOutput.textContent = `${dimensionFactor} ${unit}`;
+      dimensionOutput.textContent = `${areaSquareFeet.toLocaleString('en-IN')} sq ft`;
     }
     if (themeRateOutput) {
-      const rate = (theme.rate * rateMultiplier).toLocaleString('en-IN', {
+      const rate = paper.rate.toLocaleString('en-IN', {
         style: 'currency', currency: 'INR', maximumFractionDigits: 2,
       });
-      themeRateOutput.textContent = `${rate} / ${unit}`;
+      const amount = themeRateOutput.querySelector('.quote-rate-amount');
+      if (amount) amount.textContent = rate;
+    }
+    if (paperLabelOutput) {
+      paperLabelOutput.textContent = paper.label;
     }
     if (paperNoteOutput) {
       paperNoteOutput.textContent = paper.note;
@@ -990,6 +1056,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         projectImageReference,
         `Theme: ${theme.label}`,
         `Paper finish: ${paper.label}`,
+        `Rate: ${formatPrice(paper.rate)} per sq ft`,
+        `Wall area: ${areaSquareFeet.toLocaleString('en-IN')} sq ft`,
         `Wall size: ${width} ${unit} x ${height} ${unit}`,
         `Quantity: ${quantity}`,
         `Estimated price: ${formatPrice(total)}`,
