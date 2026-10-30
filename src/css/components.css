@@ -994,37 +994,64 @@ body.mode-3d .filter-group select {
    COLLECTION CARDS
 ========================= */
 
-.visual-search-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 20px 32px;
+.studio-searchbar {
+  display: flex;
   align-items: center;
-  margin: 24px 0;
-  padding: clamp(20px, 4vw, 34px);
+  flex: 1;
+  min-width: 0;
+  gap: 14px;
+  padding: 5px 6px 5px 20px;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 999px;
   background: var(--surface);
+  transition: border-color .2s ease, box-shadow .2s ease;
 }
-
-.visual-search-copy h3,
+.studio-searchbar:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 65%, var(--line));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.studio-search-brand {
+  flex: 0 0 auto;
+  padding-right: 14px;
+  border-right: 1px solid var(--line);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  white-space: nowrap;
+}
+.studio-searchbar .shop-search {
+  min-width: 0;
+  flex: 1;
+  gap: 10px;
+  border: 0;
+  padding: 0;
+}
+.studio-search-glass { width: 20px; height: 20px; flex: 0 0 auto; color: var(--muted); }
+.studio-searchbar .shop-search input { min-height: 46px; font-size: 14px; }
+.studio-lens-button {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 13%, var(--surface));
+  color: var(--text);
+  transition: background .2s ease, transform .2s ease;
+}
+.studio-lens-button:hover { background: color-mix(in srgb, var(--accent) 25%, var(--surface)); transform: scale(1.04); }
+.studio-lens-button:disabled { opacity: .55; cursor: wait; }
+.studio-lens-button svg { width: 22px; height: 22px; }
+.studio-search-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 20px; margin: 8px 0 18px; }
+.studio-search-note > p { margin: 0; color: var(--muted); font-size: 11px; }
+.studio-search-note .visual-search-privacy a { text-decoration: underline; }
 .visual-search-results h3 {
   margin: 0 0 8px;
   font-family: var(--font-heading);
   font-size: clamp(1.25rem, 2vw, 1.7rem);
 }
-
-.visual-search-copy > p:not(.section-kicker),
-.visual-search-privacy,
-.visual-search-action .shop-count {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.88rem;
-}
-
-.visual-search-privacy { margin-top: 10px !important; }
-.visual-search-privacy a { text-decoration: underline; }
-.visual-search-action { display: grid; justify-items: start; gap: 10px; }
-.visual-search-action button:disabled { opacity: 0.6; cursor: wait; }
 .visual-search-results { grid-column: 1 / -1; padding-top: 18px; border-top: 1px solid var(--line); }
 .visual-search-results[hidden] { display: none; }
 .visual-search-rank { display: inline-block; margin-bottom: 6px; color: var(--muted); font-size: 0.75rem; }
@@ -1033,8 +1060,11 @@ body.mode-3d .filter-group select {
 .quote-rate-unit { margin-left: 0.45rem; color: var(--muted); font-size: 0.85em; font-weight: 500; }
 
 @media (max-width: 700px) {
-  .visual-search-panel { grid-template-columns: 1fr; }
-  .visual-search-action { width: 100%; }
+  .studio-searchbar { gap: 10px; padding-left: 14px; }
+  .studio-search-brand { font-size: 10px; padding-right: 9px; letter-spacing: .08em; }
+  .studio-searchbar .shop-search input { font-size: 12px; }
+  .studio-lens-button { width: 42px; height: 42px; }
+  .studio-search-note { display: grid; }
 }
 
 .collection-body h2 {

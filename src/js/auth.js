@@ -6,7 +6,7 @@ import './cookie-consent.js';
 import './analytics.js';
 import { initGoogleSignIn } from './google-sign-in.js';
 const SESSION_KEY = "studioVianaSession";
-const PUBLIC_PAGES = new Set(["", "index.html", "about.html", "services.html", "contact.html", "plans.html", "login.html", "admin-login.html", "privacy.html", "terms.html", "404.html"]);
+const PUBLIC_PAGES = new Set(["", "index.html", "about.html", "services.html", "contact.html", "work.html", "plans.html", "login.html", "admin-login.html", "privacy.html", "terms.html", "404.html"]);
 const ADMIN_HOLD_DURATION = 950;
 
 function removeStorage(key) {
