@@ -20,7 +20,12 @@ main { max-width: 1600px; margin: auto; padding: 48px 4vw; }
 .plans-heading-copy > p:not(.eyebrow) { font-size: 15px; color: var(--muted); line-height: 1.7; }
 .plans-format-strip { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 24px; font-size: 10px; letter-spacing: .08em; color: var(--muted); }
 .plans-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
-.plan-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--line); border-top: 1px solid var(--line); background: var(--surface); border-radius: 18px; transition: transform .25s ease, border-color .25s ease; }
+.plan-card { --plan-jewel: #d6b46a; display: flex; flex-direction: column; min-width: 0; border: 1px solid color-mix(in srgb, var(--plan-jewel) 30%, var(--line)); border-top: 2px solid var(--plan-jewel); background: linear-gradient(155deg, color-mix(in srgb, var(--plan-jewel) 7%, var(--surface)), var(--surface) 42%); border-radius: 18px; transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+.plan-basic { --plan-jewel: #e7c477; }
+.plan-weekly { --plan-jewel: #b99aff; }
+.plan-monthly { --plan-jewel: #79c8ee; }
+.plan-pro { --plan-jewel: #e1a279; }
+.plan-yearly { --plan-jewel: #e5c36e; }
 .plan-top { padding: 24px 18px 12px; }
 .plan-tier { font-size: 10px; font-weight: 700; letter-spacing: .12em; color: var(--muted); }
 .price-circle { display: flex; align-items: flex-start; flex-direction: column; gap: 8px; margin-top: 22px; }
@@ -59,20 +64,27 @@ main { max-width: 1600px; margin: auto; padding: 48px 4vw; }
    a label rather than a slightly lighter border that is easy to scan past. */
 .plan-card:has([data-purchased="true"]) {
   position: relative;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), 0 16px 36px var(--accent-soft);
-  background: linear-gradient(var(--accent-soft), transparent 160px), var(--surface);
+  border: 2px solid #a92338;
+  box-shadow: 0 0 0 1px #d8b96b, 0 18px 48px rgb(145 22 44 / 28%);
+  background: linear-gradient(160deg, #fffaf1, #fff 44%, #fff7ed);
+  color: #26191a;
 }
 .plan-card:has([data-purchased="true"])::before {
-  content: 'YOUR ACTIVE PLAN';
+  content: '♛  YOUR ROYAL PLAN';
   position: absolute; top: -9px; inset-inline: 0;
   width: max-content; max-width: calc(100% - 16px); margin-inline: auto;
   padding: 4px 12px; border-radius: 999px;
-  background: var(--accent); color: var(--bg);
+  background: linear-gradient(100deg, #8f172d, #b82d42); color: #fff;
+  box-shadow: 0 2px 12px rgb(143 23 45 / 24%);
   font-size: 9px; font-weight: 700; letter-spacing: .14em; white-space: nowrap;
 }
 .plan-card:has([data-purchased="true"]) .plan-top { padding-top: 30px; }
-.plan-card:has([data-purchased="true"]) .plan-purchase-status { color: var(--text); font-weight: 600; }
+.plan-card:has([data-purchased="true"]) :is(.plan-tier, .plan-features dt, .price-circle span) { color: #76605d; }
+.plan-card:has([data-purchased="true"]) .plan-identity h2,
+.plan-card:has([data-purchased="true"]) .price-circle strong { color: #8f172d; }
+.plan-card:has([data-purchased="true"]) .plan-badge { color: #a92338; }
+.plan-card:has([data-purchased="true"]) .plan-features > div { border-color: rgb(143 23 45 / 13%); }
+.plan-card:has([data-purchased="true"]) .plan-purchase-status { color: #8f172d; font-weight: 700; }
 .plans-journey { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; padding-block: 30px; margin-bottom: 40px; border-block: 1px solid var(--line); }
 .plans-journey article { position: relative; padding-left: 42px; }
 .plans-journey article > span { position: absolute; left: 0; top: 2px; color: var(--muted); font-size: 12px; }
@@ -88,10 +100,10 @@ main { max-width: 1600px; margin: auto; padding: 48px 4vw; }
   .plans-comparison { align-items: start; }
 }
 .plan-pro { --surface: #191919; border-color: #777; background: linear-gradient(145deg, #252525, #111); }
-.plan-order { border: 0; margin: 16px; padding: 13px 10px; min-height: 44px; border-radius: 9px; background: #f5f5f5; color: #111; font-size: 12px; font-weight: 600; }
+.plan-order { border: 1px solid #fff; margin: 16px; padding: 13px 10px; min-height: 44px; border-radius: 9px; background: #f5f5f5; color: #111; font-size: 12px; font-weight: 600; }
 .plan-pro .plan-order { background: #f5f5f5; color: #111; }
 .plan-order:disabled { cursor: default; background: #242424; color: #aaa; border: 1px solid #444; }
-.plan-order[data-purchased="true"] { color: #f5f5f5; background: #333; border-color: #777; }
+.plan-order[data-purchased="true"] { color: #fff; background: linear-gradient(100deg, #8f172d, #b82d42); border-color: #d8b96b; box-shadow: 0 5px 16px rgb(143 23 45 / 20%); }
 .plan-purchase-status { margin: 10px 16px 0; font-size: 11px; line-height: 1.6; }
 .plans-note { font-size: 12px; line-height: 1.9; color: var(--muted); margin: 24px 0 40px; max-width: 900px; }
 .plan-account-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
