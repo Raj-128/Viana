@@ -1,0 +1,145 @@
+UPLOADING THE 3D LIBRARY FROM THE PC THAT HOLDS IT
+===================================================
+Run these on the computer where the 3D source library actually lives. The
+library is about 6.64 GB and is not in the repository, so only that machine can
+publish it.
+
+
+WHY THIS IS NEEDED
+------------------
+Model packages used to be written inside the hosting container, and the host
+rebuilds that container on every deploy, so the files were erased each time. A
+customer with a paid plan would be told the download was unavailable.
+
+The packages now go to Cloudflare R2 instead, which the container cannot erase.
+This upload is the one-time move of the existing library into that storage.
+
+Wallpaper previews are not affected. They are committed to the repository and
+served by GitHub Pages, and nothing about them changes.
+
+
+BEFORE STARTING, THAT PC NEEDS
+------------------------------
+  1. Node 22.5 or newer          node --version
+  2. The repository, up to date  git pull
+  3. The 3D source library attached and readable
+  4. A sync credential (below)
+  5. libarchive / bsdtar for reading archives. Windows' built-in tar.exe works.
+
+
+THE SYNC CREDENTIAL
+-------------------
+The server only accepts uploads carrying a token it recognises. The token is
+already set on Render and already works, so the other PC must use the SAME one.
+
+Copy this file across by hand (USB or password manager, not email or chat):
+
+    .private/model-sync.json
+
+It contains:
+
+    {
+      "url": "https://viana-fpph.onrender.com",
+      "token": "<the shared token>",
+      "enabled": true
+    }
+
+The folder .private/ is ignored by git, so this file is never committed. Keep it
+that way. If the token is ever exposed, generate a new one and update both the
+file and Render's MODEL_SYNC_TOKEN together.
+
+
+STEP 1 - POINT AT THE LIBRARY
+-----------------------------
+The importer looks in E:\3d design file studio viana by default. If the library
+sits elsewhere on that PC, say so before running anything:
+
+    $env:MODEL_LIBRARY_DIR = "D:\path\to\your\3d library"
+
+Check the path is right before continuing. A wrong path imports nothing and
+reports no error worth noticing.
+
+
+STEP 2 - IMPORT
+---------------
+    npm install
+    npm run models:import
+
+This reads the originals, pairs each package with its preview image, builds
+small WebP previews, and records everything in .private/model-library.json.
+
+Originals are never renamed, moved or modified. The importer only reads them.
+
+The first run takes a while. Unmatched or ambiguous pairs are left unpublished
+and listed in .private/model-import-report.json; read that file afterwards.
+
+
+STEP 3 - UPLOAD
+---------------
+    npm run models:sync
+
+Each package is checksummed before it leaves and again on arrival, and a model
+is published only when the two match. A failed transfer retries on the next run
+and already-published versions are skipped, so running it again is safe and
+costs nothing.
+
+6.64 GB over a home connection takes hours. Leave it running. If it stops,
+simply run it again; it continues rather than restarting.
+
+Expect output like:
+
+    { configured: true, uploaded: 181 }
+
+  configured: false   the credential was not found; check .private/model-sync.json
+  uploaded: 0         nothing to send, usually because the import found no library
+
+
+STEP 4 - CHECK IT WORKED
+------------------------
+Open this in a browser:
+
+    https://viana-fpph.onrender.com/api/model-catalogue
+
+Before the upload it reads:
+
+    {"revision":"...","projects":[]}
+
+Afterwards it should list the models. An empty list means the upload has not
+landed yet.
+
+Then sign in on the live site with an account holding an approved plan and
+download one model. That is the real check.
+
+
+STEP 5 - THE CHECK THAT ACTUALLY PROVES IT
+------------------------------------------
+Deploy again on purpose, then download the same model a second time.
+
+If it still downloads, the files genuinely live outside the container and the
+problem is solved. If it fails, they are still being written somewhere the host
+erases, and the R2 settings need revisiting.
+
+Storage that has never survived a restart has not been tested.
+
+
+KEEPING IT UP TO DATE
+---------------------
+To publish new models later, run the two commands again on that PC:
+
+    npm run models:import
+    npm run models:sync
+
+Or leave the watcher running, which imports and uploads changes continuously:
+
+    npm run models:watch
+
+
+STILL NOT PROTECTED
+-------------------
+This moves FILES out of the container. The DATABASE is still inside it, so
+customer accounts, approved plans and download entitlements are still erased on
+every deploy. A customer's model file will survive while the account that paid
+for it does not.
+
+Fixing that is the Litestream step in docs/LIVE-DATABASE-AND-PRINT-FILES.md. It
+uses the same bucket and the same credentials and costs nothing extra.
