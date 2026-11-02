@@ -17,7 +17,7 @@ the repository and served free by GitHub Pages. Nothing changes for them.
 THE FOUR VALUES TO COLLECT
 --------------------------
   R2_ACCOUNT_ID            Cloudflare account id, shown on the R2 overview page
-  R2_BUCKET                viana-storage
+  R2_BUCKET                viana-backup
   R2_ACCESS_KEY_ID         from the R2 API token
   R2_SECRET_ACCESS_KEY     from the R2 API token (shown once only)
 
@@ -33,13 +33,13 @@ STEP 1 - CLOUDFLARE
   1. dash.cloudflare.com  ->  R2 Object Storage
   2. If asked, add the R2 subscription. The screen reads: Total Due Now $0.00
   3. Create bucket
-       Name      viana-storage      (exactly this)
+       Name      viana-backup      (exactly this)
        Location  Automatic
        Class     Standard           (other classes are not in the free tier)
   4. Copy the Account ID from the R2 overview page
   5. Manage R2 API Tokens  ->  Create API Token
        Permission   Object Read & Write
-       Scope        this bucket only (viana-storage)
+       Scope        this bucket only (viana-backup)
      Copy the Access Key ID and the Secret Access Key.
      The secret is displayed once and cannot be shown again.
   6. Notifications  ->  Create  ->  Budget alert  ->  threshold $1
@@ -51,7 +51,7 @@ STEP 2 - RENDER
 Service viana-fpph  ->  Environment  ->  add four variables:
 
   R2_ACCOUNT_ID=<from step 4>
-  R2_BUCKET=viana-storage
+  R2_BUCKET=viana-backup
   R2_ACCESS_KEY_ID=<from step 5>
   R2_SECRET_ACCESS_KEY=<from step 5>
 
@@ -67,6 +67,21 @@ Generate the MFA key once and never change it. It encrypts the admin
 authenticator secret, so a replaced key locks the owner out permanently:
 
   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+
+VERIFIED ON 2 NOVEMBER 2026
+---------------------------
+The database now survives a deploy. An account created before a manual deploy
+signed in again afterwards, which only happens if the replica was restored into
+the rebuilt container.
+
+Bucket in use: viana-backup
+
+A stray angle bracket in the bucket name caused the first attempt to fail. R2
+reports a name it does not recognise as Access Denied rather than Not Found, so
+the error pointed at permissions instead of at the typo. Run
+scripts/check-r2.js to test the four values one operation at a time before
+blaming the configuration.
 
 
 STEP 3 - AFTER IT IS LIVE
