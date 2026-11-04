@@ -497,7 +497,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     menu.querySelector(".menu-left").prepend(heading);
     const shortcuts = document.createElement("div");
     shortcuts.className = "menu-shortcuts";
-    shortcuts.innerHTML = '<button type="button" data-menu-commerce="cart">Your cart <span aria-hidden="true">&#8599;</span></button><button type="button" data-menu-commerce="downloads">Downloads <span aria-hidden="true">&#8599;</span></button><a href="mailto:vickyranagovind@gmail.com">Have a project? Email the studio &#8599;</a>';
+    shortcuts.innerHTML = '<button type="button" data-menu-commerce="cart">Your cart <span aria-hidden="true">&#8599;</span></button><button type="button" data-menu-commerce="downloads">Downloads <span aria-hidden="true">&#8599;</span></button><a href="mailto:hello@studioviana.work.gd">Have a project? Email the studio &#8599;</a>';
     menu.querySelector(".menu-left").append(shortcuts);
     const setMenu = (open) => {
       toggle.classList.toggle("active", open);
