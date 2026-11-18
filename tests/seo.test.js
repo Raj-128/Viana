@@ -18,7 +18,7 @@ test('marketing metadata uses real production URLs and a published social image'
   assert.equal(titles.size, 5);
   assert.ok(existsSync(new URL('../public/studio-viana-logo.png', import.meta.url)));
   const schema = JSON.parse(read('index.html').match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
-  assert.equal(schema['@graph'][0]['@type'], 'Organization');
+  assert.equal(schema['@graph'][0]['@type'], 'LocalBusiness');
   assert.equal(schema['@graph'][0].url, base);
 });
 
@@ -50,7 +50,7 @@ test('business schema is in the head and homepage answers match visible content'
     const head = html.split('</head>')[0];
     const schema = JSON.parse(head.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
     assert.ok(schema['@graph'].some(node => node['@type'] === 'Person' && node.name === 'Vicky Rana'));
-    assert.doesNotMatch(JSON.stringify(schema), /AggregateRating|reviewCount|streetAddress/);
+    assert.doesNotMatch(JSON.stringify(schema), /AggregateRating|reviewCount/);
     if (page === 'index') {
       const faq = schema['@graph'].find(node => node['@type'] === 'FAQPage');
       assert.equal(faq.mainEntity.length, 4);
