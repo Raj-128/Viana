@@ -140,7 +140,7 @@ export function createApi({ dataDir = resolve(process.env.STUDIO_DATA_DIR || ".p
       const explicit = origin.split(",").map(s => s.trim().toLowerCase());
       return explicit.includes(reqOrigin.toLowerCase());
     }
-    const allowed = (process.env.ALLOWED_ORIGINS || process.env.APP_ORIGIN || "https://studioviana.work.gd,https://raj-128.github.io,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000")
+    const allowed = (process.env.ALLOWED_ORIGINS || process.env.APP_ORIGIN || "https://studioviana.in,https://raj-128.github.io,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000")
       .split(",")
       .map(s => s.trim().toLowerCase());
     return allowed.includes(reqOrigin.toLowerCase());

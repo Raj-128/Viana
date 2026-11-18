@@ -83,7 +83,7 @@ The site frontend deploys through GitHub Pages; the API runs separately on Rende
    ```
 
 4. Deploy the backend commit containing `server/visual-search.js` and `server/api.js`.
-5. Open `https://viana-fpph.onrender.com/api/visual-search/config`. It should return `{"enabled":true}`. That checks the project and product-set settings; test a photo on `https://studioviana.work.gd/work.html` as the final check.
+5. Open `https://viana-fpph.onrender.com/api/visual-search/config`. It should return `{"enabled":true}`. That checks the project and product-set settings; test a photo on `https://studioviana.in/work.html` as the final check.
 6. The public feature needs no account or sign-in. If it fails, inspect the Render logs and confirm the service account can call Vision and read the uploaded bucket images.
 
 The website resizes supported JPEG, PNG, and WebP photos before sending them to the API. It does not store the uploaded photo. It forwards that photo to Google Cloud to match only the Studio Viana wallpaper product set; the Work page explains this before upload and links to the privacy policy. The endpoint limits uploads to 4 MB and rate-limits requests.
@@ -101,27 +101,27 @@ The website resizes supported JPEG, PNG, and WebP photos before sending them to 
 The sitemap file is [`public/sitemap.xml`](../public/sitemap.xml); the production URL is:
 
 ```text
-https://studioviana.work.gd/sitemap.xml
+https://studioviana.in/sitemap.xml
 ```
 
 Current generated sitemap contains seven public canonical pages. The build regenerates it from indexable root HTML pages. The Work catalogue and individual design pages are access-gated/noindex, so they intentionally aren't sitemap entries.
 
-1. Deploy the latest frontend to GitHub Pages and backend to Render. Confirm `https://studioviana.work.gd/sitemap.xml` opens and lists the current public URLs.
-2. Open [Google Search Console](https://search.google.com/search-console/) and select the URL-prefix property `https://studioviana.work.gd/`. The homepage already contains the Search Console verification meta tag. If Search Console asks you to verify again, use the HTML-tag method for this exact HTTPS property and keep its verification tag in the homepage.
+1. Deploy the latest frontend to GitHub Pages and backend to Render. Confirm `https://studioviana.in/sitemap.xml` opens and lists the current public URLs.
+2. Open [Google Search Console](https://search.google.com/search-console/) and select the URL-prefix property `https://studioviana.in/`. The homepage already contains the Search Console verification meta tag. If Search Console asks you to verify again, use the HTML-tag method for this exact HTTPS property and keep its verification tag in the homepage.
 3. Select **Indexing → Sitemaps**. Enter `sitemap.xml` in **Add a new sitemap** and submit.
 4. Open **URL Inspection** and inspect these canonical URLs:
 
    ```text
-   https://studioviana.work.gd/
-   https://studioviana.work.gd/about.html
-   https://studioviana.work.gd/services.html
-   https://studioviana.work.gd/contact.html
+   https://studioviana.in/
+   https://studioviana.in/about.html
+   https://studioviana.in/services.html
+   https://studioviana.in/contact.html
    ```
 
-5. Click **Test Live URL** on each. Check that Google can fetch it and that indexing is allowed. Confirm Google's selected canonical matches the `https://studioviana.work.gd/` version.
+5. Click **Test Live URL** on each. Check that Google can fetch it and that indexing is allowed. Confirm Google's selected canonical matches the `https://studioviana.in/` version.
 6. If a page is eligible but absent from Google, click **Request indexing** once for the homepage and the most important public pages. Recheck **Page indexing** and the sitemap status over the next several days. A request or sitemap is a discovery signal, not a guarantee of indexing or ranking.
 7. If Google reports a block, fix its reported reason first: verify the page isn't `noindex`, robots.txt allows crawling, canonical URL is correct, and the live response isn't a 404, redirect loop, or 5xx error. Then rerun Live Test and request indexing again after the fix.
 
-Google Search Console ownership, sitemap submission, and indexing requests require access to the owner's Google account; the repository cannot perform those account actions. Google may take days or longer to crawl and index pages. The free `.work.gd` hostname can also be unreliable on some resolvers; an owned domain is the long-term improvement.
+Google Search Console ownership, sitemap submission, and indexing requests require access to the owner's Google account; the repository cannot perform those account actions. Google may take days or longer to crawl and index pages.
 
 Official references: [verify ownership](https://support.google.com/webmasters/answer/9008080), [submit a sitemap](https://support.google.com/webmasters/answer/7451001), [URL Inspection](https://support.google.com/webmasters/answer/9012289/), [Google crawling and indexing FAQ](https://developers.google.com/search/help/crawling-index-faq).

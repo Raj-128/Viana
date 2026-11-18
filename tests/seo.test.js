@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
 
 const read = file => readFileSync(new URL('../' + file, import.meta.url), 'utf8');
-const base = 'https://studioviana.work.gd/';
+const base = 'https://studioviana.in/';
 
 test('marketing metadata uses real production URLs and a published social image', () => {
   const titles = new Set();
@@ -61,5 +61,5 @@ test('business schema is in the head and homepage answers match visible content'
       }
     }
   }
-  assert.match(read('public/robots.txt'), /Sitemap: https:\/\/studioviana\.work\.gd\/sitemap\.xml/);
+  assert.match(read('public/robots.txt'), /Sitemap: https:\/\/studioviana\.in\/sitemap\.xml/);
 });

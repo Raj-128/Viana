@@ -4,8 +4,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { helpTopics, openHelp } from '../src/js/help-assistant.js';
 test('guide destinations exist and stay within the website', () => {
  for(const topic of helpTopics) for(const action of [topic,topic.secondary].filter(Boolean)) {
-  const url=new URL(action.href,'https://studioviana.work.gd/');
-  assert.equal(url.origin,'https://studioviana.work.gd');
+  const url=new URL(action.href,'https://studioviana.in/');
+  assert.equal(url.origin,'https://studioviana.in');
   const page='.'+url.pathname; assert.ok(existsSync(page),page);
   if(url.hash && !['#catalogue','#account'].includes(url.hash)) assert.ok(readFileSync(page,'utf8').includes('id="'+url.hash.slice(1)+'"'));
  }

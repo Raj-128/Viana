@@ -4,4 +4,4 @@ Disallow: /admin-login.html
 Disallow: /admin-downloads.html
 Disallow: /api/
 
-Sitemap: https://studioviana.work.gd/sitemap.xml
+Sitemap: https://studioviana.in/sitemap.xml

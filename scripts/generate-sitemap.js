@@ -2,7 +2,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const origin = 'https://studioviana.work.gd';
+const origin = 'https://studioviana.in';
 const publicDir = resolve(root, 'public');
 const pages = (await readdir(root, { withFileTypes: true }))
   .filter(entry => entry.isFile() && entry.name.endsWith('.html'))

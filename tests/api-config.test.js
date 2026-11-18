@@ -50,7 +50,7 @@ test('approved original download resolves the API base exactly once', async () =
 });
 
 test('production ignores browser-controlled destinations before sending credentials', async () => {
-  const { context, requests } = client('https://studioviana.work.gd/login.html', {
+  const { context, requests } = client('https://studioviana.in/login.html', {
     viana_token: 'private-session', viana_api_url: 'https://untrusted.example',
   });
   context.window.VIANA_API_URL = 'https://another-untrusted.example';
